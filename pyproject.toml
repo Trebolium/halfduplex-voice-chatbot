@@ -1,0 +1,30 @@
+[project]
+name = "voicebot"
+version = "0.1.0"
+description = "Conversational voice AI bot with per-user memory"
+readme = "README.md"
+requires-python = ">=3.12"
+dependencies = [
+    "numpy",
+    "sounddevice",
+    "soundfile",
+    "pynput",
+    "webrtcvad-wheels",
+    "groq",
+    "openai",
+    "edge-tts",
+    "python-dotenv",
+]
+
+[project.scripts]
+voicebot = "voicebot.main:main"
+
+[dependency-groups]
+dev = ["pytest"]
+
+[build-system]
+requires = ["uv_build>=0.11.29,<0.12.0"]
+build-backend = "uv_build"
+
+[tool.pytest.ini_options]
+testpaths = ["test"]
