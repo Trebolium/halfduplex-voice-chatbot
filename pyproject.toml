@@ -9,18 +9,42 @@ dependencies = [
     "sounddevice",
     "soundfile",
     "pynput",
-    "webrtcvad-wheels",
     "groq",
     "openai",
     "edge-tts",
     "python-dotenv",
+    "silero-vad>=6.2.3",
+    "gtts>=2.2.4",
 ]
 
 [project.scripts]
 voicebot = "voicebot.main:main"
 
 [dependency-groups]
+bench = [
+    "espeakng-loader>=0.2.4",
+    "huggingface-hub>=1.33.0",
+    "kokoro-onnx>=0.6.1",
+    "matplotlib>=3.11.2",
+    "phonemizer>=3.4.0",
+    "piper-tts>=1.8.0",
+    "pocket-tts>=3.3.0",
+]
 dev = ["pytest"]
+local-asr = [
+    "mlx-whisper>=0.4.3",
+]
+local-llm = [
+    "mlx-lm>=0.32.0",
+]
+local-tts = [
+    "espeakng-loader>=0.2.4",
+    "huggingface-hub>=1.33.0",
+    "kokoro-onnx>=0.6.1",
+    "phonemizer>=3.4.0",
+    "piper-tts>=1.8.0",
+    "pocket-tts>=3.3.0",
+]
 
 [build-system]
 requires = ["uv_build>=0.11.29,<0.12.0"]

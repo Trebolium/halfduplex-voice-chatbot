@@ -1,0 +1,187 @@
+17:53:51 [tts] [TTS] Synthesizing 8 chars with voice en-US-AriaNeural -> reply_20261006_175351_136825.mp3
+17:53:51 [tts] [TTS] Done in 0.41s (11232 bytes)
+17:53:51 [tts] [TTS] Synthesizing 57 chars with voice en-US-AriaNeural -> reply_20261006_175351_543614.mp3
+17:53:52 [tts] [TTS] Done in 0.48s (27216 bytes)
+17:53:52 [tts] [TTS] Synthesizing 57 chars with voice en-US-AriaNeural -> reply_20261006_175352_023860.mp3
+17:53:52 [tts] [TTS] Done in 0.45s (27216 bytes)
+17:53:52 [tts] [TTS] Synthesizing 57 chars with voice en-US-AriaNeural -> reply_20261006_175352_470224.mp3
+17:53:52 [tts] [TTS] Done in 0.46s (27216 bytes)
+17:53:52 [tts] [TTS] Synthesizing 57 chars with voice en-US-AriaNeural -> reply_20261006_175352_932332.mp3
+17:53:53 [tts] [TTS] Done in 0.46s (27216 bytes)
+17:53:53 [tts] [TTS] Synthesizing 57 chars with voice en-US-AriaNeural -> reply_20261006_175353_391409.mp3
+17:53:53 [tts] [TTS] Done in 0.38s (27216 bytes)
+17:53:53 [tts] [TTS] Synthesizing 57 chars with voice en-US-AriaNeural -> reply_20261006_175353_776040.mp3
+17:53:54 [tts] [TTS] Done in 0.40s (27216 bytes)
+17:53:54 [tts] [TTS] Synthesizing 57 chars with voice en-US-AriaNeural -> reply_20261006_175354_177972.mp3
+17:53:54 [tts] [TTS] Done in 0.47s (27216 bytes)
+17:53:54 [tts] [TTS] Synthesizing 57 chars with voice en-US-AriaNeural -> reply_20261006_175354_645530.mp3
+17:53:55 [tts] [TTS] Done in 0.39s (27216 bytes)
+17:53:55 [tts] [TTS] Synthesizing 57 chars with voice en-US-AriaNeural -> reply_20261006_175355_037620.mp3
+17:53:55 [tts] [TTS] Done in 0.43s (27216 bytes)
+17:53:55 [tts] [TTS] Synthesizing 57 chars with voice en-US-AriaNeural -> reply_20261006_175355_463592.mp3
+17:53:55 [tts] [TTS] Done in 0.37s (27216 bytes)
+17:53:55 [tts] [TTS] Synthesizing 201 chars with voice en-US-AriaNeural -> reply_20261006_175355_838509.mp3
+17:53:56 [tts] [TTS] Done in 0.51s (69552 bytes)
+17:53:56 [tts] [TTS] Synthesizing 201 chars with voice en-US-AriaNeural -> reply_20261006_175356_344799.mp3
+17:53:56 [tts] [TTS] Done in 0.46s (69552 bytes)
+17:53:56 [tts] [TTS] Synthesizing 201 chars with voice en-US-AriaNeural -> reply_20261006_175356_807888.mp3
+17:53:57 [tts] [TTS] Done in 0.55s (69552 bytes)
+17:53:57 [tts] [TTS] Synthesizing 201 chars with voice en-US-AriaNeural -> reply_20261006_175357_357783.mp3
+17:53:57 [tts] [TTS] Done in 0.53s (69552 bytes)
+17:53:57 [tts] [TTS] Synthesizing 201 chars with voice en-US-AriaNeural -> reply_20261006_175357_887581.mp3
+17:53:58 [tts] [TTS] Done in 0.60s (69552 bytes)
+17:53:58 [tts] [TTS] Synthesizing 201 chars with voice en-US-AriaNeural -> reply_20261006_175358_488289.mp3
+17:53:59 [tts] [TTS] Done in 0.62s (69552 bytes)
+17:53:59 [tts] [TTS] Synthesizing 201 chars with voice en-US-AriaNeural -> reply_20261006_175359_108282.mp3
+17:53:59 [tts] [TTS] Done in 0.54s (69552 bytes)
+17:53:59 [tts] [TTS] Synthesizing 201 chars with voice en-US-AriaNeural -> reply_20261006_175359_645057.mp3
+17:54:00 [tts] [TTS] Done in 0.60s (69552 bytes)
+17:54:00 [tts] [TTS] Synthesizing 201 chars with voice en-US-AriaNeural -> reply_20261006_175400_245755.mp3
+17:54:00 [tts] [TTS] Done in 0.50s (69552 bytes)
+17:54:00 [tts] [TTS] Synthesizing 201 chars with voice en-US-AriaNeural -> reply_20261006_175400_748452.mp3
+17:54:01 [tts] [TTS] Done in 0.66s (69552 bytes)
+17:54:11 [httpx] HTTP Request: POST https://api.groq.com/openai/v1/audio/speech "HTTP/1.1 200 OK"
+17:54:21 [httpx] HTTP Request: POST https://api.groq.com/openai/v1/audio/speech "HTTP/1.1 429 Too Many Requests"
+17:54:21 [httpx] HTTP Request: POST https://api.elevenlabs.io/v1/text-to-speech/JBFqnCBsd6RMkjVDRZzb?output_format=mp3_44100_128 "HTTP/1.1 200 OK"
+17:54:21 [httpx] HTTP Request: POST https://api.elevenlabs.io/v1/text-to-speech/JBFqnCBsd6RMkjVDRZzb?output_format=mp3_44100_128 "HTTP/1.1 200 OK"
+17:54:22 [httpx] HTTP Request: POST https://api.elevenlabs.io/v1/text-to-speech/JBFqnCBsd6RMkjVDRZzb?output_format=mp3_44100_128 "HTTP/1.1 200 OK"
+17:54:22 [httpx] HTTP Request: POST https://api.elevenlabs.io/v1/text-to-speech/JBFqnCBsd6RMkjVDRZzb?output_format=mp3_44100_128 "HTTP/1.1 200 OK"
+17:54:22 [httpx] HTTP Request: POST https://api.elevenlabs.io/v1/text-to-speech/JBFqnCBsd6RMkjVDRZzb?output_format=mp3_44100_128 "HTTP/1.1 200 OK"
+17:54:23 [httpx] HTTP Request: POST https://api.elevenlabs.io/v1/text-to-speech/JBFqnCBsd6RMkjVDRZzb?output_format=mp3_44100_128 "HTTP/1.1 200 OK"
+17:54:23 [httpx] HTTP Request: POST https://api.elevenlabs.io/v1/text-to-speech/JBFqnCBsd6RMkjVDRZzb?output_format=mp3_44100_128 "HTTP/1.1 200 OK"
+17:54:23 [httpx] HTTP Request: POST https://api.elevenlabs.io/v1/text-to-speech/JBFqnCBsd6RMkjVDRZzb?output_format=mp3_44100_128 "HTTP/1.1 200 OK"
+17:54:24 [httpx] HTTP Request: POST https://api.elevenlabs.io/v1/text-to-speech/JBFqnCBsd6RMkjVDRZzb?output_format=mp3_44100_128 "HTTP/1.1 200 OK"
+17:54:24 [httpx] HTTP Request: POST https://api.elevenlabs.io/v1/text-to-speech/JBFqnCBsd6RMkjVDRZzb?output_format=mp3_44100_128 "HTTP/1.1 200 OK"
+17:54:25 [httpx] HTTP Request: POST https://api.elevenlabs.io/v1/text-to-speech/JBFqnCBsd6RMkjVDRZzb?output_format=mp3_44100_128 "HTTP/1.1 200 OK"
+17:54:25 [httpx] HTTP Request: POST https://api.elevenlabs.io/v1/text-to-speech/JBFqnCBsd6RMkjVDRZzb?output_format=mp3_44100_128 "HTTP/1.1 200 OK"
+17:54:26 [httpx] HTTP Request: POST https://api.elevenlabs.io/v1/text-to-speech/JBFqnCBsd6RMkjVDRZzb?output_format=mp3_44100_128 "HTTP/1.1 200 OK"
+17:54:26 [httpx] HTTP Request: POST https://api.elevenlabs.io/v1/text-to-speech/JBFqnCBsd6RMkjVDRZzb?output_format=mp3_44100_128 "HTTP/1.1 200 OK"
+17:54:27 [httpx] HTTP Request: POST https://api.elevenlabs.io/v1/text-to-speech/JBFqnCBsd6RMkjVDRZzb?output_format=mp3_44100_128 "HTTP/1.1 200 OK"
+17:54:28 [httpx] HTTP Request: POST https://api.elevenlabs.io/v1/text-to-speech/JBFqnCBsd6RMkjVDRZzb?output_format=mp3_44100_128 "HTTP/1.1 200 OK"
+17:54:28 [httpx] HTTP Request: POST https://api.elevenlabs.io/v1/text-to-speech/JBFqnCBsd6RMkjVDRZzb?output_format=mp3_44100_128 "HTTP/1.1 200 OK"
+17:54:29 [httpx] HTTP Request: POST https://api.elevenlabs.io/v1/text-to-speech/JBFqnCBsd6RMkjVDRZzb?output_format=mp3_44100_128 "HTTP/1.1 200 OK"
+17:54:29 [httpx] HTTP Request: POST https://api.elevenlabs.io/v1/text-to-speech/JBFqnCBsd6RMkjVDRZzb?output_format=mp3_44100_128 "HTTP/1.1 200 OK"
+17:54:30 [httpx] HTTP Request: POST https://api.elevenlabs.io/v1/text-to-speech/JBFqnCBsd6RMkjVDRZzb?output_format=mp3_44100_128 "HTTP/1.1 200 OK"
+17:54:31 [httpx] HTTP Request: POST https://api.elevenlabs.io/v1/text-to-speech/JBFqnCBsd6RMkjVDRZzb?output_format=mp3_44100_128 "HTTP/1.1 200 OK"
+
+=== edge-tts ===
+[TTS] Synthesizing 8 chars with voice en-US-AriaNeural -> reply_20261006_175351_136825.mp3
+[TTS] Done in 0.41s (11232 bytes)
+[TTS] Synthesizing 57 chars with voice en-US-AriaNeural -> reply_20261006_175351_543614.mp3
+[TTS] Done in 0.48s (27216 bytes)
+[bench] edge-tts | short | run 1/10: 0.480s
+[TTS] Synthesizing 57 chars with voice en-US-AriaNeural -> reply_20261006_175352_023860.mp3
+[TTS] Done in 0.45s (27216 bytes)
+[bench] edge-tts | short | run 2/10: 0.446s
+[TTS] Synthesizing 57 chars with voice en-US-AriaNeural -> reply_20261006_175352_470224.mp3
+[TTS] Done in 0.46s (27216 bytes)
+[bench] edge-tts | short | run 3/10: 0.462s
+[TTS] Synthesizing 57 chars with voice en-US-AriaNeural -> reply_20261006_175352_932332.mp3
+[TTS] Done in 0.46s (27216 bytes)
+[bench] edge-tts | short | run 4/10: 0.459s
+[TTS] Synthesizing 57 chars with voice en-US-AriaNeural -> reply_20261006_175353_391409.mp3
+[TTS] Done in 0.38s (27216 bytes)
+[bench] edge-tts | short | run 5/10: 0.385s
+[TTS] Synthesizing 57 chars with voice en-US-AriaNeural -> reply_20261006_175353_776040.mp3
+[TTS] Done in 0.40s (27216 bytes)
+[bench] edge-tts | short | run 6/10: 0.402s
+[TTS] Synthesizing 57 chars with voice en-US-AriaNeural -> reply_20261006_175354_177972.mp3
+[TTS] Done in 0.47s (27216 bytes)
+[bench] edge-tts | short | run 7/10: 0.468s
+[TTS] Synthesizing 57 chars with voice en-US-AriaNeural -> reply_20261006_175354_645530.mp3
+[TTS] Done in 0.39s (27216 bytes)
+[bench] edge-tts | short | run 8/10: 0.392s
+[TTS] Synthesizing 57 chars with voice en-US-AriaNeural -> reply_20261006_175355_037620.mp3
+[TTS] Done in 0.43s (27216 bytes)
+[bench] edge-tts | short | run 9/10: 0.426s
+[TTS] Synthesizing 57 chars with voice en-US-AriaNeural -> reply_20261006_175355_463592.mp3
+[TTS] Done in 0.37s (27216 bytes)
+[bench] edge-tts | short | run 10/10: 0.370s
+[TTS] Synthesizing 201 chars with voice en-US-AriaNeural -> reply_20261006_175355_838509.mp3
+[TTS] Done in 0.51s (69552 bytes)
+[bench] edge-tts | long | run 1/10: 0.506s
+[TTS] Synthesizing 201 chars with voice en-US-AriaNeural -> reply_20261006_175356_344799.mp3
+[TTS] Done in 0.46s (69552 bytes)
+[bench] edge-tts | long | run 2/10: 0.463s
+[TTS] Synthesizing 201 chars with voice en-US-AriaNeural -> reply_20261006_175356_807888.mp3
+[TTS] Done in 0.55s (69552 bytes)
+[bench] edge-tts | long | run 3/10: 0.550s
+[TTS] Synthesizing 201 chars with voice en-US-AriaNeural -> reply_20261006_175357_357783.mp3
+[TTS] Done in 0.53s (69552 bytes)
+[bench] edge-tts | long | run 4/10: 0.530s
+[TTS] Synthesizing 201 chars with voice en-US-AriaNeural -> reply_20261006_175357_887581.mp3
+[TTS] Done in 0.60s (69552 bytes)
+[bench] edge-tts | long | run 5/10: 0.601s
+[TTS] Synthesizing 201 chars with voice en-US-AriaNeural -> reply_20261006_175358_488289.mp3
+[TTS] Done in 0.62s (69552 bytes)
+[bench] edge-tts | long | run 6/10: 0.620s
+[TTS] Synthesizing 201 chars with voice en-US-AriaNeural -> reply_20261006_175359_108282.mp3
+[TTS] Done in 0.54s (69552 bytes)
+[bench] edge-tts | long | run 7/10: 0.537s
+[TTS] Synthesizing 201 chars with voice en-US-AriaNeural -> reply_20261006_175359_645057.mp3
+[TTS] Done in 0.60s (69552 bytes)
+[bench] edge-tts | long | run 8/10: 0.601s
+[TTS] Synthesizing 201 chars with voice en-US-AriaNeural -> reply_20261006_175400_245755.mp3
+[TTS] Done in 0.50s (69552 bytes)
+[bench] edge-tts | long | run 9/10: 0.503s
+[TTS] Synthesizing 201 chars with voice en-US-AriaNeural -> reply_20261006_175400_748452.mp3
+[TTS] Done in 0.66s (69552 bytes)
+[bench] edge-tts | long | run 10/10: 0.656s
+
+=== gtts ===
+[bench] gtts | short | run 1/10: 0.199s
+[bench] gtts | short | run 2/10: 0.186s
+[bench] gtts | short | run 3/10: 0.212s
+[bench] gtts | short | run 4/10: 0.203s
+[bench] gtts | short | run 5/10: 0.215s
+[bench] gtts | short | run 6/10: 0.194s
+[bench] gtts | short | run 7/10: 0.274s
+[bench] gtts | short | run 8/10: 0.239s
+[bench] gtts | short | run 9/10: 0.242s
+[bench] gtts | short | run 10/10: 0.185s
+[bench] gtts | long | run 1/10: 0.658s
+[bench] gtts | long | run 2/10: 0.544s
+[bench] gtts | long | run 3/10: 0.844s
+[bench] gtts | long | run 4/10: 0.673s
+[bench] gtts | long | run 5/10: 0.662s
+[bench] gtts | long | run 6/10: 0.598s
+[bench] gtts | long | run 7/10: 0.733s
+[bench] gtts | long | run 8/10: 0.885s
+[bench] gtts | long | run 9/10: 0.667s
+[bench] gtts | long | run 10/10: 0.643s
+
+=== groq-orpheus ===
+[bench] SKIPPED groq-orpheus: Groq TTS returned 429: {"error":{"message":"Rate limit reached for model `canopylabs/orpheus-v1-english` in organization `org_01m1hde2xgeddb5gcshv159b6n` service tier `on_demand` on tokens per day (TPD): Limit 3600, Used 35. Groq's free tier allows ~10 Orpheus requests per minute: wait a few seconds and retry, or use another --tts_model.
+
+=== elevenlabs ===
+[bench] elevenlabs | short | run 1/10: 0.371s
+[bench] elevenlabs | short | run 2/10: 0.358s
+[bench] elevenlabs | short | run 3/10: 0.370s
+[bench] elevenlabs | short | run 4/10: 0.396s
+[bench] elevenlabs | short | run 5/10: 0.379s
+[bench] elevenlabs | short | run 6/10: 0.375s
+[bench] elevenlabs | short | run 7/10: 0.347s
+[bench] elevenlabs | short | run 8/10: 0.362s
+[TTS] ElevenLabs connection dropped (ConnectError), retrying once...
+[bench] elevenlabs | short | run 9/10: 0.417s
+[bench] elevenlabs | short | run 10/10: 0.355s
+[bench] elevenlabs | long | run 1/10: 0.595s
+[bench] elevenlabs | long | run 2/10: 0.596s
+[bench] elevenlabs | long | run 3/10: 0.594s
+[bench] elevenlabs | long | run 4/10: 0.614s
+[bench] elevenlabs | long | run 5/10: 0.589s
+[bench] elevenlabs | long | run 6/10: 0.598s
+[bench] elevenlabs | long | run 7/10: 0.579s
+[bench] elevenlabs | long | run 8/10: 0.698s
+[bench] elevenlabs | long | run 9/10: 0.655s
+[bench] elevenlabs | long | run 10/10: 0.573s
+
+=== SUMMARY (mean / min / max seconds) ===
+edge-tts       short  0.429 / 0.370 / 0.480  (audio 4.5s)
+edge-tts       long   0.557 / 0.463 / 0.656  (audio 11.6s)
+gtts           short  0.215 / 0.185 / 0.274  (audio 4.6s)
+gtts           long   0.691 / 0.544 / 0.885  (audio 14.4s)
+elevenlabs     short  0.373 / 0.347 / 0.417  (audio 3.5s)
+elevenlabs     long   0.609 / 0.573 / 0.698  (audio 11.4s)
+groq-orpheus   SKIPPED: Groq TTS returned 429: {"error":{"message":"Rate limit reached for model `canopylabs/orpheus-v1-english` in organization `org_01m1hde2xgeddb5gcshv159b6n` servic
+WINNER (lowest mean latency): gtts

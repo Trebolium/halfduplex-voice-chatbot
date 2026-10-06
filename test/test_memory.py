@@ -49,3 +49,11 @@ def test_empty_history_noop():
     u = store.load("Zed")
     store.end_session(u, [])
     assert u["sessions"] == 0
+
+
+def test_log_turn_persists():
+    u = store.load("Turn")
+    store.log_turn(u, "hi", "hello!", {"asr": 0.12345, "llm": 1.5}, {"llm": {"model": "m"}})
+    store.add_latency(u, "tts", 0.4)
+    turn = store.load("Turn")["cascading conversation"][0]
+    assert turn == {"user": "hi", "llm": "hello!", "latency_s": {"asr": 0.123, "llm": 1.5, "tts": 0.4}, "setup": {"llm": {"model": "m"}}}

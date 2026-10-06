@@ -13,15 +13,18 @@ USERS_DIR = ROOT / "data" / "users"
 
 GROQ_API_KEY = os.getenv("GROQ_API_KEY", "")
 OPENROUTER_API_KEY = os.getenv("OPENROUTER_API_KEY", "")
-LLM_MODEL = os.getenv("LLM_MODEL", "google/gemini-2.5-flash")
+ELEVENLABS_API_KEY = os.getenv("ELEVENLABS_API_KEY", "")
+LLM_MODEL = os.getenv("LLM_MODEL", "google/gemini-2.5-flash-lite")
+LLM_PROVIDER = os.getenv("LLM_PROVIDER", "")  # optional OpenRouter provider tag to pin, e.g. deepinfra/turbo
 ASR_MODEL = os.getenv("ASR_MODEL", "whisper-large-v3-turbo")
-TTS_VOICE = os.getenv("TTS_VOICE", "en-US-AriaNeural")
+TTS_VOICE = os.getenv("TTS_VOICE", "")  # optional voice override for the remote TTS backend (each backend has its own default)
 
 SAMPLE_RATE = 16000          # Hz, mono int16 everywhere
 MAX_RECORD_SECS = 120        # hard cap per recording
-SILENCE_END_SECS = 3.0       # consecutive silence that ends a recording
+SILENCE_END_SECS = 1.0       # consecutive silence that ends a recording
 MIN_SPEECH_MS = 300          # VAD drops speech segments shorter than this
-IDLE_TIMEOUT_SECS = 30       # no speech this long after a reply -> session ends
+VAD_THRESHOLD = 0.5          # Silero speech probability above this counts as speech
+IDLE_TIMEOUT_SECS = 5        # no speech this long after a reply -> session ends and memory is saved
 
 BASE_SYSTEM_PROMPT = (
     "You are a helpful voice AI assistant designed to assist the elderly. "

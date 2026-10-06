@@ -13,12 +13,12 @@ def _run(pattern):
 
 
 def test_ends_after_silence():
-    n = int(SILENCE_END_SECS * 1000 / FRAME_MS)
+    n = -(-int(SILENCE_END_SECS * 1000) // FRAME_MS)
     assert _run([True] * 10 + [False] * n) == 10 + n
 
 
 def test_speech_resets_silence():
-    n = int(SILENCE_END_SECS * 1000 / FRAME_MS)
+    n = -(-int(SILENCE_END_SECS * 1000) // FRAME_MS)
     assert _run([True] * 5 + [False] * (n - 1) + [True] + [False] * (n - 1)) is None
 
 

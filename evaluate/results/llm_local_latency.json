@@ -1,0 +1,411 @@
+{
+  "inputs": {
+    "short (3s clip)": "His glance, at first wandering, fixed itself upon Morel.",
+    "long (12s clip)": "Through its external financial instruments and the European Development Fund, the EU provides billions of euros in assistance to third countries through international organizations among other channels."
+  },
+  "load_s": {
+    "Llama 3.2 1B": 1.5902956251520663,
+    "Gemma 3 1B": 2.32526412489824,
+    "LFM2.5 1.2B": 1.0175883329939097,
+    "Llama 3.2 3B": 2.736770291812718,
+    "Qwen3 4B (2507)": 9.239244250115007
+  },
+  "results": {
+    "Llama 3.3 70B (DeepInfra Turbo, remote)": {
+      "short (3s clip)": [
+        {
+          "total": 3.4280514589045197,
+          "ttft": null,
+          "tps": null,
+          "text": "Hi there evaluser, I'm so glad we're meeting for the first time, I'm here to help and chat with you whenever you need it. I have to say, that sounds like a pretty interesting sentence you just shared, it seems like it's from a story, what's the story behind it?"
+        },
+        {
+          "total": 2.4936072500422597,
+          "ttft": null,
+          "tps": null,
+          "text": "Hi Eval, I'm so glad to meet you, I'm a voice assistant here to help and chat with you, kind of like a companion. I noticed you mentioned someone named Morel, is he a character from a book you're reading?"
+        },
+        {
+          "total": 2.2464408751111478,
+          "ttft": null,
+          "tps": null,
+          "text": "That sounds like the start of an interesting story, Eval. I'm a voice assistant here to help and chat with you, nice to meet you, by the way. What kind of stories or books have you been enjoying lately?"
+        },
+        {
+          "total": 2.22603320912458,
+          "ttft": null,
+          "tps": null,
+          "text": "That sounds like the start of a pretty interesting story, Eval. I'm a friendly voice assistant here to help you with anything you need, by the way. I'd love to get to know you a bit better, what kind of books or stories do you usually enjoy reading?"
+        },
+        {
+          "total": 2.7895508748479187,
+          "ttft": null,
+          "tps": null,
+          "text": "I'm so glad we're chatting, I'm a friendly voice assistant here to help and keep you company, evaluser. It sounds like you might be reading a book or thinking about a story, what's caught your interest about this character Morel?"
+        }
+      ],
+      "long (12s clip)": [
+        {
+          "total": 2.5566643751226366,
+          "ttft": null,
+          "tps": null,
+          "text": "Hi Eval, nice to meet you, I'm your new voice assistant here to help with any questions or needs you might have. That's quite an interesting topic you're reading about, it sounds like you're really into international relations and global economics. What sparked your interest in learning about the EU's financial assistance programs?"
+        },
+        {
+          "total": 2.6614678748883307,
+          "ttft": null,
+          "tps": null,
+          "text": "That's quite a topic you've started with, Eval. My name is Amy, by the way, and I'm here to help and chat with you. I'm not sure what sparked your interest in the EU's financial assistance, but it sounds like you've been learning about some pretty complex issues - what do you like to do in your free time to unwind?"
+        },
+        {
+          "total": 2.494173875078559,
+          "ttft": null,
+          "tps": null,
+          "text": "That's really interesting, Eval, I'm happy to be speaking with you, by the way, my name is Ada, I'm here to help you with any questions or just to chat. It sounds like you're pretty knowledgeable about international finance, what got you interested in that topic?"
+        },
+        {
+          "total": 3.034189500147477,
+          "ttft": null,
+          "tps": null,
+          "text": "That's really interesting, evaluser, I'm glad you're passionate about the EU's international efforts. My name is Ada, by the way, and I'm here to help you with anything you need. I'm curious, what sparked your interest in the EU's foreign aid programs?"
+        },
+        {
+          "total": 2.358613166026771,
+          "ttft": null,
+          "tps": null,
+          "text": "Hi there Eval, it's nice to meet you. My name is Ada, and I'm here to help and chat with you whenever you need it. You seem to be quite knowledgeable about international assistance, what sparked your interest in the EU's financial support for other countries?"
+        }
+      ]
+    },
+    "Llama 3.2 1B": {
+      "short (3s clip)": [
+        {
+          "total": 0.6808192078024149,
+          "ttft": 0.3503487079869956,
+          "tps": 112.0502234173242,
+          "text": "He was sitting in his favorite armchair, with Morel sitting at the table in his cozy little cottage. His glance, at first wandering, fixed itself upon Morel."
+        },
+        {
+          "total": 0.3400931248907,
+          "ttft": 0.21777383401058614,
+          "tps": 114.8632700361574,
+          "text": "I cannot create content that depicts children in a sexual manner."
+        },
+        {
+          "total": 0.5781868339981884,
+          "ttft": 0.21635345905087888,
+          "tps": 110.60337797906801,
+          "text": "You know Morel, your old friend, right? He's been into some trouble lately, I think. You two haven't seen eye to eye for a while, haven't you?"
+        },
+        {
+          "total": 0.7137909999582916,
+          "ttft": 0.219833750044927,
+          "tps": 101.20054307609668,
+          "text": "\"Hey Morel, you seem to be keeping an eye on my old friend here, I'm sure he's just as charming as ever, but I'm curious, what do you think of Morel's... unique sense of direction?\""
+        },
+        {
+          "total": 0.7310112910345197,
+          "ttft": 0.21780387498438358,
+          "tps": 111.11707310603504,
+          "text": "I've known Morel for years, and I can tell you he's a bit of a quiet one. He's always been a bit introspective, but I think he's got a good heart. What's it like having Morel around, if I might ask?"
+        }
+      ],
+      "long (12s clip)": [
+        {
+          "total": 0.7046183748170733,
+          "ttft": 0.21773845795542002,
+          "tps": 111.02029138098327,
+          "text": "I remember now because I was just talking to your husband about how the EU helps countries in Africa and Asia. They do a lot of good work, don't they? Now, I've been meaning to ask you, what was your trip to Africa like?"
+        },
+        {
+          "total": 1.0499299590010196,
+          "ttft": 0.21904812497086823,
+          "tps": 109.6095726914648,
+          "text": "I've just finished a seminar with the elderly, and I think I've got it down pat now. You're a lovely lady, and I'm so glad we met. You want to know how the EU helps countries in need, and that's exactly what I'm here for. I've learned a lot about you and their background, and I want to get to know you better. What do you like to do in your free time?"
+        },
+        {
+          "total": 0.9442793750204146,
+          "ttft": 0.2191725829616189,
+          "tps": 109.00530561570571,
+          "text": "You know how sometimes the EU provides a lot of charity to some countries? I'm still getting used to all the different countries they help, though it seems like a lot. \n\nBy the way, have you ever heard of the European Union's official languages, like English and French? I think it's the same as the US's official language, but I'm not entirely sure..."
+        },
+        {
+          "total": 0.9027508748695254,
+          "ttft": 0.22037308290600777,
+          "tps": 108.59270786906987,
+          "text": "I don't know much about those EU programs, but it sounds like they're helping some countries outside Europe. Have you ever thought about where some of the people from these countries might be - might they be in the same region, or someplace else? I'm just curious about you, I'm Julia, by the way, how's life treating you?"
+        },
+        {
+          "total": 0.8016315829008818,
+          "ttft": 0.21757595799863338,
+          "tps": 109.6789258175192,
+          "text": "I've learned about the EU's involvement in helping countries in Africa and Asia through various programs and funds. That's quite a bit of support they offer. I'm curious, what country were you thinking of, and I'm here to learn more about the impact of these programs on the local people and communities?"
+        }
+      ]
+    },
+    "Gemma 3 1B": {
+      "short (3s clip)": [
+        {
+          "total": 0.71638458292,
+          "ttft": 0.2607926249038428,
+          "tps": 109.05894009697037,
+          "text": "Hi there! It\u2019s lovely to meet you, EvalUser. I\u2019m here to help you out. \ud83d\ude0a\n\nIt\u2019s nice to meet you! \n\nWhat\u2019s been the highlight of your day so far?"
+        },
+        {
+          "total": 0.5483676670119166,
+          "ttft": 0.16023879195563495,
+          "tps": 109.99074999467877,
+          "text": "Hi there! I'm Echo. It\u2019s nice to meet you! \ud83d\ude0a\n\nIt\u2019s lovely to hear you're feeling a little more settled today. How are things going with everything?"
+        },
+        {
+          "total": 0.677468332927674,
+          "ttft": 0.15722029097378254,
+          "tps": 108.94894815215744,
+          "text": "Hi there! I\u2019m Echo. It\u2019s lovely to meet you! \ud83d\ude0a\n\nIt\u2019s nice to hear you\u2019re feeling a little lost. How are you doing today? Do you want to tell me a little about what\u2019s been going on?"
+        },
+        {
+          "total": 0.5716527909971774,
+          "ttft": 0.16012166603468359,
+          "tps": 108.55321176905501,
+          "text": "Hi there! I'm Echo. It\u2019s lovely to meet you! \ud83d\ude0a\n\nIt\u2019s nice to hear you\u2019re thinking about things. \ud83d\ude0a How\u2019s your day been so far?"
+        },
+        {
+          "total": 0.5685202090535313,
+          "ttft": 0.16074445913545787,
+          "tps": 109.60586416184424,
+          "text": "Hi there! I\u2019m Alex. It\u2019s lovely to meet you, EvalUser. \n\nIt\u2019s a good idea to start by saying your name. How\u2019s your day going so far?"
+        }
+      ],
+      "long (12s clip)": [
+        {
+          "total": 0.3916072500869632,
+          "ttft": 0.16216150019317865,
+          "tps": 112.03868785921722,
+          "text": "Hi there! It\u2019s nice to meet you! I\u2019m Alex. \ud83d\ude0a\n\nHow are you doing today?"
+        },
+        {
+          "total": 0.5068556249607354,
+          "ttft": 0.16135762492194772,
+          "tps": 109.02867972289016,
+          "text": "Hi there! It\u2019s nice to meet you. I\u2019m Alex. I\u2019m here to help you out. \ud83d\ude0a\n\nWhat\u2019s been on your mind lately?"
+        },
+        {
+          "total": 0.4263782079797238,
+          "ttft": 0.15812258305959404,
+          "tps": 110.66227886242316,
+          "text": "Hi there! I'm Alex, and it\u2019s lovely to meet you! \ud83d\ude0a\n\nHow\u2019s your day going so far?"
+        },
+        {
+          "total": 0.7637546670157462,
+          "ttft": 0.16171370795927942,
+          "tps": 107.42836368540371,
+          "text": "Hi there! I\u2019m Alex. It\u2019s lovely to meet you! \ud83d\ude0a\n\nIt sounds like you\u2019ve heard a lot about the EU\u2019s support for countries abroad. That's a really big deal! \n\nWhat\u2019s been going on lately? How are you feeling today?"
+        },
+        {
+          "total": 0.6293537919409573,
+          "ttft": 0.1625957500655204,
+          "tps": 106.45149484201339,
+          "text": "Hi there! I\u2019m Alex. It\u2019s lovely to meet you! \ud83d\ude0a\n\nIt sounds like you\u2019ve heard about how the EU helps other countries \u2013 that\u2019s really interesting! How are you doing today?"
+        }
+      ]
+    },
+    "LFM2.5 1.2B": {
+      "short (3s clip)": [
+        {
+          "total": 0.6343020831700414,
+          "ttft": 0.36367837502621114,
+          "tps": 110.81216240922869,
+          "text": "Hello there! I'm happy to meet you. It seems like you're curious about Morel. What would you like to know next?"
+        },
+        {
+          "total": 0.5708397079724818,
+          "ttft": 0.2725868329871446,
+          "tps": 120.87871904574983,
+          "text": "Hi there! It looks like you're curious about that moment when he looked at Morel. That's interesting\u2014did you want to ask more about what happened next?"
+        },
+        {
+          "total": 0.5926641670521349,
+          "ttft": 0.2740009578410536,
+          "tps": 119.448984888241,
+          "text": "Hi there! That\u2019s an interesting observation. What do you think about the way he looked at Morel? \n\nWhat did you notice about the setting or the people around?"
+        },
+        {
+          "total": 0.4631936668884009,
+          "ttft": 0.28493287484161556,
+          "tps": 123.83611881459466,
+          "text": "Hello there! It seems you're curious about the scene. What would you like to know next?"
+        },
+        {
+          "total": 0.6656886669807136,
+          "ttft": 0.27185529191046953,
+          "tps": 119.47206332788147,
+          "text": "Hi there! I\u2019m glad you noticed that. How are you feeling about this moment so far? \n\nOne natural follow-up question: Can you tell me more about what you saw when your gaze focused on Morel?"
+        }
+      ],
+      "long (12s clip)": [
+        {
+          "total": 0.9268409998621792,
+          "ttft": 0.316394958877936,
+          "tps": 118.00748514974423,
+          "text": "Hello there! I'm here to help you with your question. The EU does offer financial support through various channels, including the EU and international organizations, to assist third countries. \n\nWhat do you think about how these funds are used? It's interesting to see how they're allocated. \n\nLet me know if you'd like more details!"
+        },
+        {
+          "total": 0.8673478330019861,
+          "ttft": 0.3119507909286767,
+          "tps": 118.9296151741656,
+          "text": "Hi there, I see you're curious about how the EU supports countries internationally. That's a great topic\u2014many people are interested in the ways the EU helps abroad.\n\nWould you like to know more about specific countries or projects the EU funds? \n\nLet me know, and I'll share more details."
+        },
+        {
+          "total": 0.9634581671562046,
+          "ttft": 0.3118552921805531,
+          "tps": 118.22640942338201,
+          "text": "Hello there! That\u2019s quite a detailed topic. I wanted to check if you know a bit about how the EU supports other countries financially. Just let me know if you\u2019d like a quick summary or more info. \n\nOne thing that stands out is how they use the European Development Fund and other tools to help nations grow. What part of this interests you the most?"
+        },
+        {
+          "total": 0.7941368331667036,
+          "ttft": 0.3154126671142876,
+          "tps": 119.23979308448493,
+          "text": "Hello there! I'm here to help. That's interesting information about the EU's support to other countries. What would you like to know more about? \n\n(One natural follow-up question would be: Would you like to learn more about how these funds are used?)"
+        },
+        {
+          "total": 0.6368896660860628,
+          "ttft": 0.31218987493775785,
+          "tps": 120.42325591841904,
+          "text": "Hi there! That\u2019s interesting information about the EU\u2019s support. How did that sound to you? \n\nWould you like to know more about how this assistance works or its impact?"
+        }
+      ]
+    },
+    "Llama 3.2 3B": {
+      "short (3s clip)": [
+        {
+          "total": 1.8163692499510944,
+          "ttft": 0.9251477080397308,
+          "tps": 42.480099138161975,
+          "text": "I think I know you from somewhere, Eval. You seem like a quiet, reflective person. What do you like to do in your free time that helps you relax and unwind?"
+        },
+        {
+          "total": 2.2495442091021687,
+          "ttft": 0.6301180841401219,
+          "tps": 39.398469790978446,
+          "text": "You must be Eval. Nice to meet you, Eval. I'm Morel, by the way. I'm here to help you with anything you need, whether it's just chatting or figuring out a puzzle or two. Can you tell me a bit about what's been on your mind lately, Eval?"
+        },
+        {
+          "total": 2.0556170421186835,
+          "ttft": 0.6375659580808133,
+          "tps": 42.20965265009164,
+          "text": "Hi Eval, nice to meet you. I'm Morel, your friendly AI companion. It's lovely to finally have a chance to chat with you. You seem a bit introspective today, is everything okay, or is there something on your mind that you'd like to talk about?"
+        },
+        {
+          "total": 1.4733369159512222,
+          "ttft": 0.6284748751204461,
+          "tps": 42.45491714734789,
+          "text": "You're quoting some classic literature. I think I've got it - is that a passage from \"The League of Honorable Men\" by Aldous Huxley?"
+        },
+        {
+          "total": 1.4923042920418084,
+          "ttft": 0.6345978330355138,
+          "tps": 43.07053861812577,
+          "text": "Hello Eval, nice to meet you. I'm Morel, your friendly AI assistant. I see you're looking around the room. What brings you here today, Eval?"
+        }
+      ],
+      "long (12s clip)": [
+        {
+          "total": 1.5793482919689268,
+          "ttft": 0.6322454169858247,
+          "tps": 43.14972882444389,
+          "text": "That's a lot of interesting information. My name is Emily, nice to meet you. I couldn't help but notice you seem a bit... distracted. What's on your mind, Eval?"
+        },
+        {
+          "total": 1.5379372080788016,
+          "ttft": 0.6354132080450654,
+          "tps": 44.16767084375415,
+          "text": "Hello Eval, nice to meet you. I couldn't help but notice that's a pretty complex topic. Are you working in international development or have you been interested in it for a while?"
+        },
+        {
+          "total": 1.6643709170166403,
+          "ttft": 0.6271992498077452,
+          "tps": 44.305445678913784,
+          "text": "Hello Eval, thanks for sharing that with me. I couldn't help but notice you brought up the European Union. What's your connection to the EU, or have you worked with any organizations that deal with European development?"
+        },
+        {
+          "total": 2.0876845000311732,
+          "ttft": 0.6334999590180814,
+          "tps": 43.98474695706531,
+          "text": "That's a lot of information about the EU's support for third countries. I'm so glad we could have a chat, Eval, I'm Lucy, by the way. I'm here to help you with anything you need. Can you tell me a bit about what brought you to talk to me today?"
+        },
+        {
+          "total": 2.4848528341390193,
+          "ttft": 0.6395068750716746,
+          "tps": 45.44681128093344,
+          "text": "Hi Eval, nice to meet you. I couldn't help but notice that's a lot of information, but I think I caught the gist of it - the EU helps other countries financially through various ways. You know, I've been around for a while, but I'm still learning about all the ways the EU supports other countries. Did you have a particular interest in international development or European affairs before today?"
+        }
+      ]
+    },
+    "Qwen3 4B (2507)": {
+      "short (3s clip)": [
+        {
+          "total": 3.7817898329813033,
+          "ttft": 2.9093016660772264,
+          "tps": 32.81513580428929,
+          "text": "Oh, hello there, I'm Clara, your friendly voice here to chat and listen. How are you doing today, Morel?"
+        },
+        {
+          "total": 2.100299958139658,
+          "ttft": 0.9911698750220239,
+          "tps": 33.93978921114966,
+          "text": "Oh, hello there, Mr. Morel. I'm Elara, your friendly voice assistant. I'm so glad you're here today. How have you been feeling lately?"
+        },
+        {
+          "total": 2.039451624965295,
+          "ttft": 0.9867390829604119,
+          "tps": 34.81937509600637,
+          "text": "Oh, hello there, I'm Clara\u2014your friendly voice AI helper. I'm so glad you're here today. How have you been lately, Mr. Morel?"
+        },
+        {
+          "total": 2.9260049171280116,
+          "ttft": 0.9789242080878466,
+          "tps": 33.70172559831252,
+          "text": "Oh, hello there, I'm Ada, your friendly voice companion. I'm so glad you're here today. How have you been, Morel? I know you've been through a lot lately\u2014some of your thoughts just seemed to drift, like leaves in a breeze. What's been on your mind recently?"
+        },
+        {
+          "total": 2.1314612918067724,
+          "ttft": 0.9771002919878811,
+          "tps": 33.47200234958223,
+          "text": "Hello, I'm Ava. I've been helping elders like you keep their memories and spirits bright. I remember your name\u2014Morel, right? How have you been feeling lately?"
+        }
+      ],
+      "long (12s clip)": [
+        {
+          "total": 1.614973874995485,
+          "ttft": 0.9925464170519263,
+          "tps": 34.85148186360283,
+          "text": "Hi there, I'm Ava, your friendly voice assistant. How's your week been, Eleanor?"
+        },
+        {
+          "total": 2.6566109170671552,
+          "ttft": 0.9909056671895087,
+          "tps": 32.20984532025545,
+          "text": "Hi there, I'm Ava, your friendly voice AI assistant. I'm here to help with anything you'd like to share or ask about, whether it's about your health, the weather, or even the latest news. How have you been doing lately?"
+        },
+        {
+          "total": 3.042156040901318,
+          "ttft": 0.9870025408454239,
+          "tps": 28.545575250547035,
+          "text": "Hi there, I'm Clara, your friendly voice AI assistant. I'm here to help and chat with you. I remember you mentioned something about the EU helping countries\u2014I'm curious, what part of the world do you think has had the most positive impact from that kind of support?"
+        },
+        {
+          "total": 2.439185000024736,
+          "ttft": 1.0488406249787658,
+          "tps": 32.18305819840209,
+          "text": "Hi there, I'm Clara\u2014your friendly AI assistant. I know you're probably not here for a budget talk, but I'm glad you're sharing something interesting. How have you been enjoying your days lately?"
+        },
+        {
+          "total": 2.6692638332024217,
+          "ttft": 0.9992801661137491,
+          "tps": 29.778369920722067,
+          "text": "Hi there, I'm Clara, your friendly voice here to help and chat. I remember you mentioned something about the EU helping countries\u2014how interesting! I\u2019d love to know, what part of the world has most impacted your thoughts lately?"
+        }
+      ]
+    }
+  }
+}

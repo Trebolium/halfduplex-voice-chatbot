@@ -8,9 +8,18 @@ from pathlib import Path
 
 import edge_tts  # third-party package (absolute import, not this module)
 
-from voicebot.config import ARTEFACTS_DIR, TTS_VOICE
+from voicebot import config
+from voicebot.config import ARTEFACTS_DIR
 
 log = logging.getLogger("tts")
+
+DEFAULT_VOICE = "en-US-AriaNeural"
+INFO = {"backend": "edge-tts", "location": "cloud", "model": DEFAULT_VOICE}  # recorded in the user json
+
+
+def load() -> None:
+    """Record the (possibly CLI-overridden) voice in INFO so it lands in the saved setup."""
+    INFO["model"] = config.TTS_VOICE or DEFAULT_VOICE
 
 
 def synthesize(text: str) -> Path:
@@ -19,18 +28,18 @@ def synthesize(text: str) -> Path:
         raise ValueError("synthesize() got empty text. Make sure the LLM returned a reply before calling TTS.")
     ARTEFACTS_DIR.mkdir(parents=True, exist_ok=True)
     path = ARTEFACTS_DIR / f"reply_{datetime.now():%Y%m%d_%H%M%S_%f}.mp3"
-    msg = f"[TTS] Synthesizing {len(text)} chars with voice {TTS_VOICE} -> {path.name}"
+    msg = f"[TTS] Synthesizing {len(text)} chars with voice {config.TTS_VOICE or DEFAULT_VOICE} -> {path.name}"
     log.info(msg); print(msg)
     t0 = time.time()
     try:
-        asyncio.run(edge_tts.Communicate(text, TTS_VOICE).save(str(path)))
+        asyncio.run(edge_tts.Communicate(text, config.TTS_VOICE or DEFAULT_VOICE).save(str(path)))
     except Exception as e:
         raise RuntimeError(
             f"edge-tts failed ({type(e).__name__}: {e}). Check your internet connection "
-            f"and that TTS_VOICE '{TTS_VOICE}' is a valid voice (run `uv run edge-tts --list-voices`)."
+            f"and that the voice '{config.TTS_VOICE or DEFAULT_VOICE}' (--tts_voice / TTS_VOICE in .env) is valid (run `uv run edge-tts --list-voices`)."
         ) from e
     if not path.exists() or path.stat().st_size == 0:
-        raise RuntimeError("edge-tts produced no audio. Check your internet connection and TTS_VOICE.")
+        raise RuntimeError("edge-tts produced no audio. Check your internet connection and the voice name (--tts_voice / TTS_VOICE).")
     msg = f"[TTS] Done in {time.time() - t0:.2f}s ({path.stat().st_size} bytes)"
     log.info(msg); print(msg)
     return path

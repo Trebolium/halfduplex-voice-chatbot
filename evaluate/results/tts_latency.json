@@ -1,0 +1,132 @@
+{
+  "replies": {
+    "short (3s clip)": {
+      "asr": "His glance, at first wandering, fixed itself upon Morel.",
+      "reply": "Oh, hello there! It's so nice to meet you, evaluser. I'm here to help with anything you might need, just like a friendly companion. So, tell me, what's a favorite way you like to spend your afternoons?"
+    },
+    "long (12s clip)": {
+      "asr": "Through its external financial instruments and the European Development Fund, the EU provides billions of euros in assistance to third countries through international organizations among other channels.",
+      "reply": "Oh, hello there! It's so nice to meet you, [evaluser]. I'm here to help with anything you might need. That sounds like a lot of money going to help others, doesn't it? What kind of things do you like to read about or talk about?"
+    }
+  },
+  "cold_start_s": {
+    "edge-tts (remote)": 0.5749440831132233,
+    "Kokoro": 1.8136470830067992,
+    "Piper": 0.7295274580828846,
+    "Pocket TTS": 6.0242517499718815
+  },
+  "results": {
+    "edge-tts (remote)": {
+      "short (3s clip)": {
+        "runs": [
+          1.0050917922053486,
+          0.955850875005126,
+          0.6837967920582741,
+          0.7999857498798519,
+          1.379686790984124,
+          0.48750779195688665,
+          0.5100942081771791,
+          0.6838194169104099
+        ],
+        "audio_secs": 14.496
+      },
+      "long (12s clip)": {
+        "runs": [
+          1.5299042081460357,
+          1.5619138330221176,
+          0.6438559170346707,
+          0.6370378329884261,
+          1.750836833845824,
+          1.6920994580723345,
+          0.7238314589485526,
+          0.9271321250125766
+        ],
+        "audio_secs": 16.08
+      }
+    },
+    "Kokoro": {
+      "short (3s clip)": {
+        "runs": [
+          2.964368750108406,
+          3.076646375004202,
+          3.081329375039786,
+          2.975851791910827,
+          3.041230957955122,
+          2.9630629159510136,
+          2.96377845807001,
+          2.959759582998231
+        ],
+        "audio_secs": 12.117333333333333
+      },
+      "long (12s clip)": {
+        "runs": [
+          3.182751834159717,
+          3.2751412498764694,
+          3.1862672499846667,
+          3.1994034578092396,
+          3.215322040952742,
+          3.246536917053163,
+          3.279471332905814,
+          3.3399514998309314
+        ],
+        "audio_secs": 12.629333333333333
+      }
+    },
+    "Piper": {
+      "short (3s clip)": {
+        "runs": [
+          0.3687695839907974,
+          0.35891308286227286,
+          0.3672960000112653,
+          0.3831505829002708,
+          0.38413691706955433,
+          0.37526345788501203,
+          0.36848620884120464,
+          0.370457791024819
+        ],
+        "audio_secs": 11.215238095238096
+      },
+      "long (12s clip)": {
+        "runs": [
+          0.3847746248356998,
+          0.39836237486451864,
+          0.40355433290824294,
+          0.4076989160384983,
+          0.399468292016536,
+          0.40174287487752736,
+          0.398696375079453,
+          0.40309675014577806
+        ],
+        "audio_secs": 12.132426303854876
+      }
+    },
+    "Pocket TTS": {
+      "short (3s clip)": {
+        "runs": [
+          1.7764032920822501,
+          1.76983670797199,
+          1.8399815829470754,
+          1.6132214160170406,
+          1.8173409590963274,
+          1.709747833199799,
+          2.4929841668345034,
+          1.8090473338961601
+        ],
+        "audio_secs": 9.44
+      },
+      "long (12s clip)": {
+        "runs": [
+          2.091679875040427,
+          2.539785417029634,
+          2.401433707913384,
+          2.3439717500004917,
+          3.117652792017907,
+          2.2609979580156505,
+          2.274918207898736,
+          2.022490750066936
+        ],
+        "audio_secs": 10.64
+      }
+    }
+  }
+}

@@ -1,0 +1,5 @@
+{
+  "note": "Groq Orpheus (canopylabs/orpheus-v1-english, voice hannah) measured once, paced at 7s per call, 10 runs per text. This benchmark then used up Groq's free daily quota (3,600 tokens/day), so later runs got 429s and Orpheus is absent from tts_remote_latency.json. Individual run times were not kept; only the summary was recorded.",
+  "short_57_chars": {"mean_s": 0.992, "min_s": 0.965, "max_s": 1.017, "audio_s": 5.2},
+  "long_201_chars": {"mean_s": 2.162, "min_s": 2.097, "max_s": 2.259, "audio_s": 13.4}
+}

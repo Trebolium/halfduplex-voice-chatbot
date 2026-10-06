@@ -1,0 +1,188 @@
+14:47:33 [httpx] HTTP Request: POST https://api.groq.com/openai/v1/audio/transcriptions "HTTP/1.1 200 OK"
+14:47:33 [asr] ASR done in 0.52s: 'His glance, at first wandering, fixed itself upon Morel.'
+14:47:33 [httpx] HTTP Request: POST https://api.groq.com/openai/v1/audio/transcriptions "HTTP/1.1 200 OK"
+14:47:33 [asr] ASR done in 0.47s: 'Through its external financial instruments and the European Development Fund, the EU provides billions of euros in assistance to third countries through international organizations among other channels.'
+14:47:33 [memory] Welcome back eval_user (0 past sessions, 0 facts)
+14:47:33 [memory] Built system prompt (715 chars) for eval_user
+14:47:33 [llm] LLM request -> google/gemini-3.8-flash (2 messages)
+14:47:36 [httpx2] HTTP Request: POST https://openrouter.ai/api/v1/chat/completions "HTTP/1.1 200 OK"
+14:47:39 [llm] LLM reply in 6.14s (finish_reason=stop): 'Hello evaluser, it is so lovely to meet you! I am here to chat, lend a hand, or '
+14:47:39 [llm] LLM request -> google/gemini-3.8-flash (2 messages)
+14:47:42 [httpx2] HTTP Request: POST https://openrouter.ai/api/v1/chat/completions "HTTP/1.1 200 OK"
+14:47:46 [llm] LLM reply in 6.33s (finish_reason=stop): 'Hello evaluser, it is so lovely to meet you. I am your companion assistant, here'
+14:47:46 [llm] LLM request -> google/gemini-3.8-flash (2 messages)
+14:47:48 [httpx2] HTTP Request: POST https://openrouter.ai/api/v1/chat/completions "HTTP/1.1 200 OK"
+14:47:51 [llm] LLM reply in 5.34s (finish_reason=stop): "That sounds like a line from a classic book. Hello, evaluser, it's wonderful to "
+14:47:51 [llm] LLM request -> google/gemini-3.8-flash (2 messages)
+14:48:03 [httpx2] HTTP Request: POST https://openrouter.ai/api/v1/chat/completions "HTTP/1.1 200 OK"
+14:48:03 [llm] LLM reply in 12.54s (finish_reason=stop): "Hello evaluser. That sounds like a line right out of a good book. I'm your new c"
+14:48:03 [llm] LLM request -> google/gemini-3.8-flash (2 messages)
+14:48:16 [httpx2] HTTP Request: POST https://openrouter.ai/api/v1/chat/completions "HTTP/1.1 200 OK"
+14:48:18 [llm] LLM reply in 14.28s (finish_reason=stop): "That sounds like a scene straight out of a classic book. Hello evaluser, it's wo"
+14:48:18 [llm] LLM request -> google/gemini-3.8-flash (2 messages)
+14:48:20 [httpx2] HTTP Request: POST https://openrouter.ai/api/v1/chat/completions "HTTP/1.1 200 OK"
+14:48:24 [llm] LLM reply in 5.96s (finish_reason=stop): 'That sounds like a line right out of a good book! Hello evaluser, it is wonderfu'
+14:48:24 [llm] LLM request -> google/gemini-3.8-flash (2 messages)
+14:48:36 [httpx2] HTTP Request: POST https://openrouter.ai/api/v1/chat/completions "HTTP/1.1 200 OK"
+14:48:38 [llm] LLM reply in 13.90s (finish_reason=stop): 'That sounds like a line right out of a classic novel. Hello evaluser, I am your '
+14:48:38 [llm] LLM request -> google/gemini-3.8-flash (2 messages)
+14:48:48 [httpx2] HTTP Request: POST https://openrouter.ai/api/v1/chat/completions "HTTP/1.1 504 Gateway Timeout"
+14:48:48 [openai._base_client] Retrying request in 0.468581 seconds (retry 1 of 2)
+14:49:01 [httpx2] HTTP Request: POST https://openrouter.ai/api/v1/chat/completions "HTTP/1.1 200 OK"
+14:49:02 [llm] LLM reply in 24.70s (finish_reason=stop): 'That sounds like a line from a classic novel! Hello evaluser, it is wonderful to'
+14:49:02 [llm] LLM request -> google/gemini-3.8-flash (2 messages)
+14:49:05 [httpx2] HTTP Request: POST https://openrouter.ai/api/v1/chat/completions "HTTP/1.1 200 OK"
+14:49:08 [llm] LLM reply in 5.41s (finish_reason=stop): "That sounds like a line straight out of a classic book. Hello, evaluser, it's wo"
+14:49:08 [llm] LLM request -> google/gemini-3.8-flash (2 messages)
+14:49:10 [httpx2] HTTP Request: POST https://openrouter.ai/api/v1/chat/completions "HTTP/1.1 200 OK"
+14:49:12 [llm] LLM reply in 4.04s (finish_reason=stop): "That sounds like a line right out of a good book. Hello evaluser, I'm your compa"
+14:49:12 [llm] LLM request -> google/gemini-3.8-flash (2 messages)
+14:49:24 [httpx2] HTTP Request: POST https://openrouter.ai/api/v1/chat/completions "HTTP/1.1 200 OK"
+14:49:25 [llm] LLM reply in 13.44s (finish_reason=stop): 'That sounds like a line from a wonderful book, maybe a bit of Proust? Hello, eva'
+14:49:25 [llm] LLM request -> google/gemini-3.8-flash (2 messages)
+14:49:31 [httpx2] HTTP Request: POST https://openrouter.ai/api/v1/chat/completions "HTTP/1.1 200 OK"
+14:49:34 [llm] LLM reply in 8.93s (finish_reason=stop): 'Hello evaluser, it is wonderful to meet you! I am your voice assistant, but you '
+14:49:34 [llm] LLM request -> google/gemini-3.8-flash (2 messages)
+14:49:46 [httpx2] HTTP Request: POST https://openrouter.ai/api/v1/chat/completions "HTTP/1.1 200 OK"
+14:49:48 [llm] LLM reply in 13.41s (finish_reason=stop): 'Hello evaluser, it is so nice to meet you. I am your companion assistant, here t'
+14:49:48 [llm] LLM request -> google/gemini-3.8-flash (2 messages)
+14:49:50 [httpx2] HTTP Request: POST https://openrouter.ai/api/v1/chat/completions "HTTP/1.1 200 OK"
+14:49:53 [llm] LLM reply in 5.08s (finish_reason=stop): "Hello evaluser, it's so nice to meet you. I'm your friendly companion, here to c"
+14:49:53 [llm] LLM request -> google/gemini-3.8-flash (2 messages)
+14:50:04 [httpx2] HTTP Request: POST https://openrouter.ai/api/v1/chat/completions "HTTP/1.1 200 OK"
+14:50:05 [llm] LLM reply in 12.35s (finish_reason=stop): "Hello evaluser, it's so lovely to meet you. I'm your assistant, here to keep you"
+14:50:05 [llm] LLM request -> google/gemini-3.8-flash (2 messages)
+14:50:17 [httpx2] HTTP Request: POST https://openrouter.ai/api/v1/chat/completions "HTTP/1.1 200 OK"
+14:50:18 [llm] LLM reply in 12.70s (finish_reason=stop): 'Hello, evaluser, it is lovely to meet you. I am your friendly companion, here wh'
+14:50:18 [llm] LLM request -> google/gemini-3.8-flash (2 messages)
+14:50:20 [httpx2] HTTP Request: POST https://openrouter.ai/api/v1/chat/completions "HTTP/1.1 200 OK"
+14:50:24 [llm] LLM reply in 6.45s (finish_reason=stop): 'Hello evaluser, it is wonderful to meet you. I am your companion, here to chat a'
+14:50:24 [llm] LLM request -> google/gemini-3.8-flash (2 messages)
+14:50:36 [httpx2] HTTP Request: POST https://openrouter.ai/api/v1/chat/completions "HTTP/1.1 200 OK"
+14:50:37 [llm] LLM reply in 12.90s (finish_reason=stop): 'Hello evaluser, it is so lovely to meet you. I am your companion assistant, here'
+14:50:37 [llm] LLM request -> google/gemini-3.8-flash (2 messages)
+14:50:49 [httpx2] HTTP Request: POST https://openrouter.ai/api/v1/chat/completions "HTTP/1.1 200 OK"
+14:50:50 [llm] LLM reply in 12.89s (finish_reason=stop): 'Hello evaluser! It sounds like you know quite a bit about global affairs. I am y'
+14:50:50 [llm] LLM request -> google/gemini-3.8-flash (2 messages)
+14:50:52 [httpx2] HTTP Request: POST https://openrouter.ai/api/v1/chat/completions "HTTP/1.1 200 OK"
+14:50:55 [llm] LLM reply in 4.91s (finish_reason=stop): 'Hello evaluser, it is lovely to meet you. I am your companion assistant, and I a'
+14:50:55 [llm] LLM request -> google/gemini-3.8-flash (2 messages)
+14:50:57 [httpx2] HTTP Request: POST https://openrouter.ai/api/v1/chat/completions "HTTP/1.1 200 OK"
+14:51:00 [llm] LLM reply in 4.90s (finish_reason=stop): "Hello evaluser, it's so nice to meet you. I'm your companion assistant, here to "
+14:51:00 [llm] LLM request -> meta-llama/llama-3.3-70b-instruct (2 messages)
+14:51:00 [httpx2] HTTP Request: POST https://openrouter.ai/api/v1/chat/completions "HTTP/1.1 200 OK"
+14:51:02 [llm] LLM reply in 2.14s (finish_reason=stop): "Hi there, I'm so glad we're meeting, Eval. My name is Ada, and I'm here to help "
+14:51:02 [llm] LLM request -> meta-llama/llama-3.3-70b-instruct (2 messages)
+14:51:03 [httpx2] HTTP Request: POST https://openrouter.ai/api/v1/chat/completions "HTTP/1.1 200 OK"
+14:51:10 [llm] LLM reply in 8.37s (finish_reason=stop): "I'm so glad you're here, evaluser. My name is Alex, and I'll be happy to chat wi"
+14:51:10 [llm] LLM request -> meta-llama/llama-3.3-70b-instruct (2 messages)
+14:51:11 [httpx2] HTTP Request: POST https://openrouter.ai/api/v1/chat/completions "HTTP/1.1 200 OK"
+14:51:13 [llm] LLM reply in 2.84s (finish_reason=stop): "That's quite a vivid description, evaluser. I'm a voice assistant here to help a"
+14:51:13 [llm] LLM request -> meta-llama/llama-3.3-70b-instruct (2 messages)
+14:51:13 [httpx2] HTTP Request: POST https://openrouter.ai/api/v1/chat/completions "HTTP/1.1 200 OK"
+14:51:15 [llm] LLM reply in 2.13s (finish_reason=stop): "Hi evaluser, it's nice to meet you, I'm your friendly voice assistant here to he"
+14:51:15 [llm] LLM request -> meta-llama/llama-3.3-70b-instruct (2 messages)
+14:51:15 [httpx2] HTTP Request: POST https://openrouter.ai/api/v1/chat/completions "HTTP/1.1 200 OK"
+14:51:17 [llm] LLM reply in 1.70s (finish_reason=stop): "I'm so glad we're meeting, Eval. I'm a voice assistant here to help and chat wit"
+14:51:17 [llm] LLM request -> meta-llama/llama-3.3-70b-instruct (2 messages)
+14:51:17 [httpx2] HTTP Request: POST https://openrouter.ai/api/v1/chat/completions "HTTP/1.1 200 OK"
+14:51:22 [llm] LLM reply in 4.61s (finish_reason=stop): 'I think there might be some confusion, I was expecting to meet someone named eva'
+14:51:22 [llm] LLM request -> meta-llama/llama-3.3-70b-instruct (2 messages)
+14:51:22 [httpx2] HTTP Request: POST https://openrouter.ai/api/v1/chat/completions "HTTP/1.1 200 OK"
+14:51:23 [llm] LLM reply in 1.52s (finish_reason=stop): "Hi there Eval, it's nice to meet you, I'm a friendly voice assistant here to hel"
+14:51:23 [llm] LLM request -> meta-llama/llama-3.3-70b-instruct (2 messages)
+14:51:23 [httpx2] HTTP Request: POST https://openrouter.ai/api/v1/chat/completions "HTTP/1.1 200 OK"
+14:51:27 [llm] LLM reply in 3.54s (finish_reason=stop): "I'm so glad we're meeting, Eval. My name is Ada, and I'll be here to help and ch"
+14:51:27 [llm] LLM request -> meta-llama/llama-3.3-70b-instruct (2 messages)
+14:51:27 [httpx2] HTTP Request: POST https://openrouter.ai/api/v1/chat/completions "HTTP/1.1 200 OK"
+14:51:30 [llm] LLM reply in 3.13s (finish_reason=stop): "I'm not sure what's going on in that sentence, but I'm happy to chat with you in"
+14:51:30 [llm] LLM request -> meta-llama/llama-3.3-70b-instruct (2 messages)
+14:51:30 [httpx2] HTTP Request: POST https://openrouter.ai/api/v1/chat/completions "HTTP/1.1 200 OK"
+14:51:33 [llm] LLM reply in 3.48s (finish_reason=stop): "I'm so glad I finally get to meet you, evaluser. My name is Ada, and I'll be her"
+14:51:33 [llm] LLM request -> meta-llama/llama-3.3-70b-instruct (2 messages)
+14:51:33 [httpx2] HTTP Request: POST https://openrouter.ai/api/v1/chat/completions "HTTP/1.1 200 OK"
+14:51:35 [llm] LLM reply in 2.14s (finish_reason=stop): "I'm so sorry, it seems like you might have started telling me a story, Eval. My "
+14:51:35 [llm] LLM request -> meta-llama/llama-3.3-70b-instruct (2 messages)
+14:51:36 [httpx2] HTTP Request: POST https://openrouter.ai/api/v1/chat/completions "HTTP/1.1 200 OK"
+14:51:38 [llm] LLM reply in 2.22s (finish_reason=stop): "That's really interesting, Eval, it sounds like you've been reading about the EU"
+14:51:38 [llm] LLM request -> meta-llama/llama-3.3-70b-instruct (2 messages)
+14:51:38 [httpx2] HTTP Request: POST https://openrouter.ai/api/v1/chat/completions "HTTP/1.1 200 OK"
+14:51:41 [llm] LLM reply in 3.52s (finish_reason=stop): "Hi evaluser, I'm so glad we met. My name is Ava, and I'm here to help you with a"
+14:51:41 [llm] LLM request -> meta-llama/llama-3.3-70b-instruct (2 messages)
+14:51:41 [httpx2] HTTP Request: POST https://openrouter.ai/api/v1/chat/completions "HTTP/1.1 200 OK"
+14:51:49 [llm] LLM reply in 8.03s (finish_reason=stop): "That's really interesting, evaluser, I'm glad you're aware of the EU's efforts t"
+14:51:49 [llm] LLM request -> meta-llama/llama-3.3-70b-instruct (2 messages)
+14:51:49 [httpx2] HTTP Request: POST https://openrouter.ai/api/v1/chat/completions "HTTP/1.1 200 OK"
+14:51:56 [llm] LLM reply in 7.08s (finish_reason=stop): "Hi evaluser, I'm so glad we met. My name is Ada, and I'll be happy to help you w"
+14:51:56 [llm] LLM request -> meta-llama/llama-3.3-70b-instruct (2 messages)
+14:51:56 [httpx2] HTTP Request: POST https://openrouter.ai/api/v1/chat/completions "HTTP/1.1 200 OK"
+14:51:59 [llm] LLM reply in 2.93s (finish_reason=stop): "Hi Eval, nice to meet you, I'm your voice assistant, here to help and chat with "
+14:51:59 [llm] LLM request -> meta-llama/llama-3.3-70b-instruct (2 messages)
+14:51:59 [httpx2] HTTP Request: POST https://openrouter.ai/api/v1/chat/completions "HTTP/1.1 200 OK"
+14:52:02 [llm] LLM reply in 2.57s (finish_reason=stop): "That's a pretty interesting topic, Eval. I'm so glad we get to chat today, by th"
+14:52:02 [llm] LLM request -> meta-llama/llama-3.3-70b-instruct (2 messages)
+14:52:02 [httpx2] HTTP Request: POST https://openrouter.ai/api/v1/chat/completions "HTTP/1.1 200 OK"
+14:52:04 [llm] LLM reply in 2.65s (finish_reason=stop): "Hi there Eval User, I'm so glad we're meeting, I'm your friendly voice AI assist"
+14:52:04 [llm] LLM request -> meta-llama/llama-3.3-70b-instruct (2 messages)
+14:52:05 [httpx2] HTTP Request: POST https://openrouter.ai/api/v1/chat/completions "HTTP/1.1 200 OK"
+14:52:06 [llm] LLM reply in 1.91s (finish_reason=stop): "Hi there evaluser, I'm so glad to meet you, my name is Alex by the way. That's r"
+14:52:06 [llm] LLM request -> meta-llama/llama-3.3-70b-instruct (2 messages)
+14:52:06 [httpx2] HTTP Request: POST https://openrouter.ai/api/v1/chat/completions "HTTP/1.1 200 OK"
+14:52:09 [llm] LLM reply in 2.77s (finish_reason=stop): "Hello Eval, nice to meet you, I'm your new voice assistant, here to help and cha"
+14:52:09 [llm] LLM request -> meta-llama/llama-3.3-70b-instruct (2 messages)
+14:52:09 [httpx2] HTTP Request: POST https://openrouter.ai/api/v1/chat/completions "HTTP/1.1 200 OK"
+14:52:12 [llm] LLM reply in 2.61s (finish_reason=stop): "Hi evaluser, my name is Alex, and I'm here to help you with anything you need. I"
+[asr] transcribing 84_121123_000008_000002.wav with whisper-large-v3-turbo
+[asr] 0.52s -> 'His glance, at first wandering, fixed itself upon Morel.'
+[asr] transcribing 002.wav with whisper-large-v3-turbo
+[asr] 0.47s -> 'Through its external financial instruments and the European Development Fund, the EU provides billions of euros in assistance to third countries through international organizations among other channels.'
+
+=== Gemini 3.8 Flash (google/gemini-3.8-flash, provider=default) ===
+[bench] Gemini 3.8 Flash | short (3s clip) | run 1/10: 6.326s (245 chars)
+[bench] Gemini 3.8 Flash | short (3s clip) | run 2/10: 5.341s (216 chars)
+[bench] Gemini 3.8 Flash | short (3s clip) | run 3/10: 12.537s (160 chars)
+[bench] Gemini 3.8 Flash | short (3s clip) | run 4/10: 14.276s (237 chars)
+[bench] Gemini 3.8 Flash | short (3s clip) | run 5/10: 5.965s (203 chars)
+[bench] Gemini 3.8 Flash | short (3s clip) | run 6/10: 13.898s (206 chars)
+[bench] Gemini 3.8 Flash | short (3s clip) | run 7/10: 24.702s (180 chars)
+[bench] Gemini 3.8 Flash | short (3s clip) | run 8/10: 5.415s (223 chars)
+[bench] Gemini 3.8 Flash | short (3s clip) | run 9/10: 4.040s (178 chars)
+[bench] Gemini 3.8 Flash | short (3s clip) | run 10/10: 13.438s (249 chars)
+[bench] Gemini 3.8 Flash | long (12s clip) | run 1/10: 8.932s (324 chars)
+[bench] Gemini 3.8 Flash | long (12s clip) | run 2/10: 13.415s (263 chars)
+[bench] Gemini 3.8 Flash | long (12s clip) | run 3/10: 5.080s (251 chars)
+[bench] Gemini 3.8 Flash | long (12s clip) | run 4/10: 12.350s (267 chars)
+[bench] Gemini 3.8 Flash | long (12s clip) | run 5/10: 12.699s (299 chars)
+[bench] Gemini 3.8 Flash | long (12s clip) | run 6/10: 6.455s (227 chars)
+[bench] Gemini 3.8 Flash | long (12s clip) | run 7/10: 12.900s (267 chars)
+[bench] Gemini 3.8 Flash | long (12s clip) | run 8/10: 12.887s (242 chars)
+[bench] Gemini 3.8 Flash | long (12s clip) | run 9/10: 4.909s (326 chars)
+[bench] Gemini 3.8 Flash | long (12s clip) | run 10/10: 4.905s (247 chars)
+
+=== Llama 3.3 70B (DeepInfra Turbo) (meta-llama/llama-3.3-70b-instruct, provider=deepinfra/turbo) ===
+[bench] Llama 3.3 70B (DeepInfra Turbo) | short (3s clip) | run 1/10: 8.373s (241 chars)
+[bench] Llama 3.3 70B (DeepInfra Turbo) | short (3s clip) | run 2/10: 2.843s (196 chars)
+[bench] Llama 3.3 70B (DeepInfra Turbo) | short (3s clip) | run 3/10: 2.135s (231 chars)
+[bench] Llama 3.3 70B (DeepInfra Turbo) | short (3s clip) | run 4/10: 1.696s (204 chars)
+[bench] Llama 3.3 70B (DeepInfra Turbo) | short (3s clip) | run 5/10: 4.614s (282 chars)
+[bench] Llama 3.3 70B (DeepInfra Turbo) | short (3s clip) | run 6/10: 1.523s (205 chars)
+[bench] Llama 3.3 70B (DeepInfra Turbo) | short (3s clip) | run 7/10: 3.548s (278 chars)
+[bench] Llama 3.3 70B (DeepInfra Turbo) | short (3s clip) | run 8/10: 3.129s (203 chars)
+[bench] Llama 3.3 70B (DeepInfra Turbo) | short (3s clip) | run 9/10: 3.483s (257 chars)
+[bench] Llama 3.3 70B (DeepInfra Turbo) | short (3s clip) | run 10/10: 2.145s (183 chars)
+[bench] Llama 3.3 70B (DeepInfra Turbo) | long (12s clip) | run 1/10: 2.219s (290 chars)
+[bench] Llama 3.3 70B (DeepInfra Turbo) | long (12s clip) | run 2/10: 3.517s (356 chars)
+[bench] Llama 3.3 70B (DeepInfra Turbo) | long (12s clip) | run 3/10: 8.026s (319 chars)
+[bench] Llama 3.3 70B (DeepInfra Turbo) | long (12s clip) | run 4/10: 7.081s (236 chars)
+[bench] Llama 3.3 70B (DeepInfra Turbo) | long (12s clip) | run 5/10: 2.931s (282 chars)
+[bench] Llama 3.3 70B (DeepInfra Turbo) | long (12s clip) | run 6/10: 2.571s (299 chars)
+[bench] Llama 3.3 70B (DeepInfra Turbo) | long (12s clip) | run 7/10: 2.648s (329 chars)
+[bench] Llama 3.3 70B (DeepInfra Turbo) | long (12s clip) | run 8/10: 1.907s (276 chars)
+[bench] Llama 3.3 70B (DeepInfra Turbo) | long (12s clip) | run 9/10: 2.773s (240 chars)
+[bench] Llama 3.3 70B (DeepInfra Turbo) | long (12s clip) | run 10/10: 2.612s (294 chars)
+
+=== SUMMARY (mean / min / max seconds) ===
+Gemini 3.8 Flash                 short (3s clip)  10.594 / 4.040 / 24.702  (avg 210 chars)
+Gemini 3.8 Flash                 long (12s clip)  9.453 / 4.905 / 13.415  (avg 271 chars)
+Llama 3.3 70B (DeepInfra Turbo)  short (3s clip)  3.349 / 1.523 / 8.373  (avg 228 chars)
+Llama 3.3 70B (DeepInfra Turbo)  long (12s clip)  3.628 / 1.907 / 8.026  (avg 292 chars)

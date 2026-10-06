@@ -8,6 +8,8 @@ from voicebot import config
 
 log = logging.getLogger("memory")
 
+CONVO_KEY = "cascading conversation"  # turn-by-turn [{"user":..., "llm":...}]
+
 STYLE_RULES = (
     " Speak like a warm, human friend: natural, with contractions, and occasionally react to what they said."
     " End most replies with ONE natural follow-up question that builds on what they just said or on things"
@@ -34,12 +36,29 @@ def load(name: str) -> dict:
     p = _path(name)
     if p.exists():
         user = json.loads(p.read_text())
+        user.setdefault(CONVO_KEY, [])
         log.info("Welcome back %s (%d past sessions, %d facts)", name, user["sessions"], len(user["facts"]))
         return user
     log.info("New user: %s", name)
-    user = {"name": name, "facts": [], "summary": "", "sessions": 0, "last_seen": ""}
+    user = {"name": name, "facts": [], "summary": "", "sessions": 0, "last_seen": "", CONVO_KEY: []}
     _save(user)
     return user
+
+
+def log_turn(user: dict, user_text: str, llm_text: str, latency_s: dict | None = None, setup: dict | None = None) -> None:
+    """Append one turn (text + latencies + pipeline setup) to the user's cascading conversation and save immediately."""
+    turn = {"user": user_text, "llm": llm_text, "latency_s": {k: round(v, 3) for k, v in (latency_s or {}).items()}}
+    if setup:
+        turn["setup"] = setup
+    user.setdefault(CONVO_KEY, []).append(turn)
+    _save(user)
+
+
+def add_latency(user: dict, stage: str, secs: float) -> None:
+    """Record a latency measured after log_turn (TTS) on the latest turn and save."""
+    if user.get(CONVO_KEY):
+        user[CONVO_KEY][-1].setdefault("latency_s", {})[stage] = round(secs, 3)
+        _save(user)
 
 
 def build_system_prompt(user: dict) -> str:
@@ -74,7 +93,7 @@ def end_session(user: dict, history: list[dict]) -> None:
     if not history:
         log.info("Empty history for %s, nothing to remember", user["name"])
         return
-    from voicebot.llm.openrouter import complete  # lazy so tests can mock
+    from voicebot.llm import complete  # lazy so tests can mock
 
     log.info("Ending session for %s: extracting memory from %d messages", user["name"], len(history))
     transcript = "\n".join(f"{m['role']}: {m['content']}" for m in history)

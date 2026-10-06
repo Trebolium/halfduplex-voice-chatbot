@@ -1,62 +1,64 @@
-"""INTERFACE: trim_speech(wav_path) -> Path | None. Writes trimmed wav; None if no speech >=300ms."""
+"""INTERFACE: trim_speech(wav_path) -> Path | None, plus is_speech/reset for live use. Silero VAD."""
 import logging
-import wave
+import time
 from pathlib import Path
 
-import webrtcvad
+import numpy as np
+import soundfile as sf
 
-from voicebot.config import ARTEFACTS_DIR, MIN_SPEECH_MS, SAMPLE_RATE
+from voicebot.config import ARTEFACTS_DIR, MIN_SPEECH_MS, SAMPLE_RATE, VAD_THRESHOLD
 
 log = logging.getLogger("vad")
-FRAME_MS = 30
-PAD_FRAMES = 3  # frames of padding kept around each speech run
+INFO = {"backend": "silero-vad", "location": "local-cpu", "threshold": VAD_THRESHOLD, "min_speech_ms": MIN_SPEECH_MS}
+FRAME_SAMPLES = 512  # Silero needs exactly 512 samples per call at 16kHz (32ms)
+_model = None
+
+
+def _load():
+    """Load the Silero model once."""
+    global _model
+    if _model is None:
+        print("[vad] loading Silero VAD...")
+        from silero_vad import load_silero_vad
+        _model = load_silero_vad()
+    return _model
+
+
+def reset() -> None:
+    """Clear the model's streaming state; call before each new live recording."""
+    _load().reset_states()
+
+
+def is_speech(frame: np.ndarray) -> bool:
+    """True if one 512-sample int16 frame contains speech."""
+    import torch
+    with torch.no_grad():
+        return _load()(torch.from_numpy(frame.astype(np.float32) / 32768), SAMPLE_RATE).item() > VAD_THRESHOLD
 
 
 def trim_speech(wav_path: Path) -> Path | None:
-    """Keep only speech runs >= MIN_SPEECH_MS (with padding); write <name>_trimmed.wav."""
+    """Keep only speech (with padding); write <name>_trimmed.wav. None if no speech >= MIN_SPEECH_MS."""
+    import torch
+    from silero_vad import get_speech_timestamps
     wav_path = Path(wav_path)
     print(f"[vad] trimming {wav_path.name}")
-    with wave.open(str(wav_path), "rb") as w:
-        if w.getframerate() != SAMPLE_RATE or w.getnchannels() != 1 or w.getsampwidth() != 2:
-            raise ValueError(f"{wav_path} must be {SAMPLE_RATE}Hz mono int16. Re-record or resample with ffmpeg.")
-        pcm = w.readframes(w.getnframes())
-
-    size = SAMPLE_RATE * FRAME_MS // 1000 * 2  # bytes per frame
-    frames = [pcm[i:i + size] for i in range(0, len(pcm) - size + 1, size)]
-    vad = webrtcvad.Vad(2)
-    flags = [vad.is_speech(f, SAMPLE_RATE) for f in frames]
-
-    # find speech runs long enough
-    min_frames = -(-MIN_SPEECH_MS // FRAME_MS)
-    keep = [False] * len(frames)
-    i = 0
-    while i < len(flags):
-        if not flags[i]:
-            i += 1
-            continue
-        j = i
-        while j < len(flags) and flags[j]:
-            j += 1
-        if j - i >= min_frames:
-            for k in range(max(0, i - PAD_FRAMES), min(len(frames), j + PAD_FRAMES)):
-                keep[k] = True
-        i = j
-
-    before = len(frames) * FRAME_MS / 1000
-    out = b"".join(f for f, k in zip(frames, keep) if k)
-    after = len(out) / 2 / SAMPLE_RATE
-    log.info("VAD: %.2fs -> %.2fs", before, after)
-    print(f"[vad] {before:.2f}s -> {after:.2f}s")
-    if not out:
-        log.info("VAD: no speech found")
+    t0 = time.perf_counter()
+    audio, sr = sf.read(str(wav_path), dtype="float32")
+    if audio.ndim > 1:
+        audio = audio.mean(axis=1)  # downmix to mono
+    if sr != SAMPLE_RATE:  # linear resample (mic recordings are already 16kHz; this covers other test files)
+        print(f"[vad] resampling {sr}Hz -> {SAMPLE_RATE}Hz")
+        audio = np.interp(np.linspace(0, len(audio) - 1, int(len(audio) * SAMPLE_RATE / sr)), np.arange(len(audio)), audio).astype(np.float32)
+        sr = SAMPLE_RATE
+    spans = get_speech_timestamps(torch.from_numpy(audio), _load(), sampling_rate=SAMPLE_RATE, threshold=VAD_THRESHOLD,
+                                  min_speech_duration_ms=MIN_SPEECH_MS, speech_pad_ms=100)
+    out = np.concatenate([audio[s["start"]:s["end"]] for s in spans]) if spans else np.zeros(0, np.float32)
+    msg = f"[vad] {len(audio) / sr:.2f}s -> {len(out) / sr:.2f}s in {time.perf_counter() - t0:.2f}s"
+    log.info(msg); print(msg)
+    if not len(out):
         print("[vad] no speech found")
         return None
-
     ARTEFACTS_DIR.mkdir(parents=True, exist_ok=True)
     out_path = ARTEFACTS_DIR / f"{wav_path.stem}_trimmed.wav"
-    with wave.open(str(out_path), "wb") as w:
-        w.setnchannels(1)
-        w.setsampwidth(2)
-        w.setframerate(SAMPLE_RATE)
-        w.writeframes(out)
+    sf.write(str(out_path), out, SAMPLE_RATE, subtype="PCM_16")
     return out_path

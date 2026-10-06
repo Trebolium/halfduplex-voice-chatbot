@@ -1,0 +1,120 @@
+{
+  "inputs": {
+    "short (3s clip)": "His glance, at first wandering, fixed itself upon Morel.",
+    "long (12s clip)": "Through its external financial instruments and the European Development Fund, the EU provides billions of euros in assistance to third countries through international organizations among other channels."
+  },
+  "results": {
+    "Gemini 3.8 Flash": {
+      "short (3s clip)": {
+        "runs": [
+          6.326131124980748,
+          5.3407287921290845,
+          12.53692724998109,
+          14.275571084115654,
+          5.965327957877889,
+          13.89828558312729,
+          24.702124333009124,
+          5.41530687501654,
+          4.039801457896829,
+          13.437866249820217
+        ],
+        "chars": [
+          245,
+          216,
+          160,
+          237,
+          203,
+          206,
+          180,
+          223,
+          178,
+          249
+        ],
+        "sample": "That sounds like a line from a wonderful book, maybe a bit of Proust? Hello, evaluser, it is so nice to meet you. I am your companion assistant, here to chat and lend a hand whenever you need. Do you enjoy spending your time reading classic stories?"
+      },
+      "long (12s clip)": {
+        "runs": [
+          8.932160917203873,
+          13.414534874958917,
+          5.079770375043154,
+          12.350156834116206,
+          12.699492790969089,
+          6.455435457872227,
+          12.900145916035399,
+          12.887286665849388,
+          4.908825083868578,
+          4.904951459029689
+        ],
+        "chars": [
+          324,
+          263,
+          251,
+          267,
+          299,
+          227,
+          267,
+          242,
+          326,
+          247
+        ],
+        "sample": "Hello evaluser, it's so nice to meet you. I'm your companion assistant, here to chat and lend a hand whenever you need. That's quite an interesting bit of global news you shared there. Do you enjoy following international affairs and world events?"
+      }
+    },
+    "Llama 3.3 70B (DeepInfra Turbo)": {
+      "short (3s clip)": {
+        "runs": [
+          8.372522667050362,
+          2.8431173749268055,
+          2.1348719170782715,
+          1.6957949579227716,
+          4.6140052089467645,
+          1.522508041933179,
+          3.5475727908778936,
+          3.1290885410271585,
+          3.4834688750561327,
+          2.1450355420820415
+        ],
+        "chars": [
+          241,
+          196,
+          231,
+          204,
+          282,
+          205,
+          278,
+          203,
+          257,
+          183
+        ],
+        "sample": "I'm so sorry, it seems like you might have started telling me a story, Eval. My name is Ada, by the way, and I'm here to help and chat with you. What's been on your mind lately, Eval?"
+      },
+      "long (12s clip)": {
+        "runs": [
+          2.2192140000406653,
+          3.5167449170257896,
+          8.025627665920183,
+          7.080833041109145,
+          2.930783082963899,
+          2.57100020814687,
+          2.6483944160863757,
+          1.9070512501057237,
+          2.773209665901959,
+          2.6119017091114074
+        ],
+        "chars": [
+          290,
+          356,
+          319,
+          236,
+          282,
+          299,
+          329,
+          276,
+          240,
+          294
+        ],
+        "sample": "Hi evaluser, my name is Alex, and I'm here to help you with anything you need. I'm not sure what sparked your interest in the EU's financial assistance to third countries, but it sounds like a pretty complex topic - what do you think about the impact of international aid on global development?"
+      }
+    }
+  }
+}

@@ -27,24 +27,29 @@ def test_silence_returns_none(tmp_path, monkeypatch):
     assert vad.trim_speech(_wav(tmp_path / "s.wav", np.zeros(SR * 2))) is None
 
 
-def test_short_burst_returns_none(tmp_path, monkeypatch):
-    """A brief burst (60ms; webrtcvad hangover stretches a 200ms one past the minimum) is dropped."""
+def test_noise_returns_none(tmp_path, monkeypatch):
+    """White noise is not speech (the usual Whisper hallucination trigger)."""
     monkeypatch.setattr(vad, "ARTEFACTS_DIR", tmp_path)
-    x = np.zeros(SR * 2)
-    x[SR:SR + int(SR * 0.06)] = np.random.default_rng(0).normal(0, 8000, int(SR * 0.06))
-    assert vad.trim_speech(_wav(tmp_path / "b.wav", x)) is None
+    x = np.random.default_rng(1).normal(0, 3000, SR * 2)
+    assert vad.trim_speech(_wav(tmp_path / "n.wav", x)) is None
 
 
-def test_output_never_longer(tmp_path, monkeypatch):
-    """Noisy long segment: if kept, output is a valid wav no longer than input."""
+def test_real_speech_kept_and_trimmed(tmp_path, monkeypatch):
+    """Real speech padded with silence keeps the speech and drops most of the silence."""
+    import soundfile as sf
     monkeypatch.setattr(vad, "ARTEFACTS_DIR", tmp_path)
-    x = np.zeros(SR * 3)
-    x[SR:2 * SR] = np.random.default_rng(1).normal(0, 8000, SR)
-    out = vad.trim_speech(_wav(tmp_path / "n.wav", x))
-    if out is not None:
-        assert out.name == "n_trimmed.wav"
-        with wave.open(str(out)) as w:
-            assert w.getnframes() <= 3 * SR
+    speech, sr = sf.read("test/test_data/002.wav", dtype="int16")
+    assert sr == SR
+    padded = np.concatenate([np.zeros(SR * 3, dtype=np.int16), speech, np.zeros(SR * 3, dtype=np.int16)])
+    out = vad.trim_speech(_wav(tmp_path / "p.wav", padded))
+    assert out is not None and out.name == "p_trimmed.wav"
+    assert 0.8 * len(speech) < sf.info(str(out)).frames < len(padded) * 0.7
+
+
+def test_is_speech_frames():
+    """Live per-frame detector: silence is False."""
+    vad.reset()
+    assert vad.is_speech(np.zeros(vad.FRAME_SAMPLES, dtype=np.int16)) is False
 
 
 def test_transcribe_mocked(tmp_path, monkeypatch):

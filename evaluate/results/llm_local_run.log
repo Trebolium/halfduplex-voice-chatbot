@@ -1,0 +1,194 @@
+15:43:04 [httpx] HTTP Request: POST https://api.groq.com/openai/v1/audio/transcriptions "HTTP/1.1 200 OK"
+15:43:04 [asr] ASR done in 0.55s: 'His glance, at first wandering, fixed itself upon Morel.'
+15:43:05 [httpx] HTTP Request: POST https://api.groq.com/openai/v1/audio/transcriptions "HTTP/1.1 200 OK"
+15:43:05 [asr] ASR done in 0.53s: 'Through its external financial instruments and the European Development Fund, the EU provides billions of euros in assistance to third countries through international organizations among other channels.'
+15:43:05 [memory] Welcome back eval_user (0 past sessions, 0 facts)
+15:43:05 [memory] Built system prompt (715 chars) for eval_user
+15:43:05 [llm] LLM request -> meta-llama/llama-3.3-70b-instruct (2 messages)
+15:43:05 [httpx2] HTTP Request: POST https://openrouter.ai/api/v1/chat/completions "HTTP/1.1 200 OK"
+15:43:08 [llm] LLM reply in 3.16s (finish_reason=stop): "Hello, it's nice to meet you, Eval. My name is Alex, I'm here to help and chat w"
+15:43:08 [llm] LLM request -> meta-llama/llama-3.3-70b-instruct (2 messages)
+15:43:08 [httpx2] HTTP Request: POST https://openrouter.ai/api/v1/chat/completions "HTTP/1.1 200 OK"
+15:43:11 [llm] LLM reply in 3.43s (finish_reason=stop): "Hi there evaluser, I'm so glad we're meeting for the first time, I'm here to hel"
+15:43:11 [llm] LLM request -> meta-llama/llama-3.3-70b-instruct (2 messages)
+15:43:12 [httpx2] HTTP Request: POST https://openrouter.ai/api/v1/chat/completions "HTTP/1.1 200 OK"
+15:43:14 [llm] LLM reply in 2.49s (finish_reason=stop): "Hi Eval, I'm so glad to meet you, I'm a voice assistant here to help and chat wi"
+15:43:14 [llm] LLM request -> meta-llama/llama-3.3-70b-instruct (2 messages)
+15:43:14 [httpx2] HTTP Request: POST https://openrouter.ai/api/v1/chat/completions "HTTP/1.1 200 OK"
+15:43:16 [llm] LLM reply in 2.25s (finish_reason=stop): "That sounds like the start of an interesting story, Eval. I'm a voice assistant "
+15:43:16 [llm] LLM request -> meta-llama/llama-3.3-70b-instruct (2 messages)
+15:43:16 [httpx2] HTTP Request: POST https://openrouter.ai/api/v1/chat/completions "HTTP/1.1 200 OK"
+15:43:18 [llm] LLM reply in 2.23s (finish_reason=stop): "That sounds like the start of a pretty interesting story, Eval. I'm a friendly v"
+15:43:18 [llm] LLM request -> meta-llama/llama-3.3-70b-instruct (2 messages)
+15:43:19 [httpx2] HTTP Request: POST https://openrouter.ai/api/v1/chat/completions "HTTP/1.1 200 OK"
+15:43:21 [llm] LLM reply in 2.79s (finish_reason=stop): "I'm so glad we're chatting, I'm a friendly voice assistant here to help and keep"
+15:43:21 [llm] LLM request -> meta-llama/llama-3.3-70b-instruct (2 messages)
+15:43:21 [httpx2] HTTP Request: POST https://openrouter.ai/api/v1/chat/completions "HTTP/1.1 200 OK"
+15:43:24 [llm] LLM reply in 2.56s (finish_reason=stop): "Hi Eval, nice to meet you, I'm your new voice assistant here to help with any qu"
+15:43:24 [llm] LLM request -> meta-llama/llama-3.3-70b-instruct (2 messages)
+15:43:24 [httpx2] HTTP Request: POST https://openrouter.ai/api/v1/chat/completions "HTTP/1.1 200 OK"
+15:43:26 [llm] LLM reply in 2.66s (finish_reason=stop): "That's quite a topic you've started with, Eval. My name is Amy, by the way, and "
+15:43:26 [llm] LLM request -> meta-llama/llama-3.3-70b-instruct (2 messages)
+15:43:27 [httpx2] HTTP Request: POST https://openrouter.ai/api/v1/chat/completions "HTTP/1.1 200 OK"
+15:43:29 [llm] LLM reply in 2.49s (finish_reason=stop): "That's really interesting, Eval, I'm happy to be speaking with you, by the way, "
+15:43:29 [llm] LLM request -> meta-llama/llama-3.3-70b-instruct (2 messages)
+15:43:30 [httpx2] HTTP Request: POST https://openrouter.ai/api/v1/chat/completions "HTTP/1.1 200 OK"
+15:43:32 [llm] LLM reply in 3.03s (finish_reason=stop): "That's really interesting, evaluser, I'm glad you're passionate about the EU's i"
+15:43:32 [llm] LLM request -> meta-llama/llama-3.3-70b-instruct (2 messages)
+15:43:32 [httpx2] HTTP Request: POST https://openrouter.ai/api/v1/chat/completions "HTTP/1.1 200 OK"
+15:43:34 [llm] LLM reply in 2.36s (finish_reason=stop): "Hi there Eval, it's nice to meet you. My name is Ada, and I'm here to help and c"
+15:43:38 [httpx] HTTP Request: GET https://huggingface.co/api/models/mlx-community/Llama-3.2-1B-Instruct-4bit/revision/main "HTTP/1.1 200 OK"
+[asr] transcribing 84_121123_000008_000002.wav with whisper-large-v3-turbo
+[asr] 0.55s -> 'His glance, at first wandering, fixed itself upon Morel.'
+[asr] transcribing 002.wav with whisper-large-v3-turbo
+[asr] 0.53s -> 'Through its external financial instruments and the European Development Fund, the EU provides billions of euros in assistance to third countries through international organizations among other channels.'
+[bench] Llama 3.3 70B (DeepInfra Turbo, remote) | short (3s clip): mean 2.64s
+[bench] Llama 3.3 70B (DeepInfra Turbo, remote) | long (12s clip): mean 2.62s
+
+=== Llama 3.2 1B (mlx-community/Llama-3.2-1B-Instruct-4bit) ===
+[llm] loading local model mlx-community/Llama-3.2-1B-Instruct-4bit (first run downloads it)...
+Fetching 6 files:   0%|          | 0/6 [00:00<?, ?it/s]Fetching 6 files: 100%|██████████| 6/6 [00:00<00:00, 1508.74it/s]
+15:43:41 [httpx] HTTP Request: GET https://huggingface.co/api/models/mlx-community/Llama-3.2-1B-Instruct-4bit/revision/main "HTTP/1.1 200 OK"
+[llm] loading local model mlx-community/Llama-3.2-1B-Instruct-4bit (first run downloads it)...
+Fetching 6 files:   0%|          | 0/6 [00:00<?, ?it/s]Fetching 6 files: 100%|██████████| 6/6 [00:00<00:00, 2541.49it/s]
+15:43:50 [httpx] HTTP Request: GET https://huggingface.co/api/models/mlx-community/gemma-3-1b-it-qat-4bit/revision/main "HTTP/1.1 200 OK"
+15:43:50 [httpx] HTTP Request: GET https://huggingface.co/api/models/mlx-community/gemma-3-1b-it-qat-4bit/tree/15fed4eafb456c6fcb2a1165f19ac609670ed14b?recursive=true&expand=false "HTTP/1.1 200 OK"
+[bench] Llama 3.2 1B | short (3s clip): mean 0.61s
+[bench] Llama 3.2 1B | long (12s clip): mean 0.88s
+
+=== Gemma 3 1B (mlx-community/gemma-3-1b-it-qat-4bit) ===
+[llm] loading local model mlx-community/gemma-3-1b-it-qat-4bit (first run downloads it)...
+Fetching 8 files:   0%|          | 0/8 [00:00<?, ?it/s]15:43:51 [httpx] HTTP Request: HEAD https://huggingface.co/mlx-community/gemma-3-1b-it-qat-4bit/resolve/15fed4eafb456c6fcb2a1165f19ac609670ed14b/config.json "HTTP/1.1 307 Temporary Redirect"
+15:43:51 [httpx] HTTP Request: HEAD https://huggingface.co/mlx-community/gemma-3-1b-it-qat-4bit/resolve/15fed4eafb456c6fcb2a1165f19ac609670ed14b/special_tokens_map.json "HTTP/1.1 307 Temporary Redirect"
+15:43:51 [httpx] HTTP Request: HEAD https://huggingface.co/mlx-community/gemma-3-1b-it-qat-4bit/resolve/15fed4eafb456c6fcb2a1165f19ac609670ed14b/model.safetensors.index.json "HTTP/1.1 307 Temporary Redirect"
+15:43:51 [httpx] HTTP Request: HEAD https://huggingface.co/mlx-community/gemma-3-1b-it-qat-4bit/resolve/15fed4eafb456c6fcb2a1165f19ac609670ed14b/tokenizer.json "HTTP/1.1 302 Found"
+15:43:51 [httpx] HTTP Request: HEAD https://huggingface.co/mlx-community/gemma-3-1b-it-qat-4bit/resolve/15fed4eafb456c6fcb2a1165f19ac609670ed14b/tokenizer.model "HTTP/1.1 302 Found"
+15:43:51 [httpx] HTTP Request: HEAD https://huggingface.co/mlx-community/gemma-3-1b-it-qat-4bit/resolve/15fed4eafb456c6fcb2a1165f19ac609670ed14b/added_tokens.json "HTTP/1.1 307 Temporary Redirect"
+15:43:51 [httpx] HTTP Request: HEAD https://huggingface.co/mlx-community/gemma-3-1b-it-qat-4bit/resolve/15fed4eafb456c6fcb2a1165f19ac609670ed14b/tokenizer_config.json "HTTP/1.1 307 Temporary Redirect"
+15:43:51 [httpx] HTTP Request: GET https://huggingface.co/api/models/mlx-community/gemma-3-1b-it-qat-4bit/xet-read-token/15fed4eafb456c6fcb2a1165f19ac609670ed14b "HTTP/1.1 200 OK"
+15:43:51 [httpx] HTTP Request: HEAD https://huggingface.co/api/resolve-cache/models/mlx-community/gemma-3-1b-it-qat-4bit/15fed4eafb456c6fcb2a1165f19ac609670ed14b/config.json?%2Fmlx-community%2Fgemma-3-1b-it-qat-4bit%2Fresolve%2F15fed4eafb456c6fcb2a1165f19ac609670ed14b%2Fconfig.json=&etag=%221fbce929f85fe2ceb9bc6a216ec5ff93994ad287%22 "HTTP/1.1 200 OK"
+15:43:51 [httpx] HTTP Request: HEAD https://huggingface.co/api/resolve-cache/models/mlx-community/gemma-3-1b-it-qat-4bit/15fed4eafb456c6fcb2a1165f19ac609670ed14b/special_tokens_map.json?%2Fmlx-community%2Fgemma-3-1b-it-qat-4bit%2Fresolve%2F15fed4eafb456c6fcb2a1165f19ac609670ed14b%2Fspecial_tokens_map.json=&etag=%221a6193244714d3d78be48666cb02cdbfac62ad86%22 "HTTP/1.1 200 OK"
+15:43:51 [httpx] HTTP Request: HEAD https://huggingface.co/api/resolve-cache/models/mlx-community/gemma-3-1b-it-qat-4bit/15fed4eafb456c6fcb2a1165f19ac609670ed14b/model.safetensors.index.json?%2Fmlx-community%2Fgemma-3-1b-it-qat-4bit%2Fresolve%2F15fed4eafb456c6fcb2a1165f19ac609670ed14b%2Fmodel.safetensors.index.json=&etag=%222edd34f24a81f4e2ae901417d17a08980614c92c%22 "HTTP/1.1 200 OK"
+15:43:51 [httpx] HTTP Request: HEAD https://huggingface.co/api/resolve-cache/models/mlx-community/gemma-3-1b-it-qat-4bit/15fed4eafb456c6fcb2a1165f19ac609670ed14b/tokenizer_config.json?%2Fmlx-community%2Fgemma-3-1b-it-qat-4bit%2Fresolve%2F15fed4eafb456c6fcb2a1165f19ac609670ed14b%2Ftokenizer_config.json=&etag=%2287a7b965259321cc01a7602329d13a1fb6d8cb14%22 "HTTP/1.1 200 OK"
+15:43:51 [httpx] HTTP Request: GET https://huggingface.co/api/resolve-cache/models/mlx-community/gemma-3-1b-it-qat-4bit/15fed4eafb456c6fcb2a1165f19ac609670ed14b/config.json?%2Fmlx-community%2Fgemma-3-1b-it-qat-4bit%2Fresolve%2F15fed4eafb456c6fcb2a1165f19ac609670ed14b%2Fconfig.json=&etag=%221fbce929f85fe2ceb9bc6a216ec5ff93994ad287%22 "HTTP/1.1 200 OK"
+Fetching 8 files:  12%|█▎        | 1/8 [00:00<00:02,  2.60it/s]15:43:51 [httpx] HTTP Request: HEAD https://huggingface.co/api/resolve-cache/models/mlx-community/gemma-3-1b-it-qat-4bit/15fed4eafb456c6fcb2a1165f19ac609670ed14b/added_tokens.json?%2Fmlx-community%2Fgemma-3-1b-it-qat-4bit%2Fresolve%2F15fed4eafb456c6fcb2a1165f19ac609670ed14b%2Fadded_tokens.json=&etag=%22e17bde03d42feda32d1abfca6d3b598b9a020df7%22 "HTTP/1.1 200 OK"
+15:43:51 [httpx] HTTP Request: GET https://huggingface.co/api/resolve-cache/models/mlx-community/gemma-3-1b-it-qat-4bit/15fed4eafb456c6fcb2a1165f19ac609670ed14b/model.safetensors.index.json?%2Fmlx-community%2Fgemma-3-1b-it-qat-4bit%2Fresolve%2F15fed4eafb456c6fcb2a1165f19ac609670ed14b%2Fmodel.safetensors.index.json=&etag=%222edd34f24a81f4e2ae901417d17a08980614c92c%22 "HTTP/1.1 200 OK"
+Fetching 8 files:  25%|██▌       | 2/8 [00:00<00:01,  4.35it/s]15:43:51 [httpx] HTTP Request: GET https://huggingface.co/api/resolve-cache/models/mlx-community/gemma-3-1b-it-qat-4bit/15fed4eafb456c6fcb2a1165f19ac609670ed14b/added_tokens.json?%2Fmlx-community%2Fgemma-3-1b-it-qat-4bit%2Fresolve%2F15fed4eafb456c6fcb2a1165f19ac609670ed14b%2Fadded_tokens.json=&etag=%22e17bde03d42feda32d1abfca6d3b598b9a020df7%22 "HTTP/1.1 200 OK"
+15:43:51 [httpx] HTTP Request: GET https://huggingface.co/api/resolve-cache/models/mlx-community/gemma-3-1b-it-qat-4bit/15fed4eafb456c6fcb2a1165f19ac609670ed14b/tokenizer_config.json?%2Fmlx-community%2Fgemma-3-1b-it-qat-4bit%2Fresolve%2F15fed4eafb456c6fcb2a1165f19ac609670ed14b%2Ftokenizer_config.json=&etag=%2287a7b965259321cc01a7602329d13a1fb6d8cb14%22 "HTTP/1.1 200 OK"
+15:43:51 [httpx] HTTP Request: GET https://huggingface.co/api/resolve-cache/models/mlx-community/gemma-3-1b-it-qat-4bit/15fed4eafb456c6fcb2a1165f19ac609670ed14b/special_tokens_map.json?%2Fmlx-community%2Fgemma-3-1b-it-qat-4bit%2Fresolve%2F15fed4eafb456c6fcb2a1165f19ac609670ed14b%2Fspecial_tokens_map.json=&etag=%221a6193244714d3d78be48666cb02cdbfac62ad86%22 "HTTP/1.1 200 OK"
+Fetching 8 files:  75%|███████▌  | 6/8 [00:01<00:00,  3.62it/s]Fetching 8 files:  88%|████████▊ | 7/8 [00:01<00:00,  3.99it/s]Fetching 8 files: 100%|██████████| 8/8 [00:42<00:00,  9.67s/it]Fetching 8 files: 100%|██████████| 8/8 [00:42<00:00,  5.25s/it]
+15:44:37 [httpx] HTTP Request: GET https://huggingface.co/api/models/mlx-community/gemma-3-1b-it-qat-4bit/revision/main "HTTP/1.1 200 OK"
+[llm] loading local model mlx-community/gemma-3-1b-it-qat-4bit (first run downloads it)...
+Fetching 8 files:   0%|          | 0/8 [00:00<?, ?it/s]Fetching 8 files: 100%|██████████| 8/8 [00:00<00:00, 1917.51it/s]
+15:44:45 [httpx] HTTP Request: GET https://huggingface.co/api/models/mlx-community/LFM2.5-1.2B-Instruct-4bit/revision/main "HTTP/1.1 200 OK"
+15:44:45 [httpx] HTTP Request: GET https://huggingface.co/api/models/mlx-community/LFM2.5-1.2B-Instruct-4bit/tree/dee2f8a2786e6648bb644a7ca40652842490034b?recursive=true&expand=false "HTTP/1.1 200 OK"
+[bench] Gemma 3 1B | short (3s clip): mean 0.62s
+[bench] Gemma 3 1B | long (12s clip): mean 0.54s
+
+=== LFM2.5 1.2B (mlx-community/LFM2.5-1.2B-Instruct-4bit) ===
+[llm] loading local model mlx-community/LFM2.5-1.2B-Instruct-4bit (first run downloads it)...
+Fetching 8 files:   0%|          | 0/8 [00:00<?, ?it/s]15:44:45 [httpx] HTTP Request: HEAD https://huggingface.co/mlx-community/LFM2.5-1.2B-Instruct-4bit/resolve/dee2f8a2786e6648bb644a7ca40652842490034b/config.json "HTTP/1.1 307 Temporary Redirect"
+15:44:45 [httpx] HTTP Request: HEAD https://huggingface.co/mlx-community/LFM2.5-1.2B-Instruct-4bit/resolve/dee2f8a2786e6648bb644a7ca40652842490034b/chat_template.jinja "HTTP/1.1 307 Temporary Redirect"
+15:44:45 [httpx] HTTP Request: HEAD https://huggingface.co/mlx-community/LFM2.5-1.2B-Instruct-4bit/resolve/dee2f8a2786e6648bb644a7ca40652842490034b/tokenizer.json "HTTP/1.1 307 Temporary Redirect"
+15:44:45 [httpx] HTTP Request: HEAD https://huggingface.co/mlx-community/LFM2.5-1.2B-Instruct-4bit/resolve/dee2f8a2786e6648bb644a7ca40652842490034b/model.safetensors.index.json "HTTP/1.1 307 Temporary Redirect"
+15:44:45 [httpx] HTTP Request: HEAD https://huggingface.co/mlx-community/LFM2.5-1.2B-Instruct-4bit/resolve/dee2f8a2786e6648bb644a7ca40652842490034b/tokenizer_config.json "HTTP/1.1 307 Temporary Redirect"
+15:44:45 [httpx] HTTP Request: GET https://huggingface.co/api/models/mlx-community/LFM2.5-1.2B-Instruct-4bit/xet-read-token/dee2f8a2786e6648bb644a7ca40652842490034b "HTTP/1.1 200 OK"
+15:44:45 [httpx] HTTP Request: HEAD https://huggingface.co/mlx-community/LFM2.5-1.2B-Instruct-4bit/resolve/dee2f8a2786e6648bb644a7ca40652842490034b/special_tokens_map.json "HTTP/1.1 307 Temporary Redirect"
+15:44:45 [httpx] HTTP Request: HEAD https://huggingface.co/mlx-community/LFM2.5-1.2B-Instruct-4bit/resolve/dee2f8a2786e6648bb644a7ca40652842490034b/generation_config.json "HTTP/1.1 307 Temporary Redirect"
+15:44:45 [httpx] HTTP Request: HEAD https://huggingface.co/api/resolve-cache/models/mlx-community/LFM2.5-1.2B-Instruct-4bit/dee2f8a2786e6648bb644a7ca40652842490034b/config.json?%2Fmlx-community%2FLFM2.5-1.2B-Instruct-4bit%2Fresolve%2Fdee2f8a2786e6648bb644a7ca40652842490034b%2Fconfig.json=&etag=%2278295a39116fde1dd1a1902c79db93fbec7a4471%22 "HTTP/1.1 200 OK"
+15:44:45 [httpx] HTTP Request: HEAD https://huggingface.co/api/resolve-cache/models/mlx-community/LFM2.5-1.2B-Instruct-4bit/dee2f8a2786e6648bb644a7ca40652842490034b/chat_template.jinja?%2Fmlx-community%2FLFM2.5-1.2B-Instruct-4bit%2Fresolve%2Fdee2f8a2786e6648bb644a7ca40652842490034b%2Fchat_template.jinja=&etag=%221566006797091342d7b16fb4fb6f9adeccb48ca4%22 "HTTP/1.1 200 OK"
+15:44:45 [httpx] HTTP Request: HEAD https://huggingface.co/api/resolve-cache/models/mlx-community/LFM2.5-1.2B-Instruct-4bit/dee2f8a2786e6648bb644a7ca40652842490034b/generation_config.json?%2Fmlx-community%2FLFM2.5-1.2B-Instruct-4bit%2Fresolve%2Fdee2f8a2786e6648bb644a7ca40652842490034b%2Fgeneration_config.json=&etag=%220ec736a123e9569cb6aef0c86f7ee22523b2640f%22 "HTTP/1.1 200 OK"
+15:44:45 [httpx] HTTP Request: HEAD https://huggingface.co/api/resolve-cache/models/mlx-community/LFM2.5-1.2B-Instruct-4bit/dee2f8a2786e6648bb644a7ca40652842490034b/tokenizer.json?%2Fmlx-community%2FLFM2.5-1.2B-Instruct-4bit%2Fresolve%2Fdee2f8a2786e6648bb644a7ca40652842490034b%2Ftokenizer.json=&etag=%222e27bba0b0505b2b2124fa9225c9b5dda7531474%22 "HTTP/1.1 200 OK"
+15:44:45 [httpx] HTTP Request: HEAD https://huggingface.co/api/resolve-cache/models/mlx-community/LFM2.5-1.2B-Instruct-4bit/dee2f8a2786e6648bb644a7ca40652842490034b/special_tokens_map.json?%2Fmlx-community%2FLFM2.5-1.2B-Instruct-4bit%2Fresolve%2Fdee2f8a2786e6648bb644a7ca40652842490034b%2Fspecial_tokens_map.json=&etag=%22b28c8a1e9ecfa97dfc04bf0a5951183155ccc6d7%22 "HTTP/1.1 200 OK"
+15:44:45 [httpx] HTTP Request: HEAD https://huggingface.co/api/resolve-cache/models/mlx-community/LFM2.5-1.2B-Instruct-4bit/dee2f8a2786e6648bb644a7ca40652842490034b/tokenizer_config.json?%2Fmlx-community%2FLFM2.5-1.2B-Instruct-4bit%2Fresolve%2Fdee2f8a2786e6648bb644a7ca40652842490034b%2Ftokenizer_config.json=&etag=%225b071cd2a330a6e5b33ba575fd1e2f6f57f09927%22 "HTTP/1.1 200 OK"
+15:44:45 [httpx] HTTP Request: HEAD https://huggingface.co/api/resolve-cache/models/mlx-community/LFM2.5-1.2B-Instruct-4bit/dee2f8a2786e6648bb644a7ca40652842490034b/model.safetensors.index.json?%2Fmlx-community%2FLFM2.5-1.2B-Instruct-4bit%2Fresolve%2Fdee2f8a2786e6648bb644a7ca40652842490034b%2Fmodel.safetensors.index.json=&etag=%22e979035fbe75b3c15f06a64c88f083ee1b0ecaf3%22 "HTTP/1.1 200 OK"
+15:44:45 [httpx] HTTP Request: GET https://huggingface.co/api/resolve-cache/models/mlx-community/LFM2.5-1.2B-Instruct-4bit/dee2f8a2786e6648bb644a7ca40652842490034b/config.json?%2Fmlx-community%2FLFM2.5-1.2B-Instruct-4bit%2Fresolve%2Fdee2f8a2786e6648bb644a7ca40652842490034b%2Fconfig.json=&etag=%2278295a39116fde1dd1a1902c79db93fbec7a4471%22 "HTTP/1.1 200 OK"
+Fetching 8 files:  12%|█▎        | 1/8 [00:00<00:02,  2.54it/s]15:44:45 [httpx] HTTP Request: GET https://huggingface.co/api/resolve-cache/models/mlx-community/LFM2.5-1.2B-Instruct-4bit/dee2f8a2786e6648bb644a7ca40652842490034b/chat_template.jinja?%2Fmlx-community%2FLFM2.5-1.2B-Instruct-4bit%2Fresolve%2Fdee2f8a2786e6648bb644a7ca40652842490034b%2Fchat_template.jinja=&etag=%221566006797091342d7b16fb4fb6f9adeccb48ca4%22 "HTTP/1.1 200 OK"
+15:44:45 [httpx] HTTP Request: GET https://huggingface.co/api/resolve-cache/models/mlx-community/LFM2.5-1.2B-Instruct-4bit/dee2f8a2786e6648bb644a7ca40652842490034b/tokenizer_config.json?%2Fmlx-community%2FLFM2.5-1.2B-Instruct-4bit%2Fresolve%2Fdee2f8a2786e6648bb644a7ca40652842490034b%2Ftokenizer_config.json=&etag=%225b071cd2a330a6e5b33ba575fd1e2f6f57f09927%22 "HTTP/1.1 200 OK"
+Fetching 8 files:  38%|███▊      | 3/8 [00:00<00:00,  7.04it/s]15:44:45 [httpx] HTTP Request: GET https://huggingface.co/api/resolve-cache/models/mlx-community/LFM2.5-1.2B-Instruct-4bit/dee2f8a2786e6648bb644a7ca40652842490034b/generation_config.json?%2Fmlx-community%2FLFM2.5-1.2B-Instruct-4bit%2Fresolve%2Fdee2f8a2786e6648bb644a7ca40652842490034b%2Fgeneration_config.json=&etag=%220ec736a123e9569cb6aef0c86f7ee22523b2640f%22 "HTTP/1.1 200 OK"
+15:44:45 [httpx] HTTP Request: GET https://huggingface.co/api/resolve-cache/models/mlx-community/LFM2.5-1.2B-Instruct-4bit/dee2f8a2786e6648bb644a7ca40652842490034b/special_tokens_map.json?%2Fmlx-community%2FLFM2.5-1.2B-Instruct-4bit%2Fresolve%2Fdee2f8a2786e6648bb644a7ca40652842490034b%2Fspecial_tokens_map.json=&etag=%22b28c8a1e9ecfa97dfc04bf0a5951183155ccc6d7%22 "HTTP/1.1 200 OK"
+15:44:46 [httpx] HTTP Request: GET https://huggingface.co/api/resolve-cache/models/mlx-community/LFM2.5-1.2B-Instruct-4bit/dee2f8a2786e6648bb644a7ca40652842490034b/model.safetensors.index.json?%2Fmlx-community%2FLFM2.5-1.2B-Instruct-4bit%2Fresolve%2Fdee2f8a2786e6648bb644a7ca40652842490034b%2Fmodel.safetensors.index.json=&etag=%22e979035fbe75b3c15f06a64c88f083ee1b0ecaf3%22 "HTTP/1.1 200 OK"
+Fetching 8 files:  75%|███████▌  | 6/8 [00:00<00:00, 12.55it/s]15:44:46 [httpx] HTTP Request: GET https://huggingface.co/api/resolve-cache/models/mlx-community/LFM2.5-1.2B-Instruct-4bit/dee2f8a2786e6648bb644a7ca40652842490034b/tokenizer.json?%2Fmlx-community%2FLFM2.5-1.2B-Instruct-4bit%2Fresolve%2Fdee2f8a2786e6648bb644a7ca40652842490034b%2Ftokenizer.json=&etag=%222e27bba0b0505b2b2124fa9225c9b5dda7531474%22 "HTTP/1.1 200 OK"
+Fetching 8 files:  88%|████████▊ | 7/8 [00:13<00:00, 12.55it/s]Fetching 8 files: 100%|██████████| 8/8 [00:35<00:00,  6.52s/it]Fetching 8 files: 100%|██████████| 8/8 [00:35<00:00,  4.47s/it]
+15:45:23 [httpx] HTTP Request: GET https://huggingface.co/api/models/mlx-community/LFM2.5-1.2B-Instruct-4bit/revision/main "HTTP/1.1 200 OK"
+[llm] loading local model mlx-community/LFM2.5-1.2B-Instruct-4bit (first run downloads it)...
+Fetching 8 files:   0%|          | 0/8 [00:00<?, ?it/s]Fetching 8 files: 100%|██████████| 8/8 [00:00<00:00, 1476.35it/s]
+15:45:32 [httpx] HTTP Request: GET https://huggingface.co/api/models/mlx-community/Llama-3.2-3B-Instruct-4bit/revision/main "HTTP/1.1 200 OK"
+15:45:32 [httpx] HTTP Request: GET https://huggingface.co/api/models/mlx-community/Llama-3.2-3B-Instruct-4bit/tree/7f0dc925e0d0afb0322d96f9255cfddf2ba5636e?recursive=true&expand=false "HTTP/1.1 200 OK"
+[bench] LFM2.5 1.2B | short (3s clip): mean 0.59s
+[bench] LFM2.5 1.2B | long (12s clip): mean 0.84s
+
+=== Llama 3.2 3B (mlx-community/Llama-3.2-3B-Instruct-4bit) ===
+[llm] loading local model mlx-community/Llama-3.2-3B-Instruct-4bit (first run downloads it)...
+Fetching 6 files:   0%|          | 0/6 [00:00<?, ?it/s]15:45:32 [httpx] HTTP Request: HEAD https://huggingface.co/mlx-community/Llama-3.2-3B-Instruct-4bit/resolve/7f0dc925e0d0afb0322d96f9255cfddf2ba5636e/config.json "HTTP/1.1 307 Temporary Redirect"
+15:45:32 [httpx] HTTP Request: HEAD https://huggingface.co/mlx-community/Llama-3.2-3B-Instruct-4bit/resolve/7f0dc925e0d0afb0322d96f9255cfddf2ba5636e/special_tokens_map.json "HTTP/1.1 307 Temporary Redirect"
+15:45:32 [httpx] HTTP Request: HEAD https://huggingface.co/mlx-community/Llama-3.2-3B-Instruct-4bit/resolve/7f0dc925e0d0afb0322d96f9255cfddf2ba5636e/tokenizer_config.json "HTTP/1.1 307 Temporary Redirect"
+15:45:32 [httpx] HTTP Request: HEAD https://huggingface.co/mlx-community/Llama-3.2-3B-Instruct-4bit/resolve/7f0dc925e0d0afb0322d96f9255cfddf2ba5636e/model.safetensors.index.json "HTTP/1.1 307 Temporary Redirect"
+15:45:32 [httpx] HTTP Request: GET https://huggingface.co/api/models/mlx-community/Llama-3.2-3B-Instruct-4bit/xet-read-token/7f0dc925e0d0afb0322d96f9255cfddf2ba5636e "HTTP/1.1 200 OK"
+15:45:32 [httpx] HTTP Request: HEAD https://huggingface.co/api/resolve-cache/models/mlx-community/Llama-3.2-3B-Instruct-4bit/7f0dc925e0d0afb0322d96f9255cfddf2ba5636e/config.json?%2Fmlx-community%2FLlama-3.2-3B-Instruct-4bit%2Fresolve%2F7f0dc925e0d0afb0322d96f9255cfddf2ba5636e%2Fconfig.json=&etag=%22b1609c2927636476bf9024d7ec17ad8b8bfc68ab%22 "HTTP/1.1 200 OK"
+15:45:32 [httpx] HTTP Request: HEAD https://huggingface.co/api/resolve-cache/models/mlx-community/Llama-3.2-3B-Instruct-4bit/7f0dc925e0d0afb0322d96f9255cfddf2ba5636e/special_tokens_map.json?%2Fmlx-community%2FLlama-3.2-3B-Instruct-4bit%2Fresolve%2F7f0dc925e0d0afb0322d96f9255cfddf2ba5636e%2Fspecial_tokens_map.json=&etag=%2202ee80b6196926a5ad790a004d9efd6ab1ba6542%22 "HTTP/1.1 200 OK"
+15:45:32 [httpx] HTTP Request: HEAD https://huggingface.co/api/resolve-cache/models/mlx-community/Llama-3.2-3B-Instruct-4bit/7f0dc925e0d0afb0322d96f9255cfddf2ba5636e/tokenizer_config.json?%2Fmlx-community%2FLlama-3.2-3B-Instruct-4bit%2Fresolve%2F7f0dc925e0d0afb0322d96f9255cfddf2ba5636e%2Ftokenizer_config.json=&etag=%226568c91f9cdd35e8ac07b8ff0c201f7e835affc8%22 "HTTP/1.1 200 OK"
+15:45:32 [httpx] HTTP Request: HEAD https://huggingface.co/api/resolve-cache/models/mlx-community/Llama-3.2-3B-Instruct-4bit/7f0dc925e0d0afb0322d96f9255cfddf2ba5636e/model.safetensors.index.json?%2Fmlx-community%2FLlama-3.2-3B-Instruct-4bit%2Fresolve%2F7f0dc925e0d0afb0322d96f9255cfddf2ba5636e%2Fmodel.safetensors.index.json=&etag=%22bb46c4eea9ec7e2b114402331be90abca0131bf6%22 "HTTP/1.1 200 OK"
+15:45:32 [httpx] HTTP Request: GET https://huggingface.co/api/resolve-cache/models/mlx-community/Llama-3.2-3B-Instruct-4bit/7f0dc925e0d0afb0322d96f9255cfddf2ba5636e/config.json?%2Fmlx-community%2FLlama-3.2-3B-Instruct-4bit%2Fresolve%2F7f0dc925e0d0afb0322d96f9255cfddf2ba5636e%2Fconfig.json=&etag=%22b1609c2927636476bf9024d7ec17ad8b8bfc68ab%22 "HTTP/1.1 200 OK"
+Fetching 6 files:  33%|███▎      | 2/6 [00:00<00:00,  5.04it/s]15:45:32 [httpx] HTTP Request: GET https://huggingface.co/api/resolve-cache/models/mlx-community/Llama-3.2-3B-Instruct-4bit/7f0dc925e0d0afb0322d96f9255cfddf2ba5636e/special_tokens_map.json?%2Fmlx-community%2FLlama-3.2-3B-Instruct-4bit%2Fresolve%2F7f0dc925e0d0afb0322d96f9255cfddf2ba5636e%2Fspecial_tokens_map.json=&etag=%2202ee80b6196926a5ad790a004d9efd6ab1ba6542%22 "HTTP/1.1 200 OK"
+15:45:32 [httpx] HTTP Request: GET https://huggingface.co/api/resolve-cache/models/mlx-community/Llama-3.2-3B-Instruct-4bit/7f0dc925e0d0afb0322d96f9255cfddf2ba5636e/tokenizer_config.json?%2Fmlx-community%2FLlama-3.2-3B-Instruct-4bit%2Fresolve%2F7f0dc925e0d0afb0322d96f9255cfddf2ba5636e%2Ftokenizer_config.json=&etag=%226568c91f9cdd35e8ac07b8ff0c201f7e835affc8%22 "HTTP/1.1 200 OK"
+15:45:32 [httpx] HTTP Request: GET https://huggingface.co/api/resolve-cache/models/mlx-community/Llama-3.2-3B-Instruct-4bit/7f0dc925e0d0afb0322d96f9255cfddf2ba5636e/model.safetensors.index.json?%2Fmlx-community%2FLlama-3.2-3B-Instruct-4bit%2Fresolve%2F7f0dc925e0d0afb0322d96f9255cfddf2ba5636e%2Fmodel.safetensors.index.json=&etag=%22bb46c4eea9ec7e2b114402331be90abca0131bf6%22 "HTTP/1.1 200 OK"
+Fetching 6 files: 100%|██████████| 6/6 [01:31<00:00, 16.91s/it]Fetching 6 files: 100%|██████████| 6/6 [01:31<00:00, 15.24s/it]
+15:47:09 [httpx] HTTP Request: GET https://huggingface.co/api/models/mlx-community/Llama-3.2-3B-Instruct-4bit/revision/main "HTTP/1.1 200 OK"
+[llm] loading local model mlx-community/Llama-3.2-3B-Instruct-4bit (first run downloads it)...
+Fetching 6 files:   0%|          | 0/6 [00:00<?, ?it/s]Fetching 6 files: 100%|██████████| 6/6 [00:00<00:00, 1744.84it/s]
+15:47:30 [httpx] HTTP Request: GET https://huggingface.co/api/models/mlx-community/Qwen3-4B-Instruct-2507-4bit/revision/main "HTTP/1.1 200 OK"
+15:47:30 [httpx] HTTP Request: GET https://huggingface.co/api/models/mlx-community/Qwen3-4B-Instruct-2507-4bit/tree/50d427756c6b1b2fe0c0a10f67fbda1fc8e82c1b?recursive=true&expand=false "HTTP/1.1 200 OK"
+[bench] Llama 3.2 3B | short (3s clip): mean 1.82s
+[bench] Llama 3.2 3B | long (12s clip): mean 1.87s
+
+=== Qwen3 4B (2507) (mlx-community/Qwen3-4B-Instruct-2507-4bit) ===
+[llm] loading local model mlx-community/Qwen3-4B-Instruct-2507-4bit (first run downloads it)...
+Fetching 11 files:   0%|          | 0/11 [00:00<?, ?it/s]15:47:30 [httpx] HTTP Request: HEAD https://huggingface.co/mlx-community/Qwen3-4B-Instruct-2507-4bit/resolve/50d427756c6b1b2fe0c0a10f67fbda1fc8e82c1b/chat_template.jinja "HTTP/1.1 307 Temporary Redirect"
+15:47:30 [httpx] HTTP Request: HEAD https://huggingface.co/mlx-community/Qwen3-4B-Instruct-2507-4bit/resolve/50d427756c6b1b2fe0c0a10f67fbda1fc8e82c1b/merges.txt "HTTP/1.1 307 Temporary Redirect"
+15:47:30 [httpx] HTTP Request: HEAD https://huggingface.co/mlx-community/Qwen3-4B-Instruct-2507-4bit/resolve/50d427756c6b1b2fe0c0a10f67fbda1fc8e82c1b/generation_config.json "HTTP/1.1 307 Temporary Redirect"
+15:47:30 [httpx] HTTP Request: HEAD https://huggingface.co/mlx-community/Qwen3-4B-Instruct-2507-4bit/resolve/50d427756c6b1b2fe0c0a10f67fbda1fc8e82c1b/config.json "HTTP/1.1 307 Temporary Redirect"
+15:47:30 [httpx] HTTP Request: GET https://huggingface.co/api/models/mlx-community/Qwen3-4B-Instruct-2507-4bit/xet-read-token/50d427756c6b1b2fe0c0a10f67fbda1fc8e82c1b "HTTP/1.1 200 OK"
+15:47:30 [httpx] HTTP Request: HEAD https://huggingface.co/mlx-community/Qwen3-4B-Instruct-2507-4bit/resolve/50d427756c6b1b2fe0c0a10f67fbda1fc8e82c1b/model.safetensors.index.json "HTTP/1.1 307 Temporary Redirect"
+15:47:30 [httpx] HTTP Request: HEAD https://huggingface.co/mlx-community/Qwen3-4B-Instruct-2507-4bit/resolve/50d427756c6b1b2fe0c0a10f67fbda1fc8e82c1b/added_tokens.json "HTTP/1.1 307 Temporary Redirect"
+15:47:30 [httpx] HTTP Request: HEAD https://huggingface.co/api/resolve-cache/models/mlx-community/Qwen3-4B-Instruct-2507-4bit/50d427756c6b1b2fe0c0a10f67fbda1fc8e82c1b/chat_template.jinja?%2Fmlx-community%2FQwen3-4B-Instruct-2507-4bit%2Fresolve%2F50d427756c6b1b2fe0c0a10f67fbda1fc8e82c1b%2Fchat_template.jinja=&etag=%22a18870ad4ba26ac6c43758fc506c1bb6ff206bb4%22 "HTTP/1.1 200 OK"
+15:47:30 [httpx] HTTP Request: HEAD https://huggingface.co/mlx-community/Qwen3-4B-Instruct-2507-4bit/resolve/50d427756c6b1b2fe0c0a10f67fbda1fc8e82c1b/special_tokens_map.json "HTTP/1.1 307 Temporary Redirect"
+15:47:30 [httpx] HTTP Request: HEAD https://huggingface.co/api/resolve-cache/models/mlx-community/Qwen3-4B-Instruct-2507-4bit/50d427756c6b1b2fe0c0a10f67fbda1fc8e82c1b/merges.txt?%2Fmlx-community%2FQwen3-4B-Instruct-2507-4bit%2Fresolve%2F50d427756c6b1b2fe0c0a10f67fbda1fc8e82c1b%2Fmerges.txt=&etag=%2231349551d90c7606f325fe0f11bbb8bd5fa0d7c7%22 "HTTP/1.1 200 OK"
+15:47:30 [httpx] HTTP Request: HEAD https://huggingface.co/api/resolve-cache/models/mlx-community/Qwen3-4B-Instruct-2507-4bit/50d427756c6b1b2fe0c0a10f67fbda1fc8e82c1b/generation_config.json?%2Fmlx-community%2FQwen3-4B-Instruct-2507-4bit%2Fresolve%2F50d427756c6b1b2fe0c0a10f67fbda1fc8e82c1b%2Fgeneration_config.json=&etag=%22432531a002c181a19de338313d2375e9d7494d7e%22 "HTTP/1.1 200 OK"
+15:47:30 [httpx] HTTP Request: HEAD https://huggingface.co/api/resolve-cache/models/mlx-community/Qwen3-4B-Instruct-2507-4bit/50d427756c6b1b2fe0c0a10f67fbda1fc8e82c1b/config.json?%2Fmlx-community%2FQwen3-4B-Instruct-2507-4bit%2Fresolve%2F50d427756c6b1b2fe0c0a10f67fbda1fc8e82c1b%2Fconfig.json=&etag=%22ce8b8eccd1cdf6d8a30767f58e8ff858dd15eab5%22 "HTTP/1.1 200 OK"
+15:47:31 [httpx] HTTP Request: HEAD https://huggingface.co/api/resolve-cache/models/mlx-community/Qwen3-4B-Instruct-2507-4bit/50d427756c6b1b2fe0c0a10f67fbda1fc8e82c1b/model.safetensors.index.json?%2Fmlx-community%2FQwen3-4B-Instruct-2507-4bit%2Fresolve%2F50d427756c6b1b2fe0c0a10f67fbda1fc8e82c1b%2Fmodel.safetensors.index.json=&etag=%224741a210f9920c2949ca73bbb2a7ce9583e7fd83%22 "HTTP/1.1 200 OK"
+15:47:31 [httpx] HTTP Request: GET https://huggingface.co/api/resolve-cache/models/mlx-community/Qwen3-4B-Instruct-2507-4bit/50d427756c6b1b2fe0c0a10f67fbda1fc8e82c1b/chat_template.jinja?%2Fmlx-community%2FQwen3-4B-Instruct-2507-4bit%2Fresolve%2F50d427756c6b1b2fe0c0a10f67fbda1fc8e82c1b%2Fchat_template.jinja=&etag=%22a18870ad4ba26ac6c43758fc506c1bb6ff206bb4%22 "HTTP/1.1 200 OK"
+Fetching 11 files:   9%|▉         | 1/11 [00:00<00:03,  2.53it/s]15:47:31 [httpx] HTTP Request: HEAD https://huggingface.co/api/resolve-cache/models/mlx-community/Qwen3-4B-Instruct-2507-4bit/50d427756c6b1b2fe0c0a10f67fbda1fc8e82c1b/special_tokens_map.json?%2Fmlx-community%2FQwen3-4B-Instruct-2507-4bit%2Fresolve%2F50d427756c6b1b2fe0c0a10f67fbda1fc8e82c1b%2Fspecial_tokens_map.json=&etag=%22ac23c0aaa2434523c494330aeb79c58395378103%22 "HTTP/1.1 200 OK"
+15:47:31 [httpx] HTTP Request: GET https://huggingface.co/api/resolve-cache/models/mlx-community/Qwen3-4B-Instruct-2507-4bit/50d427756c6b1b2fe0c0a10f67fbda1fc8e82c1b/generation_config.json?%2Fmlx-community%2FQwen3-4B-Instruct-2507-4bit%2Fresolve%2F50d427756c6b1b2fe0c0a10f67fbda1fc8e82c1b%2Fgeneration_config.json=&etag=%22432531a002c181a19de338313d2375e9d7494d7e%22 "HTTP/1.1 200 OK"
+15:47:31 [httpx] HTTP Request: HEAD https://huggingface.co/api/resolve-cache/models/mlx-community/Qwen3-4B-Instruct-2507-4bit/50d427756c6b1b2fe0c0a10f67fbda1fc8e82c1b/added_tokens.json?%2Fmlx-community%2FQwen3-4B-Instruct-2507-4bit%2Fresolve%2F50d427756c6b1b2fe0c0a10f67fbda1fc8e82c1b%2Fadded_tokens.json=&etag=%22b54f9135e44c1e81047e8d05cb027af8bc039eed%22 "HTTP/1.1 200 OK"
+15:47:31 [httpx] HTTP Request: GET https://huggingface.co/api/resolve-cache/models/mlx-community/Qwen3-4B-Instruct-2507-4bit/50d427756c6b1b2fe0c0a10f67fbda1fc8e82c1b/merges.txt?%2Fmlx-community%2FQwen3-4B-Instruct-2507-4bit%2Fresolve%2F50d427756c6b1b2fe0c0a10f67fbda1fc8e82c1b%2Fmerges.txt=&etag=%2231349551d90c7606f325fe0f11bbb8bd5fa0d7c7%22 "HTTP/1.1 200 OK"
+15:47:31 [httpx] HTTP Request: GET https://huggingface.co/api/resolve-cache/models/mlx-community/Qwen3-4B-Instruct-2507-4bit/50d427756c6b1b2fe0c0a10f67fbda1fc8e82c1b/config.json?%2Fmlx-community%2FQwen3-4B-Instruct-2507-4bit%2Fresolve%2F50d427756c6b1b2fe0c0a10f67fbda1fc8e82c1b%2Fconfig.json=&etag=%22ce8b8eccd1cdf6d8a30767f58e8ff858dd15eab5%22 "HTTP/1.1 200 OK"
+Fetching 11 files:  27%|██▋       | 3/11 [00:00<00:01,  6.21it/s]15:47:31 [httpx] HTTP Request: GET https://huggingface.co/api/resolve-cache/models/mlx-community/Qwen3-4B-Instruct-2507-4bit/50d427756c6b1b2fe0c0a10f67fbda1fc8e82c1b/model.safetensors.index.json?%2Fmlx-community%2FQwen3-4B-Instruct-2507-4bit%2Fresolve%2F50d427756c6b1b2fe0c0a10f67fbda1fc8e82c1b%2Fmodel.safetensors.index.json=&etag=%224741a210f9920c2949ca73bbb2a7ce9583e7fd83%22 "HTTP/1.1 200 OK"
+15:47:31 [httpx] HTTP Request: GET https://huggingface.co/api/resolve-cache/models/mlx-community/Qwen3-4B-Instruct-2507-4bit/50d427756c6b1b2fe0c0a10f67fbda1fc8e82c1b/special_tokens_map.json?%2Fmlx-community%2FQwen3-4B-Instruct-2507-4bit%2Fresolve%2F50d427756c6b1b2fe0c0a10f67fbda1fc8e82c1b%2Fspecial_tokens_map.json=&etag=%22ac23c0aaa2434523c494330aeb79c58395378103%22 "HTTP/1.1 200 OK"
+15:47:31 [httpx] HTTP Request: GET https://huggingface.co/api/resolve-cache/models/mlx-community/Qwen3-4B-Instruct-2507-4bit/50d427756c6b1b2fe0c0a10f67fbda1fc8e82c1b/added_tokens.json?%2Fmlx-community%2FQwen3-4B-Instruct-2507-4bit%2Fresolve%2F50d427756c6b1b2fe0c0a10f67fbda1fc8e82c1b%2Fadded_tokens.json=&etag=%22b54f9135e44c1e81047e8d05cb027af8bc039eed%22 "HTTP/1.1 200 OK"
+15:47:31 [httpx] HTTP Request: HEAD https://huggingface.co/mlx-community/Qwen3-4B-Instruct-2507-4bit/resolve/50d427756c6b1b2fe0c0a10f67fbda1fc8e82c1b/tokenizer_config.json "HTTP/1.1 307 Temporary Redirect"
+15:47:31 [httpx] HTTP Request: HEAD https://huggingface.co/mlx-community/Qwen3-4B-Instruct-2507-4bit/resolve/50d427756c6b1b2fe0c0a10f67fbda1fc8e82c1b/vocab.json "HTTP/1.1 307 Temporary Redirect"
+15:47:31 [httpx] HTTP Request: HEAD https://huggingface.co/api/resolve-cache/models/mlx-community/Qwen3-4B-Instruct-2507-4bit/50d427756c6b1b2fe0c0a10f67fbda1fc8e82c1b/tokenizer_config.json?%2Fmlx-community%2FQwen3-4B-Instruct-2507-4bit%2Fresolve%2F50d427756c6b1b2fe0c0a10f67fbda1fc8e82c1b%2Ftokenizer_config.json=&etag=%22474bbcd82077828bdec32b8dbc1826cdff2a792a%22 "HTTP/1.1 200 OK"
+15:47:31 [httpx] HTTP Request: HEAD https://huggingface.co/api/resolve-cache/models/mlx-community/Qwen3-4B-Instruct-2507-4bit/50d427756c6b1b2fe0c0a10f67fbda1fc8e82c1b/vocab.json?%2Fmlx-community%2FQwen3-4B-Instruct-2507-4bit%2Fresolve%2F50d427756c6b1b2fe0c0a10f67fbda1fc8e82c1b%2Fvocab.json=&etag=%224783fe10ac3adce15ac8f358ef5462739852c569%22 "HTTP/1.1 200 OK"
+15:47:31 [httpx] HTTP Request: GET https://huggingface.co/api/resolve-cache/models/mlx-community/Qwen3-4B-Instruct-2507-4bit/50d427756c6b1b2fe0c0a10f67fbda1fc8e82c1b/tokenizer_config.json?%2Fmlx-community%2FQwen3-4B-Instruct-2507-4bit%2Fresolve%2F50d427756c6b1b2fe0c0a10f67fbda1fc8e82c1b%2Ftokenizer_config.json=&etag=%22474bbcd82077828bdec32b8dbc1826cdff2a792a%22 "HTTP/1.1 200 OK"
+Fetching 11 files:  73%|███████▎  | 8/11 [00:00<00:00, 10.30it/s]15:47:31 [httpx] HTTP Request: GET https://huggingface.co/api/resolve-cache/models/mlx-community/Qwen3-4B-Instruct-2507-4bit/50d427756c6b1b2fe0c0a10f67fbda1fc8e82c1b/vocab.json?%2Fmlx-community%2FQwen3-4B-Instruct-2507-4bit%2Fresolve%2F50d427756c6b1b2fe0c0a10f67fbda1fc8e82c1b%2Fvocab.json=&etag=%224783fe10ac3adce15ac8f358ef5462739852c569%22 "HTTP/1.1 200 OK"
+Fetching 11 files:  91%|█████████ | 10/11 [00:01<00:00,  7.92it/s]Fetching 11 files: 100%|██████████| 11/11 [01:58<00:00, 20.35s/it]Fetching 11 files: 100%|██████████| 11/11 [01:58<00:00, 10.75s/it]
+15:49:49 [httpx] HTTP Request: GET https://huggingface.co/api/models/mlx-community/Qwen3-4B-Instruct-2507-4bit/revision/main "HTTP/1.1 200 OK"
+[llm] loading local model mlx-community/Qwen3-4B-Instruct-2507-4bit (first run downloads it)...
+Fetching 11 files:   0%|          | 0/11 [00:00<?, ?it/s]Fetching 11 files: 100%|██████████| 11/11 [00:00<00:00, 946.08it/s]
+[bench] Qwen3 4B (2507) | short (3s clip): mean 2.60s
+[bench] Qwen3 4B (2507) | long (12s clip): mean 2.48s
+
+=== SUMMARY: total s | ttft s | tok/s | chars | warm load s ===
+Llama 3.3 70B (DeepInfra Turbo, remote)    short (3s clip)  2.64 | nan | nan | 229 | nan
+Llama 3.3 70B (DeepInfra Turbo, remote)    long (12s clip)  2.62 | nan | nan | 285 | nan
+Llama 3.2 1B                               short (3s clip)  0.61 | 0.24 | 110 | 149 | 1.6
+Llama 3.2 1B                               long (12s clip)  0.88 | 0.22 | 110 | 310 | 1.6
+Gemma 3 1B                                 short (3s clip)  0.62 | 0.18 | 109 | 146 | 2.3
+Gemma 3 1B                                 long (12s clip)  0.54 | 0.16 | 109 | 126 | 2.3
+LFM2.5 1.2B                                short (3s clip)  0.59 | 0.29 | 119 | 139 | 1.0
+LFM2.5 1.2B                                long (12s clip)  0.84 | 0.31 | 119 | 278 | 1.0
+Llama 3.2 3B                               short (3s clip)  1.82 | 0.69 | 42 | 181 | 2.7
+Llama 3.2 3B                               long (12s clip)  1.87 | 0.63 | 44 | 240 | 2.7
+Qwen3 4B (2507)                            short (3s clip)  2.60 | 1.37 | 34 | 156 | 9.2
+Qwen3 4B (2507)                            long (12s clip)  2.48 | 1.00 | 32 | 197 | 9.2

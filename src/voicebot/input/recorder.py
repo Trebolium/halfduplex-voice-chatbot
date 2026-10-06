@@ -13,8 +13,8 @@ from voicebot.config import (ARTEFACTS_DIR, IDLE_TIMEOUT_SECS, MAX_RECORD_SECS,
                              SAMPLE_RATE, SILENCE_END_SECS)
 
 log = logging.getLogger("recorder")
-FRAME_MS = 30
-FRAME_SAMPLES = SAMPLE_RATE * FRAME_MS // 1000  # 480
+FRAME_SAMPLES = 512  # Silero VAD frame size
+FRAME_MS = FRAME_SAMPLES * 1000 // SAMPLE_RATE  # 32
 
 
 def endpoint_state(is_speech: bool, silence_frames: int, rec_frames: int) -> tuple[int, bool]:
@@ -50,8 +50,8 @@ def _wait_for_space(stop: threading.Event) -> None:
 def record(wait_for_space: bool) -> Path | None:
     """Record one utterance from the mic; save wav to ARTEFACTS_DIR and return its path (None on idle timeout)."""
     import sounddevice as sd
-    import webrtcvad
-    vad = webrtcvad.Vad(2)
+    from voicebot.asr import vad
+    vad.reset()
     q: queue.Queue = queue.Queue()
 
     def cb(indata, frames, t, status):
@@ -83,7 +83,7 @@ def record(wait_for_space: bool) -> Path | None:
                 f = q.get(timeout=1)
             except queue.Empty:
                 raise RuntimeError("No audio from microphone for 1s. Check the input device and Microphone permission.")
-            is_speech = vad.is_speech(f.tobytes(), SAMPLE_RATE)
+            is_speech = vad.is_speech(f)
             if not started:
                 if is_speech:
                     started = True

@@ -5,3 +5,5 @@ artefacts/*
 !artefacts/.gitkeep
 data/users/*
 !data/users/.gitkeep
+models/
+.DS_Store
