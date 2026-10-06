@@ -37,5 +37,5 @@ logging.basicConfig(level=logging.INFO, format="%(asctime)s [%(name)s] %(message
 def require(key_name: str, value: str) -> str:
     """Raise a clear error if an API key is missing."""
     if not value:
-        raise RuntimeError(f"{key_name} is not set. Add it to HL-task/.env (see .env.example).")
+        raise RuntimeError(f"{key_name} is not set. Add it to the .env file in the project root (see .env.example).")
     return value
