@@ -1,5 +1,4 @@
 """INTERFACE: record(wait_for_space) -> Path | None. Returns a 16kHz mono wav, or None if no speech began within IDLE_TIMEOUT_SECS."""
-import logging
 import queue
 import threading
 import time
@@ -12,7 +11,6 @@ import soundfile as sf
 from voicebot.config import (ARTEFACTS_DIR, IDLE_TIMEOUT_SECS, MAX_RECORD_SECS,
                              SAMPLE_RATE, SILENCE_END_SECS)
 
-log = logging.getLogger("recorder")
 FRAME_SAMPLES = 512  # Silero VAD frame size
 FRAME_MS = FRAME_SAMPLES * 1000 // SAMPLE_RATE  # 32
 
@@ -25,8 +23,27 @@ def endpoint_state(is_speech: bool, silence_frames: int, rec_frames: int) -> tup
     return silence_frames, done
 
 
-def _wait_for_space(stop: threading.Event) -> None:
-    """Block until spacebar is pressed (pynput)."""
+def _keyboard_trusted() -> bool:
+    """True if macOS lets this process (your terminal/IDE) monitor key presses; non-macOS assumes yes."""
+    try:
+        from ApplicationServices import AXIsProcessTrusted
+    except ImportError:
+        return True
+    return bool(AXIsProcessTrusted())
+
+
+def _wait_for_space() -> None:
+    """Block until SPACE is pressed (pynput), or ENTER if keyboard monitoring is not permitted."""
+    if not _keyboard_trusted():
+        print("[recorder] Keyboard monitoring is not permitted for this terminal/IDE, so SPACE cannot be detected. "
+              "To enable it: System Settings > Privacy & Security > Accessibility and Input Monitoring > add your terminal/IDE, then restart it.")
+        try:
+            import sys, termios
+            termios.tcflush(sys.stdin, termios.TCIFLUSH)  # drop stray keystrokes typed earlier
+        except Exception:
+            pass
+        input("[recorder] Meanwhile, press ENTER to start recording: ")
+        return
     try:
         from pynput import keyboard
         pressed = threading.Event()
@@ -34,8 +51,7 @@ def _wait_for_space(stop: threading.Event) -> None:
         listener.start()
     except Exception as e:
         raise RuntimeError(f"Keyboard listener failed ({e}). On macOS grant your terminal/IDE Accessibility "
-                           "and Input Monitoring permission (System Settings > Privacy & Security), and Microphone too, then restart it.") from e
-    print("[recorder] Press SPACE to start recording...")
+                           "and Input Monitoring permission (System Settings > Privacy & Security), then restart it.") from e
     try:
         while not pressed.wait(0.1):
             if not listener.is_alive():
@@ -43,8 +59,6 @@ def _wait_for_space(stop: threading.Event) -> None:
                                    "System Settings > Privacy & Security, then restart it.")
     finally:
         listener.stop()
-    log.info("Space pressed")
-    print("[recorder] Space pressed.")
 
 
 def record(wait_for_space: bool) -> Path | None:
@@ -67,16 +81,13 @@ def record(wait_for_space: bool) -> Path | None:
 
     frames: list[np.ndarray] = []
     try:
-        print("[recorder] Listening...")
-        log.info("Listening (wait_for_space=%s)", wait_for_space)
         started = False
         if wait_for_space:
-            _wait_for_space(threading.Event())
+            _wait_for_space()
             while not q.empty():  # drop audio buffered before keypress
                 q.get_nowait()
-            started = True
-            print("[recorder] Recording started.")
-        t0 = time.time()
+        print("[recorder] Listening - speak now..." if wait_for_space else "[recorder] Listening...")
+        t0 = time.time()  # after a keypress the user still gets IDLE_TIMEOUT_SECS to start speaking
         silence, rec = 0, 0
         while True:
             try:
@@ -88,10 +99,8 @@ def record(wait_for_space: bool) -> Path | None:
                 if is_speech:
                     started = True
                     print("[recorder] Speech detected, recording started.")
-                    log.info("Recording started")
                 elif time.time() - t0 > IDLE_TIMEOUT_SECS:
                     print("[recorder] No speech before idle timeout.")
-                    log.info("Idle timeout, no speech")
                     return None
                 else:
                     continue
@@ -100,7 +109,6 @@ def record(wait_for_space: bool) -> Path | None:
             silence, done = endpoint_state(is_speech, silence, rec)
             if done:
                 print(f"[recorder] Recording ended ({silence * FRAME_MS / 1000:.1f}s silence, {rec * FRAME_MS / 1000:.1f}s total).")
-                log.info("Silence/max reached, stopping")
                 break
     finally:
         stream.stop()
@@ -110,5 +118,4 @@ def record(wait_for_space: bool) -> Path | None:
     path = ARTEFACTS_DIR / f"input_{datetime.now():%Y%m%d_%H%M%S}.wav"
     sf.write(path, np.concatenate(frames), SAMPLE_RATE, subtype="PCM_16")
     print(f"[recorder] Saved {path}")
-    log.info("Saved %s", path)
     return path

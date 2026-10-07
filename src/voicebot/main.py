@@ -19,9 +19,9 @@ log = logging.getLogger("main")
 
 
 def run_turn(system_prompt: str, history: list[dict], first: bool, timings: dict | None = None, user: dict | None = None) -> bool:
-    """One loop iteration. Returns False when the session should end."""
+    """One loop iteration. Returns False when the session should end; sets t["retry"] if nothing was heard (so SPACE is asked again)."""
     t = timings if timings is not None else {}
-    print("\n[1/5] INPUT: " + ("press SPACE to speak..." if first else "listening for your reply..."))
+    print("\n[1/5] INPUT: " + ("press SPACE (or ENTER if prompted) to speak..." if first else "listening for your reply..."))
     wav = record(wait_for_space=first)
     if wav is None:
         print("No speech heard - ending session.")
@@ -32,7 +32,8 @@ def run_turn(system_prompt: str, history: list[dict], first: bool, timings: dict
     trimmed = trim_speech(wav)
     t["vad"] = time.time() - t0
     if trimmed is None:
-        print("VAD found no speech in the recording - skipping ASR to avoid hallucinated text.")
+        print("VAD found no speech in the recording - skipping ASR. Press SPACE and try again.")
+        t["retry"] = True
         return True
     t0 = time.time()
     text = transcribe(trimmed)
@@ -117,7 +118,6 @@ def warm_up() -> None:
     """Run each local model once so the first real turn is not slow (weights get paged in, kernels compile)."""
     print("[main] warming up local models (avoids a slow first turn)...")
     t0 = time.time()
-    asr.current().load()
     llm.reply("Be brief.", [], "Hello")
     tts.synthesize("Hello.")
     print(f"[main] warm-up done in {time.time() - t0:.1f}s")
@@ -139,8 +139,11 @@ def main() -> None:
     history: list[dict] = []
     first = True
     try:
-        while run_turn(system_prompt, history, first, user=user):
-            first = False
+        while True:
+            t: dict = {}
+            if not run_turn(system_prompt, history, first, timings=t, user=user):
+                break
+            first = bool(t.get("retry")) if first else False
     except KeyboardInterrupt:
         print("\nInterrupted - saving memory.")
     finally:  # always save memory, even if a stage crashed

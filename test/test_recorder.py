@@ -25,3 +25,12 @@ def test_speech_resets_silence():
 def test_max_cap():
     n = int(MAX_RECORD_SECS * 1000 / FRAME_MS)
     assert _run([True] * (n + 5)) == n
+
+
+def test_untrusted_keyboard_falls_back_to_enter(monkeypatch, capsys):
+    """Without macOS keyboard permission we must not hang on pynput: ask for ENTER and explain how to fix it."""
+    from voicebot.input import recorder
+    monkeypatch.setattr(recorder, "_keyboard_trusted", lambda: False)
+    monkeypatch.setattr("builtins.input", lambda prompt="": "")
+    recorder._wait_for_space()
+    assert "Accessibility" in capsys.readouterr().out

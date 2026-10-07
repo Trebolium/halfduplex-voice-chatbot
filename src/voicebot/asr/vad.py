@@ -54,7 +54,7 @@ def trim_speech(wav_path: Path) -> Path | None:
                                   min_speech_duration_ms=MIN_SPEECH_MS, speech_pad_ms=100)
     out = np.concatenate([audio[s["start"]:s["end"]] for s in spans]) if spans else np.zeros(0, np.float32)
     msg = f"[vad] {len(audio) / sr:.2f}s -> {len(out) / sr:.2f}s in {time.perf_counter() - t0:.2f}s"
-    log.info(msg); print(msg)
+    print(msg)
     if not len(out):
         print("[vad] no speech found")
         return None

@@ -29,7 +29,9 @@ def test_no_speech_skips_asr(monkeypatch):
     monkeypatch.setattr(main, "record", lambda wait_for_space: Path("a.wav"))
     monkeypatch.setattr(main, "trim_speech", lambda p: None)
     monkeypatch.setattr(main, "transcribe", lambda p: (_ for _ in ()).throw(AssertionError("ASR should not run")))
-    assert main.run_turn("sys", [], first=False) is True
+    t = {}
+    assert main.run_turn("sys", [], first=True, timings=t) is True
+    assert t["retry"] is True  # main loop keeps asking for SPACE after a failed first take
 
 
 # --- --mode local|remote ---

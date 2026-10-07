@@ -27,7 +27,8 @@ def load(model: str = DEFAULT_MODEL) -> None:
     import gc
     import mlx.core as mx
     gc.collect(); mx.clear_cache()  # free the previous model before loading the next (8GB RAM)
-    _model, _tok = mlx_load(model)
+    from voicebot.hf_cache import local_path
+    _model, _tok = mlx_load(local_path(model))
     INFO["model"] = model
 
 

@@ -24,7 +24,7 @@ MAX_RECORD_SECS = 120        # hard cap per recording
 SILENCE_END_SECS = 1.0       # consecutive silence that ends a recording
 MIN_SPEECH_MS = 300          # VAD drops speech segments shorter than this
 VAD_THRESHOLD = 0.5          # Silero speech probability above this counts as speech
-IDLE_TIMEOUT_SECS = 5        # no speech this long after a reply -> session ends and memory is saved
+IDLE_TIMEOUT_SECS = 8        # no speech this long after a reply -> session ends and memory is saved
 
 BASE_SYSTEM_PROMPT = (
     "You are a helpful voice AI assistant designed to assist the elderly. "
@@ -32,6 +32,8 @@ BASE_SYSTEM_PROMPT = (
 )
 
 logging.basicConfig(level=logging.INFO, format="%(asctime)s [%(name)s] %(message)s", datefmt="%H:%M:%S")
+for noisy in ("httpx", "httpcore", "pynput"):  # silence per-request chatter; the recorder checks keyboard permission itself
+    logging.getLogger(noisy).setLevel(logging.ERROR)
 
 
 def require(key_name: str, value: str) -> str:

@@ -17,7 +17,7 @@ The bot runs in one of two modes, chosen with `--mode` (default: **local**).
 
 | | **local** (default) | **remote** |
 |---|---|---|
-| ASR | mlx-whisper, `whisper-large-v3-turbo`, on the Mac GPU | Groq `whisper-large-v3-turbo` (cloud) |
+| ASR | mlx-whisper, `whisper-base`, on the Mac GPU | Groq `whisper-large-v3-turbo` (cloud) |
 | LLM | LFM2.5 1.2B (4-bit) via mlx-lm | any OpenRouter model (default Llama 3.3 70B on DeepInfra Turbo) |
 | TTS | Piper `en_US-lessac-medium` on CPU | gTTS (Google Translate voice, free, no key; lowest latency measured) or edge-tts, ElevenLabs, Groq Orpheus |
 | API keys | none | `GROQ_API_KEY`, `OPENROUTER_API_KEY` (plus `ELEVENLABS_API_KEY` only if you pick ElevenLabs) |
@@ -66,7 +66,7 @@ The bot runs in one of two modes, chosen with `--mode` (default: **local**).
 
    | Model | Size | Cached in |
    |---|---|---|
-   | mlx-whisper large-v3-turbo | ~1.6GB | `~/.cache/huggingface` |
+   | mlx-whisper base | ~150MB | `~/.cache/huggingface` |
    | LFM2.5 1.2B 4-bit | ~0.7GB | `~/.cache/huggingface` |
    | Piper voice | ~63MB | `models/` |
 
