@@ -2,7 +2,9 @@
 import json
 import logging
 import re
+import shutil
 from datetime import datetime, timezone
+from pathlib import Path
 
 from voicebot import config
 
@@ -19,9 +21,14 @@ STYLE_RULES = (
 )
 
 
-def _path(name: str):
+def user_dir(name: str):
+    """data/users/<slug>/ holds the user's json plus audio/ and text/ subfolders."""
     slug = re.sub(r"[^a-z0-9]+", "_", name.lower()).strip("_") or "user"
-    return config.USERS_DIR / f"{slug}.json"
+    return config.USERS_DIR / slug
+
+
+def _path(name: str):
+    return user_dir(name) / f"{user_dir(name).name}.json"
 
 
 def _save(user: dict) -> None:
@@ -59,6 +66,21 @@ def add_latency(user: dict, stage: str, secs: float) -> None:
     if user.get(CONVO_KEY):
         user[CONVO_KEY][-1].setdefault("latency_s", {})[stage] = round(secs, 3)
         _save(user)
+
+
+def archive_turn(user: dict, user_text: str, llm_text: str, input_wav, trimmed_wav, reply_audio) -> None:
+    """Move this turn's audio into <user>/audio and write transcripts to <user>/text, named after the audio they belong to."""
+    base = user_dir(user["name"])
+    (base / "audio").mkdir(parents=True, exist_ok=True)
+    (base / "text").mkdir(parents=True, exist_ok=True)
+    for src in (input_wav, trimmed_wav, reply_audio):
+        if src and Path(src).exists():
+            shutil.move(str(src), base / "audio" / Path(src).name)
+    if input_wav:
+        (base / "text" / f"{Path(input_wav).stem}.txt").write_text(user_text)
+    if reply_audio:
+        (base / "text" / f"{Path(reply_audio).stem}.txt").write_text(llm_text)
+    log.info("Archived turn audio + text for %s -> %s", user["name"], base)
 
 
 def build_system_prompt(user: dict) -> str:

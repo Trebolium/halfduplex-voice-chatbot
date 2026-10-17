@@ -1,4 +1,4 @@
-"""INTERFACE: reply(system_prompt, history, user_text) -> str, complete(system_prompt, user_text) -> str. Local LFM2.5 1.2B via mlx-lm."""
+"""INTERFACE: reply(system_prompt, history, user_text) -> str, complete(system_prompt, user_text) -> str. Local LLM (DEFAULT_MODEL below) via mlx-lm."""
 import logging
 import time
 
@@ -6,7 +6,7 @@ from voicebot.llm.openrouter import _clean
 
 log = logging.getLogger("llm")
 
-DEFAULT_MODEL = "mlx-community/LFM2.5-1.2B-Instruct-4bit"
+DEFAULT_MODEL = "mlx-community/Llama-3.2-3B-Instruct-4bit"
 MAX_TOKENS = 200
 INFO = {"backend": "mlx-lm", "location": "local-apple-gpu", "model": DEFAULT_MODEL, "provider": "mlx-lm", "max_tokens": MAX_TOKENS}  # model updated by load()
 _model = _tok = None
@@ -22,7 +22,7 @@ def load(model: str = DEFAULT_MODEL) -> None:
     """Download (first run) and load a model, replacing any previously loaded one."""
     global _model, _tok, _model_id
     from mlx_lm import load as mlx_load
-    print(f"[llm] loading local model {model} (first run downloads ~0.7GB from Hugging Face, then it is cached)...")
+    print(f"[llm] loading local model {model} (first run downloads it from Hugging Face, ~1-2GB, then it is cached)...")
     _model, _tok, _model_id = None, None, model
     import gc
     import mlx.core as mx
@@ -39,7 +39,7 @@ def stream_reply(system_prompt: str, history: list[dict], user_text: str):
     if _model is None:
         load()
     messages = [{"role": "system", "content": system_prompt}, *history, {"role": "user", "content": user_text}]
-    prompt = _tok.apply_chat_template(messages, add_generation_prompt=True, tokenize=False)
+    prompt = _tok.apply_chat_template(messages, add_generation_prompt=True, tokenize=False, enable_thinking=False)  # enable_thinking: Qwen3 hybrid models only, ignored by other templates
     text = ""
     for r in stream_generate(_model, _tok, prompt, max_tokens=MAX_TOKENS, sampler=make_sampler(temp=0.7)):
         text += r.text

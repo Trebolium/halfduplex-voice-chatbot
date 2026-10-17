@@ -15,6 +15,6 @@ def test_setup_has_models_locations_and_no_keys():
 
 def test_setup_for_local_llm():
     llm = setup_info.build(groq_asr, mlx_lm, piper, vad)["llm"]
-    assert llm["location"] == "local-apple-gpu" and "LFM2.5" in llm["model"] and llm["max_tokens"] and "provider" in llm
+    assert llm["location"] == "local-apple-gpu" and llm["model"] == mlx_lm.DEFAULT_MODEL and llm["max_tokens"] and "provider" in llm
     remote = setup_info.build(groq_asr, openrouter, piper, vad)["llm"]
     assert remote["location"] == "cloud" and remote["max_tokens"] == openrouter.REPLY_MAX_TOKENS and remote["provider"]

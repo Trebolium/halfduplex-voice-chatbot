@@ -45,6 +45,6 @@ def test_full_pipeline(tmp_path, monkeypatch):
         history += [{"role": "user", "content": text}, {"role": "assistant", "content": answer}]
 
     store.end_session(user, history)
-    saved = json.loads((tmp_path / "margaret.json").read_text())
+    saved = json.loads((tmp_path / "margaret" / "margaret.json").read_text())
     print(f"[E2E] saved memory: {saved}")
     assert saved["sessions"] == 1 and saved["facts"], "memory extraction produced no facts"

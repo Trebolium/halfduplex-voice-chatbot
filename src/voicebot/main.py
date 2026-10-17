@@ -12,7 +12,7 @@ from voicebot.asr.vad import trim_speech
 from voicebot.input.recorder import record
 from voicebot.llm import reply
 from voicebot.memory import store
-from voicebot import tts
+from voicebot import pipeline_test, tts
 from voicebot.tts import play, synthesize
 
 log = logging.getLogger("main")
@@ -62,6 +62,8 @@ def run_turn(system_prompt: str, history: list[dict], first: bool, timings: dict
 
     print("[5/5] PLAYBACK...")
     play(audio)
+    if user is not None:
+        store.archive_turn(user, text, answer, wav, trimmed, audio)
     return True
 
 
@@ -71,13 +73,18 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
     """CLI: --mode picks the whole stack; the model flags only apply in remote mode."""
     p = argparse.ArgumentParser(description="Voice bot: local mode (default) runs everything on this Mac; remote mode calls cloud APIs.")
     p.add_argument("--mode", choices=["local", "remote"], default=os.getenv("MODE", "local"),
-                   help="local = mlx-whisper + LFM2.5 1.2B + Piper (Apple Silicon, no API keys); remote = Groq + OpenRouter + edge-tts")
+                   help="local = mlx-whisper + Llama 3.2 3B + Piper (Apple Silicon, no API keys); remote = Groq + OpenRouter + edge-tts")
     p.add_argument("--asr_model", help="remote only: Groq transcription model (default ASR_MODEL in .env, whisper-large-v3-turbo)")
     p.add_argument("--llm_model", help="remote only: OpenRouter model slug (default LLM_MODEL in .env)")
     p.add_argument("--llm_provider", help="remote only: OpenRouter provider tag to pin, e.g. deepinfra/turbo (default LLM_PROVIDER in .env)")
     p.add_argument("--tts_model", help=f"TTS backend, works in both modes. local: {'|'.join(tts.LOCAL_BACKENDS)} (default {tts.DEFAULT}); "
                                        f"remote: {'|'.join(tts.REMOTE_BACKENDS)} (default {tts.REMOTE_DEFAULT})")
     p.add_argument("--tts_voice", help="remote only: voice for the chosen remote TTS (edge-tts voice name, Orpheus voice, or ElevenLabs voice id)")
+    st = dict(type=str.upper, choices=pipeline_test.STAGES, metavar="|".join(pipeline_test.STAGES))
+    p.add_argument("--test_start", **st, help="test run: start the pipeline at this stage and go to the end (or --test_end)")
+    p.add_argument("--test_end", **st, help="test run: stop after this stage, inclusive (starts at VAD unless --test_start is given)")
+    p.add_argument("--test_audio", help="test run: wav file fed to a VAD/ASR start (replaces the mic)")
+    p.add_argument("--test_text", help="test run: text file fed to an LLM/TTS start")
     return p.parse_args(argv)
 
 
@@ -125,7 +132,11 @@ def warm_up() -> None:
 
 def main() -> None:
     args = parse_args()
+    test = pipeline_test.validate(args)  # fail on bad test flags before loading anything
     names = configure(args)
+    if test:
+        pipeline_test.run(*test, args, names)
+        return
     print(f"[main] mode={args.mode}: asr={names['asr']} llm={names['llm']} tts={names['tts']}")
     asr.select_backend(names["asr"])
     llm.select_backend(names["llm"])

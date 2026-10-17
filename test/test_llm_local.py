@@ -16,7 +16,7 @@ def test_empty_reply_raises(monkeypatch):
 
 
 def test_default_model_is_lfm():
-    assert mlx_lm.DEFAULT_MODEL == "mlx-community/LFM2.5-1.2B-Instruct-4bit" and mlx_lm.INFO["model"] == mlx_lm.DEFAULT_MODEL
+    assert mlx_lm.DEFAULT_MODEL == "mlx-community/Llama-3.2-3B-Instruct-4bit" and mlx_lm.INFO["model"] == mlx_lm.DEFAULT_MODEL
 
 
 def test_complete_is_raw(monkeypatch):

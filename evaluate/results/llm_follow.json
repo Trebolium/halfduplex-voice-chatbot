@@ -1,0 +1,627 @@
+{
+  "LFM2.5 1.2B (current)": {
+    "rows": [
+      {
+        "user": "Hello?",
+        "text": "Hello! I'm here to help you. How are you feeling today? \n\nWould you like to share something about yourself or ask a question?",
+        "s": 0.6693630420049885,
+        "checks": {
+          "plain_text": true,
+          "one_question": false,
+          "greets_by_name": false
+        }
+      },
+      {
+        "user": "Hello?",
+        "text": "Hello there! I'm here to help. How can I assist you today? \n\nWould you like to talk about anything in particular or just start chatting?",
+        "s": 0.6274388749952777,
+        "checks": {
+          "plain_text": true,
+          "one_question": false,
+          "greets_by_name": false
+        }
+      },
+      {
+        "user": "I had a rough morning, my knee is sore.",
+        "text": "I'm sorry to hear that. If your knee is hurting, it might help to rest it a bit and take a warm compress. Let me know if you need anything else. \n\nWhat\u2019s been going on with your garden lately?",
+        "s": 0.8665117909986293,
+        "checks": {
+          "plain_text": true,
+          "one_question": true,
+          "short": true
+        }
+      },
+      {
+        "user": "I had a rough morning, my knee is sore.",
+        "text": "I'm sorry to hear that. Knee pain can be tough. Taking it easy and resting might help. Would you like some tips on how to ease the soreness?",
+        "s": 0.7209117079983116,
+        "checks": {
+          "plain_text": true,
+          "one_question": true,
+          "short": true
+        }
+      },
+      {
+        "user": "What do you remember about me?",
+        "text": "I remember you mentioned your garden and your dog Biscuit. That\u2019s a nice detail! I\u2019m here to make sure everything\u2019s okay. How\u2019s your day going so far?",
+        "s": 0.6835890420043143,
+        "checks": {
+          "plain_text": true,
+          "one_question": true,
+          "uses_memory": true
+        }
+      },
+      {
+        "user": "What do you remember about me?",
+        "text": "Oh dear, I remember you sharing about your garden. It sounds like a lovely space! Would you like to tell me more about it? \n\nLet me know what you'd like to talk about next.",
+        "s": 0.7359046249985113,
+        "checks": {
+          "plain_text": true,
+          "one_question": false,
+          "uses_memory": true
+        }
+      },
+      {
+        "user": "Tell me about the moon landing, in detail please.",
+        "text": "The moon landing is one of the most famous events in space history. On July 20, 1969, astronauts Neil Armstrong and Buzz Aldrin became the first humans to walk on the moon. The mission was part of NASA's Apollo program, which aimed to explore the lunar surface. Armstrong took the iconic first steps, followed by Aldrin, who conducted experiments and collected samples. The event was broadcast worldwide, marking a huge milestone for science and human achievement.\n\nIt\u2019s a story that continues to inspire people all over the world. What aspect of the moon landing would you like to know more about?",
+        "s": 1.7483887080015847,
+        "checks": {
+          "plain_text": true,
+          "one_question": true,
+          "elaborates": true
+        }
+      },
+      {
+        "user": "Tell me about the moon landing, in detail please.",
+        "text": "The moon landing was a historic event when a spacecraft brought astronauts to the Moon in 1969. It marked a major achievement in space exploration, with NASA's Apollo 11 mission being the first to successfully land humans on the lunar surface. Astronauts Neil Armstrong and Buzz Aldrin walked on the Moon while Michael Collins remained in orbit. The mission collected samples, conducted experiments, and sent back valuable data about the Moon's composition. It inspired a lot of people around the world and remains a symbol of human curiosity and innovation.\n\nWould you like to know more about how the mission was conducted or its impact on science? \n\nLet me know if you'd like more details!",
+        "s": 2.264798874995904,
+        "checks": {
+          "plain_text": true,
+          "one_question": false,
+          "elaborates": true
+        }
+      },
+      {
+        "user": "I went for a walk by the river today.",
+        "text": "That sounds nice! Walking by the river must be peaceful. How was the walk? \n\nWould you like to share more about your garden or anything else?",
+        "s": 0.6144542500042007,
+        "checks": {
+          "plain_text": true,
+          "one_question": false,
+          "short": true
+        }
+      },
+      {
+        "user": "I went for a walk by the river today.",
+        "text": "That sounds lovely! Walking by the river must feel peaceful. How was the walk? Did you notice anything special? \n\nOne thing I remember is Nial talking about his garden before. Would you like to share more about that?",
+        "s": 0.7386258750048,
+        "checks": {
+          "plain_text": true,
+          "one_question": false,
+          "short": false
+        }
+      },
+      {
+        "user": "Give me three tips for sleeping better.",
+        "text": "That's a nice topic! Here are three tips for better sleep: make sure your bedroom is dark and quiet, stick to a consistent sleep schedule, and avoid heavy meals or caffeine before bedtime. \n\nHow was that? Would you like more advice?",
+        "s": 0.759098291004193,
+        "checks": {
+          "plain_text": true,
+          "one_question": false,
+          "short": true
+        }
+      },
+      {
+        "user": "Give me three tips for sleeping better.",
+        "text": "That's a good question, dear. Try to keep a consistent sleep schedule, avoid screens before bed, and make your sleeping area comfy. Let me know if you'd like more advice. \n\nWhat do you think about a relaxing bedtime routine?",
+        "s": 0.7575432079975144,
+        "checks": {
+          "plain_text": true,
+          "one_question": true,
+          "short": true
+        }
+      }
+    ],
+    "peak_gb": 0.872925834
+  },
+  "Gemma 3 1B": {
+    "rows": [
+      {
+        "user": "Hello?",
+        "text": "Hi Nial! It\u2019s nice to meet you. \n\nI\u2019m here to help you out. I'm glad you\u2019re here. \n\nIt's lovely to meet you, Nial. How are you feeling today?",
+        "s": 0.6268032910011243,
+        "checks": {
+          "plain_text": true,
+          "one_question": true,
+          "greets_by_name": true
+        }
+      },
+      {
+        "user": "Hello?",
+        "text": "Hi Nial! It\u2019s so nice to meet you! I\u2019m Alex. I\u2019m here to help you out. \n\nHow are things going today?",
+        "s": 0.4832566670011147,
+        "checks": {
+          "plain_text": true,
+          "one_question": true,
+          "greets_by_name": true
+        }
+      },
+      {
+        "user": "I had a rough morning, my knee is sore.",
+        "text": "Hey there, Nial. That sounds rough. It's okay to not be feeling great. Let\u2019s do what you need to do. How\u2019s Biscuit doing today?",
+        "s": 0.5428332500014221,
+        "checks": {
+          "plain_text": true,
+          "one_question": true,
+          "short": false
+        }
+      },
+      {
+        "user": "I had a rough morning, my knee is sore.",
+        "text": "Oh no, I\u2019m so sorry to hear that! That sounds rough. \n\nThat\u2019s okay, it\u2019s alright to not be feeling your best. I\u2019m sorry you\u2019re dealing with that. \n\nDoes Biscuit need a little extra cuddles today?",
+        "s": 0.7164220419945195,
+        "checks": {
+          "plain_text": true,
+          "one_question": true,
+          "short": false
+        }
+      },
+      {
+        "user": "What do you remember about me?",
+        "text": "Hey Nial! It\u2019s so nice to hear from you again. I remember you talking about your garden \u2013 it looks lovely! You said you like to grow tomatoes. Is that something you\u2019re enjoying right now?",
+        "s": 0.6308984999996028,
+        "checks": {
+          "plain_text": true,
+          "one_question": true,
+          "uses_memory": true
+        }
+      },
+      {
+        "user": "What do you remember about me?",
+        "text": "Hey there! It\u2019s nice to hear from you. I\u2019ve been thinking about you and Biscuit. You seem like a lovely man. It\u2019s good to know you like gardening. You used to drive a bus, right? That\u2019s a really cool job! What\u2019s your favorite thing about it?",
+        "s": 0.8248514579972834,
+        "checks": {
+          "plain_text": true,
+          "one_question": false,
+          "uses_memory": true
+        }
+      },
+      {
+        "user": "Tell me about the moon landing, in detail please.",
+        "text": "Hey Nial, that\u2019s a really interesting thing! It's pretty amazing, right? \n\nIt\u2019s the moon landing, yeah? It was a huge deal, a really big moment for everyone. \n\nSo, what part of the landing are you curious about? Do you remember what colors you saw?",
+        "s": 0.8094827079985407,
+        "checks": {
+          "plain_text": true,
+          "one_question": false,
+          "elaborates": false
+        }
+      },
+      {
+        "user": "Tell me about the moon landing, in detail please.",
+        "text": "Hey there, Nial! It\u2019s lovely to hear from you. \n\nThe moon landing, huh? That's a really big deal, isn't it? It was pretty amazing, a whole lot of history! \n\nIt happened in 1969, and Neil Armstrong took his first steps on the lunar surface. Imagine a giant step into the dark, gray world \u2013 that was the feeling! Did you know there were tons of people working on that mission? It was a huge collaborative effort, and everyone believed in the possibility. It\u2019s a pretty incredible story, right? \n\nWould you like to tell me more about Biscuit, the dog?",
+        "s": 1.5038121250036056,
+        "checks": {
+          "plain_text": true,
+          "one_question": false,
+          "elaborates": true
+        }
+      },
+      {
+        "user": "I went for a walk by the river today.",
+        "text": "Hey Nial! That sounds lovely. Did you see any interesting things along the way?",
+        "s": 0.3456491670003743,
+        "checks": {
+          "plain_text": true,
+          "one_question": true,
+          "short": true
+        }
+      },
+      {
+        "user": "I went for a walk by the river today.",
+        "text": "That sounds lovely! Did you enjoy the scenery?",
+        "s": 0.2732300839998061,
+        "checks": {
+          "plain_text": true,
+          "one_question": true,
+          "short": true
+        }
+      },
+      {
+        "user": "Give me three tips for sleeping better.",
+        "text": "Hey there! It sounds like you're trying to get some good rest. That\u2019s a really important thing, isn\u2019t it? I\u2019m glad you\u2019re thinking about it.\n\nOkay, here are a few things that often help people when they\u2019re trying to sleep better. Think of them as just suggestions \u2013 what works for you might not work for you.\n\n Make your bed comfy. Seriously, it\u2019s about making it feel good. \n Try to go to bed when you feel tired. It\u2019s okay if you don\u2019t have to.\n Take a warm bath or shower. It can really calm things down.\n\nDo you want to tell me a little more about your garden?",
+        "s": 1.8243390409988933,
+        "checks": {
+          "plain_text": true,
+          "one_question": false,
+          "short": false
+        }
+      },
+      {
+        "user": "Give me three tips for sleeping better.",
+        "text": "Hey Nial! It's nice to hear from you. \n\nOkay, so you want to sleep better, huh? That\u2019s a good goal! \n\nHere are a few things that usually help:\n\n Make your bedroom a haven: Dim the lights, make sure it\u2019s cool, and have a comfy pillow.\n Wind-down routine: Take a warm bath or shower, read a book, or do some gentle stretching.\n Don\u2019t eat right before bed: Sometimes a little snack will help, but avoid heavy meals.\n\nAnything else you'd like to talk about?",
+        "s": 1.4492661250042147,
+        "checks": {
+          "plain_text": true,
+          "one_question": false,
+          "short": false
+        }
+      }
+    ],
+    "peak_gb": 0.909814548
+  },
+  "Llama 3.2 1B": {
+    "rows": [
+      {
+        "user": "Hello?",
+        "text": "Hello there, I'm so glad you're here. I'm Nial, nice to meet you, isn't it? I'm here to help and listen. I remember you said you wanted to get to know me better, so I'm curious - what do you think about my friendly and helpful nature?",
+        "s": 0.9527163329985342,
+        "checks": {
+          "plain_text": true,
+          "one_question": false,
+          "greets_by_name": true
+        }
+      },
+      {
+        "user": "Hello?",
+        "text": "Hi Nial, nice to meet ya. I'm so glad you're here. I'm Ellie, your friendly AI assistant. I'm here to help you with everything from answering your questions to helping you with your medical concerns. Now, how's your day going so far?",
+        "s": 0.7865417920038453,
+        "checks": {
+          "plain_text": true,
+          "one_question": true,
+          "greets_by_name": true
+        }
+      },
+      {
+        "user": "I had a rough morning, my knee is sore.",
+        "text": "Sorry to hear you had a rough morning. Are you feeling a bit better now that it's over? I hope your knee is feeling better some days are just better than others, huh?",
+        "s": 0.6398695839961874,
+        "checks": {
+          "plain_text": true,
+          "one_question": false,
+          "short": true
+        }
+      },
+      {
+        "user": "I had a rough morning, my knee is sore.",
+        "text": "I'm so sorry to hear that, Nial! You know I'm here for you, and I want to help. But how's the knee doing now? It was really getting under your skin, wasn't it? \n\nBy the way, I have a new plant in my garden that I think you'd love. It's a nice little succulent that's really low maintenance. Do you think I should give it a name?",
+        "s": 1.2550573750049807,
+        "checks": {
+          "plain_text": true,
+          "one_question": false,
+          "short": false
+        }
+      },
+      {
+        "user": "What do you remember about me?",
+        "text": "I remember you've a nice garden, Nial. We've been talking about it, and I think you mentioned growing your favorite flowers. What's been blooming in your garden lately?",
+        "s": 0.6744377089999034,
+        "checks": {
+          "plain_text": true,
+          "one_question": true,
+          "uses_memory": true
+        }
+      },
+      {
+        "user": "What do you remember about me?",
+        "text": "I remember you're Nial, and we've had a few chats before. You mentioned you have a dog called Biscuit, and I recall we talked about how you used to drive a bus. Now, I'm a bit curious, Nial - what do you remember about our earlier conversations?",
+        "s": 0.9415352500000154,
+        "checks": {
+          "plain_text": true,
+          "one_question": true,
+          "uses_memory": true
+        }
+      },
+      {
+        "user": "Tell me about the moon landing, in detail please.",
+        "text": "The moon landing! It's a story that's still spinning in our minds, even after all these years. So, let me take you back to July 1969, when a group of brave astronauts dared to challenge the laws of physics.\n\nIt all started in 1962, when NASA decided to send humans to the moon. The early 1960s were a tough time for space exploration, but the agency was determined to make it happen. They chose the Apollo 11 mission to be the first humans to set foot on another celestial body.\n\nThe Apollo 11 spacecraft was a behemoth, a massive rocket that stood over 110 feet tall! It was powered by a combination of liquid hydrogen and kerosene, and it weighed over 6.7 million pounds. But that was just the beginning - the spacecraft itself was a remarkable achievement, with a heat shield that protected it from the intense heat of re-entry.\n\nThe first step for Apollo 11 was to leave Earth's gravitational",
+        "s": 2.500299667000945,
+        "checks": {
+          "plain_text": true,
+          "one_question": false,
+          "elaborates": true
+        }
+      },
+      {
+        "user": "Tell me about the moon landing, in detail please.",
+        "text": "Nial, I can tell you all about the moon landing. So, June 20, 1969, was the day the Apollo 11 mission set out to make history. Each mission was like a big puzzle with many pieces - the crew, the spacecraft, the Saturn V rocket, and the lunar module.\n\nThe Apollo 11 spacecraft was huge - about the size of a small car, but it had a lot of features. It had three main parts: the command module \"Columbia\", the lunar module \"Eagle\", and the descent stage. The crew was three astronauts - Neil Armstrong, Edwin \"Buzz\" Aldrin, and Michael Collins.\n\nFirst, they had to prepare the launch site, a huge empty area in the desert of Florida. They built the command and lunar modules, and attached the descent stage, which they called the \"Starfire\". The rocket was so big, it would make your hair fall out if you looked at it for too long.\n\nFinally, the",
+        "s": 2.3551434999972116,
+        "checks": {
+          "plain_text": true,
+          "one_question": false,
+          "elaborates": true
+        }
+      },
+      {
+        "user": "I went for a walk by the river today.",
+        "text": "Blasted lovely day out, wasn't it? Fresh air and being close to the water always lifts my spirits. Did you find any new flowers blooming along the riverbank?\n\nBy the way, I have to ask: are you planning on joining the gardening club?",
+        "s": 0.8227651670022169,
+        "checks": {
+          "plain_text": true,
+          "one_question": false,
+          "short": true
+        }
+      },
+      {
+        "user": "I went for a walk by the river today.",
+        "text": "It's lovely to think of you enjoying the fresh air and scenery on the riverbank. I hope the day was nice enough for you to relax a bit. Did you have a nice cup of coffee and cake before you headed out?",
+        "s": 0.7348467080009868,
+        "checks": {
+          "plain_text": true,
+          "one_question": true,
+          "short": true
+        }
+      },
+      {
+        "user": "Give me three tips for sleeping better.",
+        "text": "Amy, I've got just the thing for you to sleep better. Here are three tips:\n\nFirst, try to create a bedtime routine. Yeah, I know, it sounds weird, but just take some time to unwind before bed - maybe read a book, take a warm bath, or listen to some soothing music.\n\nSecond, make sure your bedroom is dark and quiet. I know, I know, it's easy to let things cramp when I'm not home, but try to keep the lights on and the curtains closed.\n\nThird, consider taking a warm milk before bed. It's been a thing for people to do for a long time, and it's supposed to help calm you down and get you to sleep.\n\nWhat do you think, Nial?",
+        "s": 2.0514929170021787,
+        "checks": {
+          "plain_text": true,
+          "one_question": true,
+          "short": false
+        }
+      },
+      {
+        "user": "Give me three tips for sleeping better.",
+        "text": "Nial, I've got just the thing for a good night's sleep. Here are three tips I want you to try:\n\nFirst, make sure your bedroom is cool. I know, I know, it's hard to adjust to a cooler room, especially in the summer, but trust me, it's worth the effort.\n\nSecond, get some fresh air in your bedroom. Open your curtains or blinds a bit at night and let the stars shine in. It'll help regulate your body's internal clock.\n\nThird, stop the screen time before bed. I know it's hard to resist a good show or a book, but the blue light from screens can make it hard to fall asleep. Try reading a book or listening to some soothing music instead.\n\nHow's that, Nial? Feeling any better already?",
+        "s": 1.968531874998007,
+        "checks": {
+          "plain_text": true,
+          "one_question": false,
+          "short": false
+        }
+      }
+    ],
+    "peak_gb": 0.935730488
+  },
+  "Qwen3 1.7B": {
+    "rows": [
+      {
+        "user": "Hello?",
+        "text": "Hello! I'm here to help you, and I'm glad you said hello. What's your name?",
+        "s": 0.697047499998007,
+        "checks": {
+          "plain_text": true,
+          "one_question": true,
+          "greets_by_name": false
+        }
+      },
+      {
+        "user": "Hello?",
+        "text": "Hello! It's nice to speak to you. I'm here to help and support you. What's your name?",
+        "s": 0.7177416249978705,
+        "checks": {
+          "plain_text": true,
+          "one_question": true,
+          "greets_by_name": false
+        }
+      },
+      {
+        "user": "I had a rough morning, my knee is sore.",
+        "text": "I'm sorry to hear that. Let me know if you need help with something else. What's going on with your knee?",
+        "s": 0.7471167500043521,
+        "checks": {
+          "plain_text": true,
+          "one_question": true,
+          "short": true
+        }
+      },
+      {
+        "user": "I had a rough morning, my knee is sore.",
+        "text": "I'm sorry to hear that. Maybe some ice will help with the soreness. Would you like me to suggest some gentle exercises to help with the pain?",
+        "s": 0.8306034589986666,
+        "checks": {
+          "plain_text": true,
+          "one_question": true,
+          "short": true
+        }
+      },
+      {
+        "user": "What do you remember about me?",
+        "text": "I remember you mentioned a garden. You used to be a bus driver, and you have a dog named Biscuit. What else do you remember about your garden?",
+        "s": 0.8733700420052628,
+        "checks": {
+          "plain_text": true,
+          "one_question": true,
+          "uses_memory": true
+        }
+      },
+      {
+        "user": "What do you remember about me?",
+        "text": "I remember you mentioned a garden. You used to be a bus driver, and you have a dog named Biscuit. What else do you remember about your garden?",
+        "s": 0.8596860000034212,
+        "checks": {
+          "plain_text": true,
+          "one_question": true,
+          "uses_memory": true
+        }
+      },
+      {
+        "user": "Tell me about the moon landing, in detail please.",
+        "text": "Oh, I remember! The moon landing was a big deal when we were kids. The astronauts were Neil Armstrong, Buzz Aldrin, and Michael Collins. They landed on the moon in 1969. Armstrong was the first to set foot on the moon and said, \"That's one small step for man, one giant leap for mankind.\" It was a huge moment for our country and the world. Do you remember anything specific about the mission?",
+        "s": 1.6497558749979362,
+        "checks": {
+          "plain_text": true,
+          "one_question": true,
+          "elaborates": true
+        }
+      },
+      {
+        "user": "Tell me about the moon landing, in detail please.",
+        "text": "Oh, I remember! The moon landing was when we landed on the moon, right? It was in 1969, and Neil Armstrong was the first person to step on the moon. He said, \"That's one small step for man, one giant step for mankind.\" It was a big deal because it showed that we could go to the moon and come back. Do you remember any details about the mission?",
+        "s": 1.5662766250025015,
+        "checks": {
+          "plain_text": true,
+          "one_question": false,
+          "elaborates": true
+        }
+      },
+      {
+        "user": "I went for a walk by the river today.",
+        "text": "That's awesome! The river must be nice out there. What did you do while you were walking?",
+        "s": 0.6975755829989794,
+        "checks": {
+          "plain_text": true,
+          "one_question": true,
+          "short": true
+        }
+      },
+      {
+        "user": "I went for a walk by the river today.",
+        "text": "That sounds lovely! The river must be peaceful. What did you do when you walked?",
+        "s": 0.6389952919998905,
+        "checks": {
+          "plain_text": true,
+          "one_question": true,
+          "short": true
+        }
+      },
+      {
+        "user": "Give me three tips for sleeping better.",
+        "text": "Sure! Here are three tips to help you sleep better:\n\n1. Create a calm environment \u2013 Keep your room dark, quiet, and cool. Use a comfortable pillow and a good blanket.\n2. Limit caffeine and screens \u2013 Avoid coffee, tea, or soda before bed. Also, avoid phones or TV before sleep.\n3. Try relaxation techniques \u2013 Deep breathing, a warm bath, or a light massage can help you unwind.\n\nWhat do you think? Would you like some tips for your garden too?",
+        "s": 1.897126957999717,
+        "checks": {
+          "plain_text": false,
+          "one_question": false,
+          "short": false
+        }
+      },
+      {
+        "user": "Give me three tips for sleeping better.",
+        "text": "Sure! Here are three tips to help you sleep better:\n\n1. Create a calm environment \u2013 Keep the room dark, cool, and quiet. Use a fan or a white noise machine if needed.\n2. Stick to a sleep schedule \u2013 Go to bed and wake up at the same time every day, even on the weekend.\n3. Try relaxation techniques \u2013 Deep breathing, meditation, or a warm bath before bed can help you unwind.\n\nWhat\u2019s your favorite way to wind down?",
+        "s": 1.8558822919949307,
+        "checks": {
+          "plain_text": false,
+          "one_question": true,
+          "short": false
+        }
+      }
+    ],
+    "peak_gb": 1.252756922
+  },
+  "Llama 3.2 3B": {
+    "rows": [
+      {
+        "user": "Hello?",
+        "text": "Hi Nial, I'm so glad you're here. My name is Nova, and I'm your friendly AI assistant. I'm here to help you with any questions or tasks you need assistance with, or just to chat and keep you company if you'd like. How's your day been so far?",
+        "s": 2.0463247500010766,
+        "checks": {
+          "plain_text": true,
+          "one_question": true,
+          "greets_by_name": true
+        }
+      },
+      {
+        "user": "Hello?",
+        "text": "Hello Nial, it's nice to meet you. I'm Karen, your friendly AI assistant. I heard you've been looking for some help with staying connected and organized. How's your day been so far?",
+        "s": 1.5606632499984698,
+        "checks": {
+          "plain_text": true,
+          "one_question": true,
+          "greets_by_name": true
+        }
+      },
+      {
+        "user": "I had a rough morning, my knee is sore.",
+        "text": "Sorry to hear that, Nial. A sore knee can be a real pain, literally! Did you have any trouble with it before, or is it just a one-off thing?",
+        "s": 1.542230875005771,
+        "checks": {
+          "plain_text": true,
+          "one_question": true,
+          "short": true
+        }
+      },
+      {
+        "user": "I had a rough morning, my knee is sore.",
+        "text": "Sorry to hear that, Nial. A sore knee can be a real pain. Did you have a bit of a mishap in the garden this morning, or was it just a normal morning get-up?",
+        "s": 1.647274707996985,
+        "checks": {
+          "plain_text": true,
+          "one_question": true,
+          "short": true
+        }
+      },
+      {
+        "user": "What do you remember about me?",
+        "text": "You're Nial, and we've been chatting for a bit. You've got a lovely garden, and you've been talking about it. You also mentioned having a dog named Biscuit, and you used to be a bus driver. You're a nice bloke, Nial. What's new with Biscuit these days?",
+        "s": 2.3436977500023204,
+        "checks": {
+          "plain_text": true,
+          "one_question": true,
+          "uses_memory": true
+        }
+      },
+      {
+        "user": "What do you remember about me?",
+        "text": "I remember you're a lovely fellow, Nial. We've had a nice chat before. I recall you've got a lovely garden, and you've been showing me around it. You also have a furry friend at home named Biscuit. That dog's a sweetheart, isn't it? What's new with Biscuit, have they been keeping you on your toes lately?",
+        "s": 2.551599083999463,
+        "checks": {
+          "plain_text": true,
+          "one_question": false,
+          "uses_memory": true
+        }
+      },
+      {
+        "user": "Tell me about the moon landing, in detail please.",
+        "text": "Nial, I remember you mentioning this before, but I'll give you the lowdown. The moon landing, of course, refers to Apollo 11, which successfully landed astronauts Neil Armstrong and Edwin \"Buzz\" Aldrin on the moon's surface in July 1969.\n\nThe mission was a culmination of years of hard work by NASA, with thousands of people involved in its development and execution. The spaceship, named Columbia, was launched from Kennedy Space Center in Florida on July 16, 1969. It took about 77 hours to reach the moon.\n\nAfter entering lunar orbit, the astronauts transferred to the Lunar Module, named Eagle, which was designed to land on the moon's surface. On July 20, Armstrong and Aldrin suited up in their spacesuits and climbed into the Eagle. The landing was a complex process, requiring precise calculations and manual controls to ensure a safe touchdown.\n\nAt 20:17 UTC, the Eagle landed on the moon's surface in the Sea of",
+        "s": 5.399431290999928,
+        "checks": {
+          "plain_text": true,
+          "one_question": false,
+          "elaborates": true
+        }
+      },
+      {
+        "user": "Tell me about the moon landing, in detail please.",
+        "text": "That's quite a topic, Nial! Alright, let me give you the lowdown. The moon landing happened on July 20, 1969. You know how I know you used to drive a bus? Well, one of your passengers, Neil Armstrong, was actually one of the astronauts who landed on the moon.\n\nThe Apollo 11 mission was the first manned mission to the moon. Armstrong and his crewmates, Edwin \"Buzz\" Aldrin and Michael Collins, launched from Kennedy Space Center in Florida on July 16, 1969. They traveled through space for four days before entering lunar orbit.\n\nOn July 20, Armstrong and Aldrin suited up in their spacesuits and climbed into the lunar module Eagle. They separated from the command module Columbia, and Armstrong took the helm of the Eagle. At 20:17 UTC, Eagle landed on the moon's surface in the Sea of Tranquility.\n\nArmstrong radioed back to Mission Control on Earth: \"Houston,",
+        "s": 5.535784665997198,
+        "checks": {
+          "plain_text": true,
+          "one_question": false,
+          "elaborates": true
+        }
+      },
+      {
+        "user": "I went for a walk by the river today.",
+        "text": "That sounds lovely, Nial. I hope Biscuit enjoyed the outing too. Did the river have any effects on your walk, like the weather or the scenery?",
+        "s": 1.7425755829972331,
+        "checks": {
+          "plain_text": true,
+          "one_question": true,
+          "short": true
+        }
+      },
+      {
+        "user": "I went for a walk by the river today.",
+        "text": "That sounds lovely, Nial. I'm glad you're getting out and about. Did you catch a glimpse of any wildlife, like Biscuit likes to do when you take him for a walk?",
+        "s": 1.6051029580048635,
+        "checks": {
+          "plain_text": true,
+          "one_question": true,
+          "short": true
+        }
+      },
+      {
+        "user": "Give me three tips for sleeping better.",
+        "text": "Nial, I'm happy to help. Three tips for sleeping better are: \n\n1) Create a bedtime routine, like reading a book or having a warm bath, to signal your body it's time to sleep.\n2) Make your bedroom a sleep haven, dark, quiet, and at a comfortable temperature.\n3) Get some morning sunlight, it helps regulate your circadian rhythms so you'll sleep better at night.\n\nNow, what's your favorite thing to do to help you relax before bed, Nial?",
+        "s": 3.1256627089969697,
+        "checks": {
+          "plain_text": false,
+          "one_question": true,
+          "short": false
+        }
+      },
+      {
+        "user": "Give me three tips for sleeping better.",
+        "text": "Nial, I've got three tips for you. First, try to establish a bedtime routine, like reading a book or having a cup of tea. It'll help signal to your brain that it's time to wind down. Second, make sure your bedroom is cool, quiet, and dark. You might even consider using earplugs or blackout curtains if necessary. And third, try to avoid screens for at least an hour before bedtime. That'll help you relax and get a good night's sleep.\n\nDo you find that Biscuit gets in the way of a good night's sleep, or does he sleep through the night?",
+        "s": 3.5801796660016407,
+        "checks": {
+          "plain_text": true,
+          "one_question": true,
+          "short": false
+        }
+      }
+    ],
+    "peak_gb": 2.188262266
+  }
+}

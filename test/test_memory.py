@@ -57,3 +57,16 @@ def test_log_turn_persists():
     store.add_latency(u, "tts", 0.4)
     turn = store.load("Turn")["cascading conversation"][0]
     assert turn == {"user": "hi", "llm": "hello!", "latency_s": {"asr": 0.123, "llm": 1.5, "tts": 0.4}, "setup": {"llm": {"model": "m"}}}
+
+
+def test_user_files_live_in_own_folder_and_archive_turn(tmp_path):
+    u = store.load("Mary Jane")
+    assert (tmp_path / "mary_jane" / "mary_jane.json").exists()
+    src = tmp_path / "src"; src.mkdir()
+    for n in ("input_1.wav", "input_1_trimmed.wav", "reply_1.mp3"):
+        (src / n).write_bytes(b"x")
+    store.archive_turn(u, "hello", "hi there", src / "input_1.wav", src / "input_1_trimmed.wav", src / "reply_1.mp3")
+    base = tmp_path / "mary_jane"
+    assert sorted(p.name for p in (base / "audio").iterdir()) == ["input_1.wav", "input_1_trimmed.wav", "reply_1.mp3"]
+    assert (base / "text" / "input_1.txt").read_text() == "hello" and (base / "text" / "reply_1.txt").read_text() == "hi there"
+    assert not list(src.iterdir())

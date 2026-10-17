@@ -16,10 +16,11 @@ def test_run_turn_and_end(monkeypatch):
     history = []
     user = {"name": "T"}
     monkeypatch.setattr(main.store, "log_turn", lambda u, t, a, lat=None, setup=None: u.setdefault("c", []).append((t, a, sorted(lat), sorted(setup))))
+    monkeypatch.setattr(main.store, "archive_turn", lambda *a: user.setdefault("archived", a[1:3]))
     monkeypatch.setattr(main.store, "add_latency", lambda u, stage, secs: u.__setitem__(stage + "_lat", secs))
     assert main.run_turn("sys", history, first=True, user=user) is True
     assert user["c"] == [("hello", "hi there", ["asr", "llm", "vad"], ["asr", "config", "llm", "tts", "vad"])]
-    assert user["tts_lat"] > 0
+    assert user["tts_lat"] > 0 and user["archived"] == ("hello", "hi there")
     assert history[-1] == {"role": "assistant", "content": "hi there"}
     assert main.run_turn("sys", history, first=False) is False
 

@@ -9,7 +9,7 @@ import subprocess
 # CLI name -> (module, uv dependency group needed or None, python package to check)
 BACKENDS = {
     "remote-llm": ("voicebot.llm.openrouter", None, None),         # OpenRouter (LLM_MODEL / LLM_PROVIDER in .env)
-    "local-llm": ("voicebot.llm.mlx_lm", "local-llm", "mlx_lm"),  # LFM2.5 1.2B via mlx-lm (Apple Silicon, local)
+    "local-llm": ("voicebot.llm.mlx_lm", "local-llm", "mlx_lm"),  # Llama 3.2 3B via mlx-lm (see DEFAULT_MODEL) (Apple Silicon, local)
 }
 DEFAULT = "remote-llm"
 _current = None
