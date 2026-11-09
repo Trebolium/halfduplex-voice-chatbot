@@ -253,6 +253,7 @@ src/voicebot/
   setup_info.py    builds the per-turn setup metadata
   pipeline_test.py once-off test runs of any slice of VAD/ASR/LLM/TTS (--test_start/--test_end)
   evaluation.py    master eval: latency + WER over a folder of clips (`uv run voicebot-eval`)
+  compare.py       side-by-side comparison of eval runs (`uv run voicebot-compare`)
   input/           recorder.py: mic capture, SPACE to start, Silero endpointing
   asr/             __init__.py dispatcher; mlx_whisper.py (local), groq_asr.py (remote), vad.py (Silero)
   llm/             __init__.py dispatcher; mlx_lm.py (local), openrouter.py (remote)
@@ -280,6 +281,7 @@ An optional `load()` is called once at startup (download and load the model ther
 ```bash
 uv run python -m pytest -q   # unit tests; live tests use your keys if present and skip if not
 uv run voicebot-eval         # latency per stage + ASR WER over TEST_AUDIO_PATH from .env (add --mode remote, ...)
+uv run voicebot-compare --compare_results <run> <run>   # side-by-side metrics of runs in evaluate/results/
 ```
 
 The eval writes `config.json` (settings, datetime, commit SHA) and `metrics.json` to `evaluate/results/<datetime>_<sha>/` (git-ignored). Set `TEST_AUDIO_PATH` in `.env` first: there is no default, and without it the eval stops with "Test data not found". It needs no extra dependency groups beyond those of the mode you run. Details are in [Benchmarks](#6-benchmarks-evaluate).
@@ -384,6 +386,7 @@ Run `uv run python -m pytest -q`. Most tests mock the other stages so they are f
 | `test_pipeline_test.py` | `--test_*` flag combinations (valid and invalid), only the slice's stages being called, no playback in test runs |
 | `test_memory.py`, `test_setup_info.py` | memory load/save/extraction (incl. bad JSON), per-turn setup metadata |
 | `test_asr*.py`, `test_llm*.py`, `test_tts*.py`, `test_recorder.py` | each backend and its dispatcher |
+| `test_compare.py` | run comparison: missing/short `--compare_results`, unknown run, config diff, deltas, clip mismatch warning, report + charts written |
 | `test_evaluation.py` | master eval: dataset pairing, WER, flags, and a mocked run writing `config.json` + `metrics.json` |
 | `test_pipeline.py` | live end-to-end run through real services (needs keys; skips without them) |
 
@@ -405,6 +408,28 @@ uv run voicebot-eval --mode remote                   # any voicebot flag works (
 - **Output:** `evaluate/results/<datetime>_<sha>/`. `config.json` is written at the start of the run and holds the datetime, the latest commit SHA (plus whether the tree was dirty), the mode, backends, models, voice, VAD and recorder settings, the system prompt, the bucket definitions and the datapoint paths. `metrics.json` is written at the end and holds the summaries plus each datapoint's transcript, reply and timings. Compare runs by diffing their `config.json` files.
 - **The test set** (usually `TEST_AUDIO_PATH=./test/test_data/`, git-ignored, so each machine builds its own): `libritts/` and `voxpopuli/` with 12 clips each. These are 3 random clips per bucket from LibriTTS `dev-clean` (normalized transcripts) and the voxpopuli `en_samples` set, with different speakers where possible. The longform clips are joined from several source clips and named `<stem>+<stem>+...`: consecutive utterances from one chapter for LibriTTS, and unrelated segments for voxpopuli (so different speakers). [evaluate/sample_dataset.py](evaluate/sample_dataset.py) made the selection and writes to `TEST_AUDIO_PATH` with `--copy` (seed 0, sources expected in `~/Documents/datasets/`). A re-run picks different clips because it skips ones already copied.
 - The code is in `src/voicebot/evaluation.py` (`evaluate/run_eval.py` is the same thing as a script).
+
+**Comparing runs** — pass two or more folder names from `evaluate/results/`. The first is the baseline:
+
+```bash
+uv run voicebot-compare --compare_results 20261109_115628_d7489ad 20261109_120646_d7489ad
+```
+
+It prints:
+- each run's datetime, commit, mode and backends;
+- every config value that differs between the runs (models, providers, settings), with a warning if the runs used different clips;
+- for each group (overall, each dataset, each length bucket): corpus WER, ASR RTF p50, p50 latency for every stage, total p90, and the change from the baseline.
+
+It also saves `report.txt` (the same text) and four charts to `evaluate/result_comparisons/<run>__vs__<run>/` (git-ignored):
+
+| Chart | Shows |
+|---|---|
+| `1_latency_breakdown.png` | stacked mean seconds per stage (VAD, ASR, LLM, TTS) for each run: where the time goes |
+| `2_wer_by_group.png` | corpus WER per group (overall, datasets, length buckets), one bar per run |
+| `3_latency_by_group.png` | total turn latency per group: p50 bar with a p90 tick |
+| `4_asr_scaling.png` | ASR time against clip length for every clip, with a linear fit per run (intercept = fixed overhead, slope = cost per minute of audio) |
+
+Runs keep the same colour in every chart, and up to 3 runs stay distinguishable for colour-blind readers. Running it without `--compare_results` stops with an error that lists the available runs. The code is in `src/voicebot/compare.py` (`evaluate/compare_results.py` is the same thing as a script).
 
 **Older per-stage benchmarks:** these scripts use the same stage functions and start/stop points as the app (see [Latency](#latency-what-is-measured)). `llm_follow.py` also scores replies against the style rules and records peak GPU memory. Scripts that need audio or transcripts take the `TEST_AUDIO_PATH` clips closest to 3s and 12s. They write to `evaluate/results/`. Only `llm_follow.py`'s output (`evaluate/old_results/llm_follow.json`, git-ignored) is kept locally; it uses fixed prompts, not test clips, so it is still comparable.
 

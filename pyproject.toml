@@ -16,11 +16,13 @@ dependencies = [
     "silero-vad>=6.2.3",
     "gtts>=2.2.4",
     "whisper-normalizer>=1.0.0",
+    "matplotlib>=3.11.2",
 ]
 
 [project.scripts]
 voicebot = "voicebot.main:main"
 voicebot-eval = "voicebot.evaluation:cli"
+voicebot-compare = "voicebot.compare:cli"
 
 [dependency-groups]
 bench = [

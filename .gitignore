@@ -8,3 +8,4 @@ artefacts/*
 /test/test_data/
 models/
 .DS_Store
+/evaluate/result_comparisons/
