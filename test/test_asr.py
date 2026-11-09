@@ -38,8 +38,11 @@ def test_real_speech_kept_and_trimmed(tmp_path, monkeypatch):
     """Real speech padded with silence keeps the speech and drops most of the silence."""
     import soundfile as sf
     monkeypatch.setattr(vad, "ARTEFACTS_DIR", tmp_path)
-    speech, sr = sf.read("test/test_data/002.wav", dtype="int16")
-    assert sr == SR
+    clips = sorted(Path(config.TEST_AUDIO_PATH).rglob("*.wav")) if config.TEST_AUDIO_PATH else []
+    clips = [c for c in clips if sf.info(str(c)).samplerate == SR and 3 < sf.info(str(c)).duration < 30]
+    if not clips:
+        pytest.skip(f"needs a {SR}Hz speech clip (3-30s) under TEST_AUDIO_PATH in .env")
+    speech, sr = sf.read(str(clips[0]), dtype="int16")
     padded = np.concatenate([np.zeros(SR * 3, dtype=np.int16), speech, np.zeros(SR * 3, dtype=np.int16)])
     out = vad.trim_speech(_wav(tmp_path / "p.wav", padded))
     assert out is not None and out.name == "p_trimmed.wav"

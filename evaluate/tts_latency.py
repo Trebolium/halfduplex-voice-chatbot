@@ -5,6 +5,8 @@ import statistics
 import time
 from pathlib import Path
 
+from voicebot.evaluation import clips_near
+
 import matplotlib
 matplotlib.use("Agg")
 import matplotlib.pyplot as plt
@@ -16,7 +18,8 @@ from voicebot.memory.store import build_system_prompt, load
 
 BACKENDS = {"edge-tts (remote)": "voicebot.tts.edge_tts", "Kokoro": "voicebot.tts.kokoro",
             "Piper": "voicebot.tts.piper", "Pocket TTS": "voicebot.tts.pocket"}
-CLIPS = {"short (3s clip)": "test/test_data/84_121123_000008_000002.wav", "long (12s clip)": "test/test_data/002.wav"}
+TARGETS = {"short": 3, "long": 12}  # picks the TEST_AUDIO_PATH clips closest to these lengths (s)
+CLIPS = {f"{k} ({v:.0f}s target)": str(w) for (k, v), (w, _) in zip(TARGETS.items(), clips_near(TARGETS).values())}
 RUNS = 8
 OUT = Path("evaluate/results"); OUT.mkdir(parents=True, exist_ok=True)
 

@@ -112,6 +112,7 @@ You will be asked for your name (it picks up your saved memory). Press **SPACE**
 | `LLM_MODEL` | remote | `meta-llama/llama-3.3-70b-instruct` |
 | `LLM_PROVIDER` | remote | `deepinfra/turbo` |
 | `TTS_VOICE` | remote | empty (each backend's own default voice) |
+| `TEST_AUDIO_PATH` | eval and tests | **none**: folder of `<name>.wav` + `<name>.txt` pairs used by `voicebot-eval`, the older benchmark scripts and the VAD test (e.g. `./test/test_data/`) |
 | `LOCAL_TTS` | local | `piper` (also `pocket-tts`, `kokoro`, `kitten-tts`) |
 | `REMOTE_TTS` | remote | `gtts` (also `edge-tts`, `groq-orpheus`, `elevenlabs`) |
 | `ELEVENLABS_API_KEY` | remote, only for ElevenLabs | none |
@@ -181,14 +182,14 @@ Every turn in the user JSON stores, next to the text:
 
 All figures are seconds. The remote numbers vary with the network and provider load.
 
-**Master eval, local mode** (`uv run voicebot-eval` on the 27 clips in `test/test_data/`; run `20261106_140732_2875453`). WER is corpus-level after Whisper's `EnglishTextNormalizer`, ASR RTF is ASR time ÷ clip length, and latencies are p50 / p90 in seconds:
+**Master eval, local mode** (`uv run voicebot-eval` on the 27-clip local test set described in [Benchmarks](#6-benchmarks-evaluate); run `20261106_140732_2875453`). WER is corpus-level after Whisper's `EnglishTextNormalizer`, ASR RTF is ASR time ÷ clip length, and latencies are p50 / p90 in seconds:
 
 | Group | n | WER | ASR RTF | VAD | ASR | LLM | TTS | Total |
 |---|---|---|---|---|---|---|---|---|
 | **overall** | 27 | **6.5%** | 0.023 | 0.06 / 0.21 | 0.28 / 0.81 | 2.24 / 3.06 | 0.55 / 0.85 | **3.11 / 4.61** |
 | libritts | 12 | 5.7% | 0.021 | 0.07 / 0.21 | 0.26 / 0.84 | 2.00 / 2.86 | 0.52 / 0.61 | 2.89 / 4.50 |
 | voxpopuli | 12 | 9.9% | 0.023 | 0.06 / 0.20 | 0.30 / 0.69 | 2.35 / 2.86 | 0.63 / 0.80 | 3.19 / 4.56 |
-| original 3 clips | 3 | 0.4% | 0.027 | 0.05 / 0.22 | 0.33 / 0.94 | 2.15 / 3.84 | 0.52 / 0.85 | 3.05 / 5.85 |
+| 3 earlier clips (since removed) | 3 | 0.4% | 0.027 | 0.05 / 0.22 | 0.33 / 0.94 | 2.15 / 3.84 | 0.52 / 0.85 | 3.05 / 5.85 |
 | short <5s | 7 | 6.5% | 0.063 | 0.02 / 0.02 | 0.16 / 0.20 | 1.95 / 2.28 | 0.46 / 0.68 | 2.61 / 3.15 |
 | medium 5–15s | 7 | 5.5% | 0.024 | 0.04 / 0.06 | 0.22 / 0.30 | 2.15 / 3.03 | 0.53 / 0.80 | 3.05 / 4.07 |
 | long 15–30s | 6 | 8.3% | 0.017 | 0.09 / 0.10 | 0.35 / 0.41 | 2.10 / 2.53 | 0.54 / 0.69 | 3.04 / 3.68 |
@@ -201,7 +202,7 @@ All figures are seconds. The remote numbers vary with the network and provider l
 - n = 6–12 per group, so treat differences of a few WER points between groups as noise.
 - No remote-mode run yet (the Groq key was invalid and edge-tts was returning 403).
 
-**Earlier per-stage benchmarks** (the older scripts in `evaluate/`, archived in `evaluate/old_results/`):
+**Earlier per-stage benchmarks** (the older scripts in `evaluate/`, run on two clips that are no longer in the test set, so they are not directly comparable with a re-run; the raw outputs were deleted and survive only in git history, commit `2875453`, under `evaluate/results/`):
 
 | Stage | Local | Remote |
 |---|---|---|
@@ -236,7 +237,7 @@ All figures are seconds. The remote numbers vary with the network and provider l
 
 Qwen3 1.7B scored the same as Llama 3B at about 40% of the latency and half the memory, so it is the next model worth trying live. Llama 3B at 2.2GB peak leaves little headroom on an 8GB machine (see [Memory pressure](#memory-pressure-on-8gb)).
 
-Other local TTS models: Pocket TTS ~1.9s, Kokoro ~3.5s, Kitten TTS mini ~4.0s for 200 characters. Piper was 3–10x faster than all three. Charts and raw data are in `evaluate/old_results/`.
+Other local TTS models: Pocket TTS ~1.9s, Kokoro ~3.5s, Kitten TTS mini ~4.0s for 200 characters. Piper was 3–10x faster than all three. (Raw data: git history only, as above.)
 
 Things to know:
 - **Speed vs quality:** the local LLM is much faster but noticeably weaker than the 70B remote model. In spot checks it sometimes invented names or details and didn't always ask a follow-up question.
@@ -257,8 +258,8 @@ src/voicebot/
   llm/             __init__.py dispatcher; mlx_lm.py (local), openrouter.py (remote)
   tts/             __init__.py dispatcher; piper.py, pocket.py, kokoro.py, kitten.py (local); google_tts.py, edge_tts.py, groq_orpheus.py, elevenlabs.py (remote)
   memory/          store.py: per-user JSON memory
-test/              pytest suite; test_data/ has eval clips (.wav + matching .txt): 3 originals, libritts/, voxpopuli/
-evaluate/          run_eval.py (master latency + WER eval), sample_dataset.py (builds the test set), older benchmarks; results/ per run, old_results/ archived
+test/              pytest suite; test_data/ is the usual TEST_AUDIO_PATH (git-ignored, built locally)
+evaluate/          run_eval.py (master latency + WER eval), sample_dataset.py (builds the test set), older benchmarks; results/ and old_results/ are git-ignored
 models/            downloaded Piper and Kokoro model files (git-ignored)
 data/users/        one folder per user: memory json, audio/ and text/ (git-ignored)
 artefacts/         audio from benchmarks, tests and no-speech recordings (git-ignored)
@@ -278,10 +279,10 @@ An optional `load()` is called once at startup (download and load the model ther
 
 ```bash
 uv run python -m pytest -q   # unit tests; live tests use your keys if present and skip if not
-uv run voicebot-eval         # latency per stage + ASR WER over ./test/test_data/ (add --data_dir DIR, --mode remote, ...)
+uv run voicebot-eval         # latency per stage + ASR WER over TEST_AUDIO_PATH from .env (add --mode remote, ...)
 ```
 
-The eval writes `config.json` (settings, datetime, commit SHA) and `metrics.json` to `evaluate/results/<datetime>_<sha>/`. It needs no extra dependency groups beyond those of the mode you run. Details are in [Benchmarks](#6-benchmarks-evaluate).
+The eval writes `config.json` (settings, datetime, commit SHA) and `metrics.json` to `evaluate/results/<datetime>_<sha>/` (git-ignored). Set `TEST_AUDIO_PATH` in `.env` first: there is no default, and without it the eval stops with "Test data not found". It needs no extra dependency groups beyond those of the mode you run. Details are in [Benchmarks](#6-benchmarks-evaluate).
 
 > Use `python -m pytest` rather than bare `uv run pytest`: it guarantees the project's own environment and `src` path are used.
 
@@ -290,10 +291,10 @@ The eval writes `config.json` (settings, datetime, commit SHA) and `metrics.json
 Run any contiguous part of `VAD -> ASR -> LLM -> TTS` once, from a file instead of the microphone:
 
 ```bash
-uv run voicebot --test_start ASR --test_end LLM --test_audio test/test_data/57s_anecdote.wav   # ASR then LLM, prints text
-uv run voicebot --test_start VAD --test_audio test/test_data/57s_anecdote.wav                  # everything, VAD to TTS
-uv run voicebot --test_end ASR --test_audio test/test_data/002.wav                              # VAD then ASR
-uv run voicebot --test_start LLM --test_end TTS --test_text test/test_data/57s_anecdote.txt    # text in, audio file out
+uv run voicebot --test_start ASR --test_end LLM --test_audio path/to/clip.wav   # ASR then LLM, prints text
+uv run voicebot --test_start VAD --test_audio path/to/clip.wav                  # everything, VAD to TTS
+uv run voicebot --test_end ASR --test_audio path/to/clip.wav                    # VAD then ASR
+uv run voicebot --test_start LLM --test_end TTS --test_text path/to/clip.txt    # text in, audio file out
 ```
 
 Test runs are single-shot: no mic, no loop, no name prompt, no memory saved, **no audio playback**. Each stage prints its output and its time. Bad flag combinations stop with a message saying what to change. Full rules are in the [detailed guide](#detailed-guide-how-each-part-works-and-how-it-is-tested) below.
@@ -315,7 +316,7 @@ Docker: `docker build -t voicebot . && docker run voicebot` runs the tests only 
 - **Remote 429 "rate-limited":** the pinned provider is overloaded; retry, or clear `LLM_PROVIDER` so OpenRouter can use another host.
 - **Groq 401 "Invalid API Key":** the key is set but wrong or revoked. Create a new one at [console.groq.com](https://console.groq.com) and replace `GROQ_API_KEY` in `.env`. Note that the live tests only skip when a key is *missing*; a set but invalid key makes them fail.
 - **edge-tts 403 (`WSServerHandshakeError`):** Microsoft's free endpoint is rejecting the connection, usually because the installed `edge-tts` is out of date with the service. Run `uv lock --upgrade-package edge-tts && uv sync`, or use another remote TTS meanwhile (`--tts_model gtts`).
-- **Eval stops with "Unpaired files":** every audio file in `--data_dir` needs a `.txt` of the same name, and the reverse.
+- **Eval stops with "Unpaired files":** every audio file under `TEST_AUDIO_PATH` needs a `.txt` of the same name, and the reverse.
 - **Odd or missing text in a transcript:** check the `[vad]` lines in the terminal; if VAD found no speech, ASR is skipped.
 
 ## To do
@@ -393,18 +394,19 @@ Rule used in this repo: when a test is added, it is re-run after every later cha
 **Master evaluation (latency + ASR WER)** — one line, using recorded clips instead of the mic:
 
 ```bash
-uv run voicebot-eval                                  # local mode, dataset ./test/test_data/
-uv run voicebot-eval --mode remote --data_dir path/   # any voicebot flag works (--tts_model, --llm_model, ...)
+uv run voicebot-eval                                  # local mode, dataset = TEST_AUDIO_PATH in .env (no default)
+uv run voicebot-eval --mode remote                   # any voicebot flag works (--tts_model, --llm_model, ...)
 ```
 
-- **Dataset:** every audio file (`.wav`/`.flac`/`.ogg`) under `--data_dir`, including subfolders, must have a same-named `.txt` next to it holding its reference transcript. Unpaired files stop the run with an error. Each subfolder counts as a dataset in the summaries; files at the top level are grouped as `root`.
+- **Dataset location:** only `TEST_AUDIO_PATH` in `.env` (no flag, no default). If it isn't set, or the folder doesn't exist, the run stops with "Test data not found" and says what to set. To evaluate a different set, point `TEST_AUDIO_PATH` at it.
+- **Dataset:** every audio file (`.wav`/`.flac`/`.ogg`) under `TEST_AUDIO_PATH`, including subfolders, must have a same-named `.txt` next to it holding its reference transcript. Unpaired files stop the run with an error. Each subfolder counts as a dataset in the summaries; files at the top level are grouped as `root`.
 - **Per datapoint:** the clip runs through VAD → ASR → LLM → TTS (ASR gets the VAD-trimmed audio, as in the live app). It records the clip's duration and bucket, the `vad`, `asr`, `llm`, `tts` and `total` latency, the real-time factor (RTF) for VAD, ASR (stage time ÷ clip length) and TTS (synthesis time ÷ length of the generated audio), and the WER of the transcript against the `.txt`. Both texts go through Whisper's standard `EnglishTextNormalizer` first (from the `whisper-normalizer` package). It lowercases and removes punctuation, expands contractions, turns spelled-out numbers into digits and maps British spellings to American, so formatting differences aren't counted as errors. One untimed warm-up pass is made first.
 - **Summaries:** overall, per dataset, and per duration bucket (short <5s, medium 5–15s, long 15–30s, longform >30s; 30s is Whisper's window). Each group reports corpus WER (total errors ÷ total reference words, the headline figure, so short clips don't dominate), mean per-clip WER, and p50/p90/mean for every stage's latency and RTF. Percentiles are used instead of min/max because the occasional slow turn is what users notice.
 - **Output:** `evaluate/results/<datetime>_<sha>/`. `config.json` is written at the start of the run and holds the datetime, the latest commit SHA (plus whether the tree was dirty), the mode, backends, models, voice, VAD and recorder settings, the system prompt, the bucket definitions and the datapoint paths. `metrics.json` is written at the end and holds the summaries plus each datapoint's transcript, reply and timings. Compare runs by diffing their `config.json` files.
-- **The test set** (`test/test_data/`): the 3 original clips at the top level, plus `libritts/` and `voxpopuli/` with 12 clips each. These are 3 random clips per bucket from LibriTTS `dev-clean` (normalized transcripts) and the voxpopuli `en_samples` set, with different speakers where possible. The longform clips are joined from several source clips and named `<stem>+<stem>+...`: consecutive utterances from one chapter for LibriTTS, and unrelated segments for voxpopuli (so different speakers). [evaluate/sample_dataset.py](evaluate/sample_dataset.py) made the selection (seed 0, sources expected in `~/Documents/datasets/`). A re-run picks different clips because it skips ones already copied.
+- **The test set** (usually `TEST_AUDIO_PATH=./test/test_data/`, git-ignored, so each machine builds its own): `libritts/` and `voxpopuli/` with 12 clips each. These are 3 random clips per bucket from LibriTTS `dev-clean` (normalized transcripts) and the voxpopuli `en_samples` set, with different speakers where possible. The longform clips are joined from several source clips and named `<stem>+<stem>+...`: consecutive utterances from one chapter for LibriTTS, and unrelated segments for voxpopuli (so different speakers). [evaluate/sample_dataset.py](evaluate/sample_dataset.py) made the selection and writes to `TEST_AUDIO_PATH` with `--copy` (seed 0, sources expected in `~/Documents/datasets/`). A re-run picks different clips because it skips ones already copied.
 - The code is in `src/voicebot/evaluation.py` (`evaluate/run_eval.py` is the same thing as a script).
 
-**Older per-stage benchmarks:** these scripts use the same stage functions and start/stop points as the app (see [Latency](#latency-what-is-measured)). `llm_follow.py` also scores replies against the style rules and records peak GPU memory. The scripts write to `evaluate/results/`. The results quoted in this README are archived in `evaluate/old_results/`, and `llm_follow.py`'s raw replies are in `evaluate/old_results/llm_follow.json`.
+**Older per-stage benchmarks:** these scripts use the same stage functions and start/stop points as the app (see [Latency](#latency-what-is-measured)). `llm_follow.py` also scores replies against the style rules and records peak GPU memory. Scripts that need audio or transcripts take the `TEST_AUDIO_PATH` clips closest to 3s and 12s. They write to `evaluate/results/`. Only `llm_follow.py`'s output (`evaluate/old_results/llm_follow.json`, git-ignored) is kept locally; it uses fixed prompts, not test clips, so it is still comparable.
 
 ### Memory pressure on 8GB
 

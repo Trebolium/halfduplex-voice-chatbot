@@ -1,6 +1,6 @@
 """Master eval: runs every datapoint (audio + matching .txt) through VAD -> ASR -> LLM -> TTS, recording per-stage latency and ASR WER.
 
-Run: uv run voicebot-eval [--mode local|remote] [--data_dir ./test/test_data/] [any voicebot model flag]
+Run: uv run voicebot-eval [--mode local|remote] [any voicebot model flag]; clips come from TEST_AUDIO_PATH in .env
 Writes evaluate/results/<datetime>_<sha>/config.json (at start) and metrics.json (at end).
 Summaries: corpus WER, real-time factor (stage time / audio length) and p50/p90 latency, overall + per dataset + per duration bucket.
 """
@@ -20,7 +20,6 @@ from voicebot import asr, config, llm, main, setup_info, tts
 from voicebot.asr import vad
 from voicebot.memory import store
 
-DEFAULT_DATA_DIR = "./test/test_data/"
 RESULTS_DIR = config.ROOT / "evaluate" / "results"
 AUDIO_EXTS = {".wav", ".flac", ".ogg"}  # anything soundfile can read
 STAGES = ["vad", "asr", "llm", "tts"]
@@ -35,7 +34,7 @@ def bucket(secs: float) -> str:
 def find_datapoints(data_dir: Path) -> list[tuple[Path, Path]]:
     """Pair every audio file (searched recursively) with its same-named .txt in the same folder; error if either is missing."""
     if not data_dir.is_dir():
-        raise FileNotFoundError(f"Dataset folder '{data_dir}' not found. Pass --data_dir <folder> with audio + .txt pairs.")
+        raise FileNotFoundError(f"Test data not found: folder '{data_dir}' does not exist. Fix TEST_AUDIO_PATH in .env so it points at a folder of <name>.wav + <name>.txt pairs.")
     key = lambda p: str(p.relative_to(data_dir).with_suffix(""))
     audio = {key(p): p for p in sorted(data_dir.rglob("*")) if p.suffix.lower() in AUDIO_EXTS}
     texts = {key(p): p for p in sorted(data_dir.rglob("*.txt"))}
@@ -49,6 +48,18 @@ def find_datapoints(data_dir: Path) -> list[tuple[Path, Path]]:
 
 
 _normalizer = EnglishTextNormalizer()  # OpenAI Whisper's standard English normalizer (Open ASR Leaderboard convention)
+
+
+def clips_near(targets: dict[str, float]) -> dict[str, tuple[Path, Path]]:
+    """For older benchmark scripts: {label: (wav, txt)} of the TEST_AUDIO_PATH clip closest to each target length in seconds."""
+    if not config.TEST_AUDIO_PATH:
+        raise FileNotFoundError("Test data not found: TEST_AUDIO_PATH is not set in .env. Add TEST_AUDIO_PATH=<folder of .wav + .txt pairs>.")
+    points = find_datapoints(Path(config.TEST_AUDIO_PATH).resolve())
+    dur = {a: sf.info(str(a)).duration for a, _ in points}
+    out = {label: min(points, key=lambda p: abs(dur[p[0]] - secs)) for label, secs in targets.items()}
+    for label, (a, _) in out.items():
+        print(f"[eval] {label}: {a.name} ({dur[a]:.1f}s)")
+    return out
 
 
 def normalize(text: str) -> list[str]:
@@ -80,14 +91,11 @@ def git_info() -> dict:
 
 
 def parse_args(argv: list[str] | None = None) -> tuple[argparse.Namespace, Path]:
-    """--data_dir is eval-only; every other flag is the normal voicebot CLI (mode + model flags)."""
-    p = argparse.ArgumentParser(description="Evaluate latency + WER on a folder of recorded clips.", add_help=False)
-    p.add_argument("--data_dir", default=DEFAULT_DATA_DIR, help=f"folder of <name>.wav + <name>.txt pairs (default {DEFAULT_DATA_DIR})")
-    own, rest = p.parse_known_args(argv)
-    if "-h" in rest or "--help" in rest:
-        p.print_help()
-        print("\nAll voicebot flags below also apply:\n")
-    return main.parse_args(rest), Path(own.data_dir).resolve()  # absolute, so clips map to their dataset subfolder
+    """Same flags as voicebot (mode + model flags); the dataset folder comes only from TEST_AUDIO_PATH in .env."""
+    if not config.TEST_AUDIO_PATH:
+        raise FileNotFoundError("Test data not found: TEST_AUDIO_PATH is not set in .env. Add "
+                                "TEST_AUDIO_PATH=<folder of <name>.wav + <name>.txt pairs> to .env (evaluate/sample_dataset.py can build one).")
+    return main.parse_args(argv), Path(config.TEST_AUDIO_PATH).resolve()  # absolute, so clips map to their dataset subfolder
 
 
 def run_datapoint(audio: Path, ref_path: Path, system_prompt: str, data_dir: Path) -> dict:

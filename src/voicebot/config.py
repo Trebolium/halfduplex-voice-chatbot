@@ -17,7 +17,8 @@ ELEVENLABS_API_KEY = os.getenv("ELEVENLABS_API_KEY", "")
 LLM_MODEL = os.getenv("LLM_MODEL", "google/gemini-2.5-flash-lite")
 LLM_PROVIDER = os.getenv("LLM_PROVIDER", "")  # optional OpenRouter provider tag to pin, e.g. deepinfra/turbo
 ASR_MODEL = os.getenv("ASR_MODEL", "whisper-large-v3-turbo")
-TTS_VOICE = os.getenv("TTS_VOICE", "")  # optional voice override for the remote TTS backend (each backend has its own default)
+TTS_VOICE = os.getenv("TTS_VOICE", "")
+TEST_AUDIO_PATH = os.getenv("TEST_AUDIO_PATH", "")  # folder of <name>.wav + <name>.txt pairs used by voicebot-eval and some tests; no default  # optional voice override for the remote TTS backend (each backend has its own default)
 
 SAMPLE_RATE = 16000          # Hz, mono int16 everywhere
 MAX_RECORD_SECS = 120        # hard cap per recording

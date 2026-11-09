@@ -6,7 +6,7 @@ import numpy as np
 import pytest
 import soundfile as sf
 
-from voicebot import evaluation as ev
+from voicebot import config, evaluation as ev
 
 
 def wav(path, secs):
@@ -23,9 +23,11 @@ def test_wer():
     assert ev.word_errors("organisations of colour", "organizations of color") == (0, 3)
 
 
-def test_default_dataset_pairs():
-    pts = ev.find_datapoints(Path(ev.DEFAULT_DATA_DIR))  # searches subfolders (libritts/, voxpopuli/) too
-    assert len(pts) >= 27 and all(a.stem == t.stem and a.parent == t.parent and a.is_absolute() for a, t in pts)
+def test_env_dataset_pairs():
+    if not config.TEST_AUDIO_PATH or not Path(config.TEST_AUDIO_PATH).is_dir():
+        pytest.skip("TEST_AUDIO_PATH in .env is not set or missing")
+    pts = ev.find_datapoints(Path(config.TEST_AUDIO_PATH))  # searches subfolders too
+    assert pts and all(a.stem == t.stem and a.parent == t.parent and a.is_absolute() for a, t in pts)
 
 
 def test_bucket():
@@ -36,14 +38,19 @@ def test_unpaired_and_missing(tmp_path):
     (tmp_path / "a.wav").write_bytes(b""); (tmp_path / "b.txt").write_text("x")
     with pytest.raises(ValueError, match="Unpaired"):
         ev.find_datapoints(tmp_path)
-    with pytest.raises(FileNotFoundError, match="--data_dir"):
+    with pytest.raises(FileNotFoundError, match="Test data not found.*TEST_AUDIO_PATH"):
         ev.find_datapoints(tmp_path / "nope")
 
 
-def test_parse_args():
-    args, d = ev.parse_args(["--data_dir", "x/", "--mode", "remote"])
-    assert d == Path("x/").resolve() and args.mode == "remote"
-    assert ev.parse_args([])[1] == Path(ev.DEFAULT_DATA_DIR).resolve()
+def test_parse_args(monkeypatch):
+    monkeypatch.setattr(config, "TEST_AUDIO_PATH", "from_env/")
+    args, d = ev.parse_args(["--mode", "remote"])
+    assert d == Path("from_env/").resolve() and args.mode == "remote"
+    with pytest.raises(SystemExit):
+        ev.parse_args(["--data_dir", "x/"])  # removed: the dataset comes only from .env
+    monkeypatch.setattr(config, "TEST_AUDIO_PATH", "")
+    with pytest.raises(FileNotFoundError, match="Test data not found: TEST_AUDIO_PATH is not set"):
+        ev.parse_args([])
 
 
 def test_mocked_run(tmp_path, monkeypatch):
@@ -62,7 +69,8 @@ def test_mocked_run(tmp_path, monkeypatch):
     monkeypatch.setattr(ev.llm, "reply", lambda s, h, t: "hi!")
     monkeypatch.setattr(ev.tts, "synthesize", lambda t: tmp_path / "out.wav")
     monkeypatch.chdir(tmp_path)
-    out = ev.run(["--data_dir", "data"])  # relative, like the default ./test/test_data/
+    monkeypatch.setattr(config, "TEST_AUDIO_PATH", "data")  # relative path, like ./test/test_data/
+    out = ev.run([])
     cfg = json.loads((out / "config.json").read_text())
     assert cfg["commit_sha"] and cfg["datetime"] and len(cfg["datapoints"]) == 2
     m = json.loads((out / "metrics.json").read_text())
@@ -72,3 +80,14 @@ def test_mocked_run(tmp_path, monkeypatch):
     assert set(s["overall"]["latency_s"]) == {"vad", "asr", "llm", "tts", "total"} and "p90" in s["overall"]["latency_s"]["asr"]
     row = m["datapoints"][1]
     assert row["audio_s"] == 40 and row["tts_audio_s"] == 1 and row["rtf"]["asr"] == pytest.approx(row["latency_s"]["asr"] / 40, abs=1e-3)
+
+
+def test_clips_near(tmp_path, monkeypatch):
+    for n, secs in (("a", 2), ("b", 11), ("c", 40)):
+        wav(tmp_path / f"{n}.wav", secs); (tmp_path / f"{n}.txt").write_text("x")
+    monkeypatch.setattr(config, "TEST_AUDIO_PATH", str(tmp_path))
+    got = ev.clips_near({"short": 3, "long": 12})
+    assert got["short"][0].stem == "a" and got["long"][0].stem == "b" and got["long"][1].suffix == ".txt"
+    monkeypatch.setattr(config, "TEST_AUDIO_PATH", "")
+    with pytest.raises(FileNotFoundError, match="Test data not found"):
+        ev.clips_near({"short": 3})

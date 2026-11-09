@@ -2,8 +2,11 @@
 import glob, os, random, sys
 from collections import defaultdict
 import numpy as np, soundfile as sf
+from voicebot import config  # loads .env
 
-OUT = "test/test_data"  # run from the repo root
+OUT = config.TEST_AUDIO_PATH.rstrip("/")  # clips are written here (TEST_AUDIO_PATH in .env)
+if not OUT:
+    sys.exit("TEST_AUDIO_PATH is not set in .env - add e.g. TEST_AUDIO_PATH=./test/test_data/ so the sampled test clips have somewhere to go.")
 BUCKETS = {"short": (1, 5), "medium": (5, 15), "long": (15, 30)}  # single clips
 JOINED = (45, 120)  # long-form: beyond Whisper's 30s window, built by joining clips
 N, MAXNAME = 3, 240

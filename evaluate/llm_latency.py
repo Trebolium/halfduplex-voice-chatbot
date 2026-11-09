@@ -4,6 +4,8 @@ import statistics
 import time
 from pathlib import Path
 
+from voicebot.evaluation import clips_near
+
 import matplotlib
 matplotlib.use("Agg")
 import matplotlib.pyplot as plt
@@ -15,7 +17,8 @@ from voicebot.memory.store import build_system_prompt, load
 
 MODELS = {"Gemini 3.8 Flash": ("google/gemini-3.8-flash", ""),
           "Llama 3.3 70B (DeepInfra Turbo)": ("meta-llama/llama-3.3-70b-instruct", "deepinfra/turbo")}
-CLIPS = {"short (3s clip)": "test/test_data/84_121123_000008_000002.wav", "long (12s clip)": "test/test_data/002.wav"}
+TARGETS = {"short": 3, "long": 12}  # picks the TEST_AUDIO_PATH clips closest to these lengths (s)
+CLIPS = {f"{k} ({v:.0f}s target)": str(w) for (k, v), (w, _) in zip(TARGETS.items(), clips_near(TARGETS).values())}
 RUNS = 10
 OUT = Path("evaluate/results"); OUT.mkdir(parents=True, exist_ok=True)
 

@@ -5,8 +5,6 @@ artefacts/*
 !artefacts/.gitkeep
 /data/
 /evaluate/results/
-/evaluate/old_results/
 /test/test_data/
-!data/users/.gitkeep
 models/
 .DS_Store

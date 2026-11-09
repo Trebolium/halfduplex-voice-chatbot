@@ -1,9 +1,15 @@
 """--test_start/--test_end flag validation and a mocked slice run."""
+import tempfile
+from pathlib import Path
+
 import pytest
 
 from voicebot import main, pipeline_test as pt
 
-WAV, TXT = "test/test_data/002.wav", "test/test_data/002.txt"
+_TMP = Path(tempfile.mkdtemp())  # flag validation only checks the files exist, so no real test data is needed
+WAV, TXT = str(_TMP / "clip.wav"), str(_TMP / "clip.txt")
+Path(WAV).write_bytes(b"")
+Path(TXT).write_text("hello there")
 
 
 def args(*a):

@@ -5,6 +5,8 @@ import statistics
 import time
 from pathlib import Path
 
+from voicebot.evaluation import clips_near
+
 import matplotlib
 matplotlib.use("Agg")
 import matplotlib.pyplot as plt
@@ -19,7 +21,8 @@ LOCAL = {"Llama 3.2 1B": "mlx-community/Llama-3.2-1B-Instruct-4bit", "Gemma 3 1B
          "LFM2.5 1.2B": "mlx-community/LFM2.5-1.2B-Instruct-4bit", "Llama 3.2 3B": "mlx-community/Llama-3.2-3B-Instruct-4bit",
          "Qwen3 4B (2507)": "mlx-community/Qwen3-4B-Instruct-2507-4bit"}
 REMOTE = "Llama 3.3 70B (DeepInfra Turbo, remote)"
-CLIPS = {"short (3s clip)": "test/test_data/84_121123_000008_000002.wav", "long (12s clip)": "test/test_data/002.wav"}
+TARGETS = {"short": 3, "long": 12}  # picks the TEST_AUDIO_PATH clips closest to these lengths (s)
+CLIPS = {f"{k} ({v:.0f}s target)": str(w) for (k, v), (w, _) in zip(TARGETS.items(), clips_near(TARGETS).values())}
 RUNS = 5
 OUT = Path("evaluate/results"); OUT.mkdir(parents=True, exist_ok=True)
 

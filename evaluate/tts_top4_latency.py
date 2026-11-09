@@ -1,4 +1,4 @@
-"""Benchmark top-4 local TTS backends on test/test_data/*.txt (one subprocess per model). Run: uv run python evaluate/tts_top4_latency.py"""
+"""Benchmark top-4 local TTS backends on two TEST_AUDIO_PATH transcripts (one subprocess per model). Run: uv run python evaluate/tts_top4_latency.py"""
 import importlib
 import json
 import resource
@@ -8,11 +8,12 @@ import sys
 import time
 from pathlib import Path
 
+from voicebot.evaluation import clips_near
 import soundfile as sf
 
 BACKENDS = {"Kokoro": "voicebot.tts.kokoro", "Pocket TTS": "voicebot.tts.pocket",
             "Piper": "voicebot.tts.piper", "Kitten TTS mini": "voicebot.tts.kitten"}
-TEXTS = {"short": "test/test_data/84_121123_000008_000002.txt", "long": "test/test_data/002.txt"}
+TEXTS = {k: str(t) for k, (_, t) in clips_near({"short": 3, "long": 12}).items()}  # transcripts of the clips closest to 3s / 12s
 RUNS = 8
 OUT = Path("evaluate/results"); OUT.mkdir(parents=True, exist_ok=True)
 

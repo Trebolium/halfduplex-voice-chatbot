@@ -1,4 +1,4 @@
-"""Benchmark remote/free TTS backends on test/test_data/*.txt; picks the lowest-latency one that works. Run: uv run python evaluate/tts_remote_latency.py"""
+"""Benchmark remote/free TTS backends on two TEST_AUDIO_PATH transcripts; picks the lowest-latency one that works. Run: uv run python evaluate/tts_remote_latency.py"""
 import importlib
 import json
 import statistics
@@ -8,11 +8,12 @@ from pathlib import Path
 import matplotlib
 matplotlib.use("Agg")
 import matplotlib.pyplot as plt
+from voicebot.evaluation import clips_near
 import soundfile as sf
 
 BACKENDS = {"edge-tts": "voicebot.tts.edge_tts", "gtts": "voicebot.tts.google_tts",
             "groq-orpheus": "voicebot.tts.groq_orpheus", "elevenlabs": "voicebot.tts.elevenlabs"}
-TEXTS = {"short": Path("test/test_data/84_121123_000008_000002.txt"), "long": Path("test/test_data/002.txt")}
+TEXTS = {k: t for k, (_, t) in clips_near({"short": 3, "long": 12}).items()}  # transcripts of the clips closest to 3s / 12s
 RUNS = 10
 PACE_S = {"groq-orpheus": 9.0}  # free tier allows 10 requests/min: wait between calls (outside the timer) so rate limits do not skew or break the run
 OUT = Path("evaluate/results"); OUT.mkdir(parents=True, exist_ok=True)
