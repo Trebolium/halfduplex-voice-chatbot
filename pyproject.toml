@@ -15,10 +15,12 @@ dependencies = [
     "python-dotenv",
     "silero-vad>=6.2.3",
     "gtts>=2.2.4",
+    "whisper-normalizer>=1.0.0",
 ]
 
 [project.scripts]
 voicebot = "voicebot.main:main"
+voicebot-eval = "voicebot.evaluation:cli"
 
 [dependency-groups]
 bench = [

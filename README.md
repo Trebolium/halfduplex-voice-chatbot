@@ -169,7 +169,9 @@ Every turn in the user JSON stores, next to the text:
 
 **What you actually wait for.** The delay from the moment you stop talking to the moment the bot starts speaking is about `1s silence + vad + asr + llm + tts` (plus a little for starting playback). The saved per-turn numbers cover everything except the 1s silence and the playback start.
 
-**How the benchmarks in `evaluate/` measure.** They call the same stage functions as the bot, with the same start and stop points as the table above, and use a stopwatch around each call:
+**How the master eval (`uv run voicebot-eval`) measures.** It feeds each recorded clip in the dataset through the full pipeline once, with exactly the timers above. The only difference from a live turn is that the audio comes from a file, so the recording and the 1s silence never happen. ASR gets the VAD-trimmed audio, as in the app, and the LLM gets a fresh first-meeting system prompt with no history. `total` is `vad + asr + llm + tts`. One untimed warm-up pass on the first clip comes first. See [Benchmarks](#6-benchmarks-evaluate) for the dataset format and output files.
+
+**How the older benchmark scripts in `evaluate/` measure.** They call the same stage functions as the bot, with the same start and stop points as the table above, and use a stopwatch around each call:
 - **ASR:** a recorded `.wav` file in, transcript out. The clips are sent as they are, without the VAD trim step, and the clip length is given with each result (for example "12s clip").
 - **LLM:** starts when the transcript has just been produced and stops when the full reply is returned. The transcript is generated once per clip, so every model gets the same input. One untimed warm-up call is made first to set up the connection.
 - **TTS:** starts when the LLM reply has just been returned and stops when the audio file is written. Texts are 57 and 201 characters long. One untimed warm-up call is made first (it covers connection setup and, for local models, first-use costs), and the results are the mean of 10 runs. Model load time is reported separately where it is measured, not counted in these figures.
@@ -177,7 +179,29 @@ Every turn in the user JSON stores, next to the text:
 
 ## Performance (measured on an M2 MacBook Air, 8GB)
 
-All figures are seconds, measured with the scripts in `evaluate/`. The remote numbers vary with the network and provider load.
+All figures are seconds. The remote numbers vary with the network and provider load.
+
+**Master eval, local mode** (`uv run voicebot-eval` on the 27 clips in `test/test_data/`; run `20261106_140732_2875453`). WER is corpus-level after Whisper's `EnglishTextNormalizer`, ASR RTF is ASR time ÷ clip length, and latencies are p50 / p90 in seconds:
+
+| Group | n | WER | ASR RTF | VAD | ASR | LLM | TTS | Total |
+|---|---|---|---|---|---|---|---|---|
+| **overall** | 27 | **6.5%** | 0.023 | 0.06 / 0.21 | 0.28 / 0.81 | 2.24 / 3.06 | 0.55 / 0.85 | **3.11 / 4.61** |
+| libritts | 12 | 5.7% | 0.021 | 0.07 / 0.21 | 0.26 / 0.84 | 2.00 / 2.86 | 0.52 / 0.61 | 2.89 / 4.50 |
+| voxpopuli | 12 | 9.9% | 0.023 | 0.06 / 0.20 | 0.30 / 0.69 | 2.35 / 2.86 | 0.63 / 0.80 | 3.19 / 4.56 |
+| original 3 clips | 3 | 0.4% | 0.027 | 0.05 / 0.22 | 0.33 / 0.94 | 2.15 / 3.84 | 0.52 / 0.85 | 3.05 / 5.85 |
+| short <5s | 7 | 6.5% | 0.063 | 0.02 / 0.02 | 0.16 / 0.20 | 1.95 / 2.28 | 0.46 / 0.68 | 2.61 / 3.15 |
+| medium 5–15s | 7 | 5.5% | 0.024 | 0.04 / 0.06 | 0.22 / 0.30 | 2.15 / 3.03 | 0.53 / 0.80 | 3.05 / 4.07 |
+| long 15–30s | 6 | 8.3% | 0.017 | 0.09 / 0.10 | 0.35 / 0.41 | 2.10 / 2.53 | 0.54 / 0.69 | 3.04 / 3.68 |
+| longform >30s | 7 | 6.3% | 0.015 | 0.21 / 0.26 | 0.79 / 0.97 | 2.86 / 3.90 | 0.68 / 0.99 | 4.60 / 5.97 |
+
+- **The normalizer matters, mostly for voxpopuli.** With the earlier basic normalisation (lowercase and strip punctuation), the same model scored 13.9% on voxpopuli and 8.4% overall. voxpopuli's references write numbers as words ("ten years") and expand contractions ("i am"), which the basic version counted as errors. What remains is mostly genuine misrecognition (rare words, names, a list of obscure instruments in one LibriTTS clip).
+- **ASR cost per second of audio falls as clips get longer** (RTF 0.063 for short clips, 0.015 for longform), because the fixed per-call overhead gets spread out.
+- **The LLM is most of the wait:** about 70% of the total at p50.
+- **Latency varies between runs on the same machine.** The previous run (same code apart from the normalizer, same day) gave a total p50 of 4.25s against 3.11s here, probably from memory pressure and background load (see [Memory pressure](#memory-pressure-on-8gb)). Compare configurations within the same session, or over several runs.
+- n = 6–12 per group, so treat differences of a few WER points between groups as noise.
+- No remote-mode run yet (the Groq key was invalid and edge-tts was returning 403).
+
+**Earlier per-stage benchmarks** (the older scripts in `evaluate/`, archived in `evaluate/old_results/`):
 
 | Stage | Local | Remote |
 |---|---|---|
@@ -212,7 +236,7 @@ All figures are seconds, measured with the scripts in `evaluate/`. The remote nu
 
 Qwen3 1.7B scored the same as Llama 3B at about 40% of the latency and half the memory, so it is the next model worth trying live. Llama 3B at 2.2GB peak leaves little headroom on an 8GB machine (see [Memory pressure](#memory-pressure-on-8gb)).
 
-Other local TTS models: Pocket TTS ~1.9s, Kokoro ~3.5s, Kitten TTS mini ~4.0s for 200 characters. Piper was 3–10x faster than all three. Charts and raw data are in `evaluate/results/`.
+Other local TTS models: Pocket TTS ~1.9s, Kokoro ~3.5s, Kitten TTS mini ~4.0s for 200 characters. Piper was 3–10x faster than all three. Charts and raw data are in `evaluate/old_results/`.
 
 Things to know:
 - **Speed vs quality:** the local LLM is much faster but noticeably weaker than the 70B remote model. In spot checks it sometimes invented names or details and didn't always ask a follow-up question.
@@ -227,13 +251,14 @@ src/voicebot/
   config.py        .env loading and constants
   setup_info.py    builds the per-turn setup metadata
   pipeline_test.py once-off test runs of any slice of VAD/ASR/LLM/TTS (--test_start/--test_end)
+  evaluation.py    master eval: latency + WER over a folder of clips (`uv run voicebot-eval`)
   input/           recorder.py: mic capture, SPACE to start, Silero endpointing
   asr/             __init__.py dispatcher; mlx_whisper.py (local), groq_asr.py (remote), vad.py (Silero)
   llm/             __init__.py dispatcher; mlx_lm.py (local), openrouter.py (remote)
   tts/             __init__.py dispatcher; piper.py, pocket.py, kokoro.py, kitten.py (local); google_tts.py, edge_tts.py, groq_orpheus.py, elevenlabs.py (remote)
   memory/          store.py: per-user JSON memory
-test/              pytest suite; test_data/ has sample .wav files with matching .txt transcripts
-evaluate/          latency and LLM instruction-following scripts and results (charts and JSON)
+test/              pytest suite; test_data/ has eval clips (.wav + matching .txt): 3 originals, libritts/, voxpopuli/
+evaluate/          run_eval.py (master latency + WER eval), sample_dataset.py (builds the test set), older benchmarks; results/ per run, old_results/ archived
 models/            downloaded Piper and Kokoro model files (git-ignored)
 data/users/        one folder per user: memory json, audio/ and text/ (git-ignored)
 artefacts/         audio from benchmarks, tests and no-speech recordings (git-ignored)
@@ -253,7 +278,10 @@ An optional `load()` is called once at startup (download and load the model ther
 
 ```bash
 uv run python -m pytest -q   # unit tests; live tests use your keys if present and skip if not
+uv run voicebot-eval         # latency per stage + ASR WER over ./test/test_data/ (add --data_dir DIR, --mode remote, ...)
 ```
+
+The eval writes `config.json` (settings, datetime, commit SHA) and `metrics.json` to `evaluate/results/<datetime>_<sha>/`. It needs no extra dependency groups beyond those of the mode you run. Details are in [Benchmarks](#6-benchmarks-evaluate).
 
 > Use `python -m pytest` rather than bare `uv run pytest`: it guarantees the project's own environment and `src` path are used.
 
@@ -285,6 +313,9 @@ Docker: `docker build -t voicebot . && docker run voicebot` runs the tests only 
 - **First turn is slow in local mode:** the machine is probably low on memory (see [Memory pressure](#memory-pressure-on-8gb)); close other apps.
 - **Remote 404 / "model not found":** check the model slug, and clear `LLM_PROVIDER` if you pinned a provider that doesn't host that model.
 - **Remote 429 "rate-limited":** the pinned provider is overloaded; retry, or clear `LLM_PROVIDER` so OpenRouter can use another host.
+- **Groq 401 "Invalid API Key":** the key is set but wrong or revoked. Create a new one at [console.groq.com](https://console.groq.com) and replace `GROQ_API_KEY` in `.env`. Note that the live tests only skip when a key is *missing*; a set but invalid key makes them fail.
+- **edge-tts 403 (`WSServerHandshakeError`):** Microsoft's free endpoint is rejecting the connection, usually because the installed `edge-tts` is out of date with the service. Run `uv lock --upgrade-package edge-tts && uv sync`, or use another remote TTS meanwhile (`--tts_model gtts`).
+- **Eval stops with "Unpaired files":** every audio file in `--data_dir` needs a `.txt` of the same name, and the reverse.
 - **Odd or missing text in a transcript:** check the `[vad]` lines in the terminal; if VAD found no speech, ASR is skipped.
 
 ## To do
@@ -352,13 +383,28 @@ Run `uv run python -m pytest -q`. Most tests mock the other stages so they are f
 | `test_pipeline_test.py` | `--test_*` flag combinations (valid and invalid), only the slice's stages being called, no playback in test runs |
 | `test_memory.py`, `test_setup_info.py` | memory load/save/extraction (incl. bad JSON), per-turn setup metadata |
 | `test_asr*.py`, `test_llm*.py`, `test_tts*.py`, `test_recorder.py` | each backend and its dispatcher |
+| `test_evaluation.py` | master eval: dataset pairing, WER, flags, and a mocked run writing `config.json` + `metrics.json` |
 | `test_pipeline.py` | live end-to-end run through real services (needs keys; skips without them) |
 
 Rule used in this repo: when a test is added, it is re-run after every later change, and removed or amended when it stops applying.
 
 ### 6. Benchmarks (`evaluate/`)
 
-Scripts use the same stage functions and start/stop points as the app (see [Latency](#latency-what-is-measured)). `llm_follow.py` also scores replies against the style rules and records peak GPU memory; its raw replies are in `evaluate/results/llm_follow.json`. Results and charts are written to `evaluate/results/`.
+**Master evaluation (latency + ASR WER)** — one line, using recorded clips instead of the mic:
+
+```bash
+uv run voicebot-eval                                  # local mode, dataset ./test/test_data/
+uv run voicebot-eval --mode remote --data_dir path/   # any voicebot flag works (--tts_model, --llm_model, ...)
+```
+
+- **Dataset:** every audio file (`.wav`/`.flac`/`.ogg`) under `--data_dir`, including subfolders, must have a same-named `.txt` next to it holding its reference transcript. Unpaired files stop the run with an error. Each subfolder counts as a dataset in the summaries; files at the top level are grouped as `root`.
+- **Per datapoint:** the clip runs through VAD → ASR → LLM → TTS (ASR gets the VAD-trimmed audio, as in the live app). It records the clip's duration and bucket, the `vad`, `asr`, `llm`, `tts` and `total` latency, the real-time factor (RTF) for VAD, ASR (stage time ÷ clip length) and TTS (synthesis time ÷ length of the generated audio), and the WER of the transcript against the `.txt`. Both texts go through Whisper's standard `EnglishTextNormalizer` first (from the `whisper-normalizer` package). It lowercases and removes punctuation, expands contractions, turns spelled-out numbers into digits and maps British spellings to American, so formatting differences aren't counted as errors. One untimed warm-up pass is made first.
+- **Summaries:** overall, per dataset, and per duration bucket (short <5s, medium 5–15s, long 15–30s, longform >30s; 30s is Whisper's window). Each group reports corpus WER (total errors ÷ total reference words, the headline figure, so short clips don't dominate), mean per-clip WER, and p50/p90/mean for every stage's latency and RTF. Percentiles are used instead of min/max because the occasional slow turn is what users notice.
+- **Output:** `evaluate/results/<datetime>_<sha>/`. `config.json` is written at the start of the run and holds the datetime, the latest commit SHA (plus whether the tree was dirty), the mode, backends, models, voice, VAD and recorder settings, the system prompt, the bucket definitions and the datapoint paths. `metrics.json` is written at the end and holds the summaries plus each datapoint's transcript, reply and timings. Compare runs by diffing their `config.json` files.
+- **The test set** (`test/test_data/`): the 3 original clips at the top level, plus `libritts/` and `voxpopuli/` with 12 clips each. These are 3 random clips per bucket from LibriTTS `dev-clean` (normalized transcripts) and the voxpopuli `en_samples` set, with different speakers where possible. The longform clips are joined from several source clips and named `<stem>+<stem>+...`: consecutive utterances from one chapter for LibriTTS, and unrelated segments for voxpopuli (so different speakers). [evaluate/sample_dataset.py](evaluate/sample_dataset.py) made the selection (seed 0, sources expected in `~/Documents/datasets/`). A re-run picks different clips because it skips ones already copied.
+- The code is in `src/voicebot/evaluation.py` (`evaluate/run_eval.py` is the same thing as a script).
+
+**Older per-stage benchmarks:** these scripts use the same stage functions and start/stop points as the app (see [Latency](#latency-what-is-measured)). `llm_follow.py` also scores replies against the style rules and records peak GPU memory. The scripts write to `evaluate/results/`. The results quoted in this README are archived in `evaluate/old_results/`, and `llm_follow.py`'s raw replies are in `evaluate/old_results/llm_follow.json`.
 
 ### Memory pressure on 8GB
 

@@ -3,7 +3,10 @@
 __pycache__/
 artefacts/*
 !artefacts/.gitkeep
-data/users/*
+/data/
+/evaluate/results/
+/evaluate/old_results/
+/test/test_data/
 !data/users/.gitkeep
 models/
 .DS_Store
