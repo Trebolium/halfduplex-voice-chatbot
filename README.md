@@ -11,6 +11,28 @@ mic ──► Silero VAD ──► ASR ──► LLM ──► TTS ──► spe
 
 Each stage is a swappable module with a one-function interface, and the per-turn latency of every stage is saved with the conversation.
 
+## Built to be latency-aware
+
+A voice bot feels broken when the pause after you stop talking is long, so latency is treated as a first-class concern here, not an afterthought:
+
+- **It is measured, per stage, every turn.** VAD, ASR, LLM and TTS are timed separately and saved with the conversation. `uv run voicebot-eval` replays a folder of clips through the full pipeline and reports p50/p90 latency per stage, real-time factor and WER, and `uv run voicebot-compare` diffs two runs side by side (config differences, deltas, charts). Runs can be labelled with `--note`. Every change below was judged against these numbers, not by feel. See [Latency: what is measured](#latency-what-is-measured).
+- **Everything swappable is benchmarked.** Each stage is a one-function module, and the `evaluate/` scripts compare the alternatives (local and remote TTS, local LLMs) so the defaults are chosen on measured speed.
+- **Local mode removes the network.** The default local stack runs ASR, LLM and TTS on the machine, so there is no round trip or queueing delay on any stage.
+- **Streaming mode hides work inside the silence you were waiting out anyway** (`--streaming`, see [Streaming turns](#streaming-turns---streaming)):
+  1. *Partial ASR while you speak:* the transcript is built up as you talk, so it is ready at the endpoint instead of starting then.
+  2. *Speculative LLM at the first pause:* a 0.3s pause starts the LLM inside the 1s of silence the recorder waits for. A stability tracker only does this when the transcript has not retracted, and a reply is thrown away (and its generation stopped) if you start talking again.
+  3. *Sentence-level LLM to TTS handoff:* the reply is cut into sentences as it is generated and each is spoken as soon as it exists, so you wait for the first sentence rather than the whole reply.
+- **Failures degrade, they don't stall.** If partial ASR fails (for example, rate limits) the turn falls back to one normal transcription; a remote LLM with no token stream sends its whole reply as one sentence.
+
+**What this buys** (local mode on an M2 MacBook Air, `voicebot-eval`, median time from the end of your turn to the first audio; compared with the same pipeline without `--streaming`):
+
+| | Wait for first audio |
+|---|---|
+| Streaming ASR + speculative LLM | about 15% lower |
+| Plus sentence-level TTS handoff | about 60% lower overall, and about 60% lower for clips up to 30s |
+
+The percentages are relative, because the absolute figures depend on your hardware, mode (local or remote), model choices and clip length, and will differ on your setup. Two caveats: the non-streaming baseline was measured on a slightly different clip set, so treat the figures as approximate; and the **tail is not improved yet**: on long (>30s) turns the first sentence is slow to appear and p90 is no better than without streaming. Run `voicebot-eval` with and without `--streaming` on your own setup to get your own numbers.
+
 ## Local vs remote mode
 
 The bot runs in one of two modes, chosen with `--mode` (default: **local**).
@@ -140,14 +162,15 @@ Normally nothing happens until the turn ends: the recorder waits out 1s of silen
 1. **Partials.** A background worker re-transcribes the audio so far every `STREAM_PARTIAL_EVERY_S` (1s locally; 3s in remote mode, because each partial re-uploads the audio and Groq limits requests and audio-seconds) using the normal ASR backend.
 2. **Stable prefix.** Each partial goes into a `StabilityTracker` (`src/voicebot/asr/stability.py`, adapted from [streaming-asr-normalizer](https://github.com/Orenil/streaming-asr-normalizer), MIT). A word counts as stable once it has come out the same in `STREAM_WINDOW` (2) consecutive partials. If a later partial changes an already-stable word, or comes back shorter, that is reported as a retraction rather than silently rewritten. Words are compared after lowercasing and removing punctuation, because Whisper re-punctuates as it hears more.
 3. **Speculative LLM start.** After `STREAM_PAUSE_SECS` (0.3s) of silence, the worker transcribes all the speech so far. If that partial retracts nothing, the LLM starts straight away, inside the 1s of silence the recorder waits out anyway. If you start talking again, that reply is discarded and the cycle repeats at your next pause.
-4. **Endpoint.** At the 1s endpoint, the turn uses the speculative reply if it is still valid. Otherwise it uses the newest partial that covers all the speech, and if partials failed (for example, rate limits) it falls back to one normal transcription. You only wait for whatever is still unfinished.
+4. **Sentence-level TTS handoff** (`src/voicebot/reply_stream.py`). As the LLM's tokens arrive they are cut into sentences (at least 20 characters, ending in `.`/`!`/`?` plus a space), and each sentence is sent to TTS on its own thread straight away, while the LLM keeps generating. Playback starts as soon as sentence 1's audio exists and later sentences play as they are ready, so you no longer wait for the whole reply to be generated and spoken. A remote LLM (no token stream) sends its whole reply as one sentence. To change where replies are cut, edit `next_sentence()`.
+5. **Endpoint.** At the 1s endpoint, the turn uses the speculative reply if it is still valid. Otherwise it uses the newest partial that covers all the speech, and if partials failed (for example, rate limits) it falls back to one normal transcription. `finish()` returns as soon as the first sentence's audio is ready, not when the reply is complete.
 
 This works with any LLM: it doesn't make the model faster, it starts it sooner. The costs:
 - The ASR runs many times per turn. That's free locally, but uses more of the remote API quota.
 - A discarded speculative reply wastes one LLM call.
 - Partials skip the VAD trim. The transcript at a pause is of the raw audio so far.
 
-In streaming mode, the saved `vad`/`asr`/`llm` latencies mean **the time you waited after the endpoint for each step** (`vad` is always 0), not the processing time. Compare the two modes on `total`.
+In streaming mode, the saved `vad`/`asr`/`llm`/`tts` latencies mean **the time you waited after the endpoint for each step** (`vad` is always 0), not the processing time: `llm` is the wait for the first sentence and `tts` the wait for its audio, so `total` is the time to first audio. Compare the two modes on `total`. Streaming-mode `tts` RTF is total synthesis time over total audio length.
 
 ### What each turn records
 
@@ -185,7 +208,7 @@ Every turn in the user JSON stores, next to the text:
 - Model loading and warm-up at startup.
 - The end-of-session memory update (the LLM call that extracts facts and updates the summary).
 
-**What you actually wait for.** The delay from the moment you stop talking to the moment the bot starts speaking is about `1s silence + vad + asr + llm + tts` (plus a little for starting playback). The saved per-turn numbers cover everything except the 1s silence and the playback start. With `--streaming`, ASR and the LLM mostly run inside that 1s silence, so `vad + asr + llm` is only what is left over after it (see [Streaming turns](#streaming-turns---streaming)).
+**What you actually wait for.** The delay from the moment you stop talking to the moment the bot starts speaking is about `1s silence + vad + asr + llm + tts` (plus a little for starting playback). The saved per-turn numbers cover everything except the 1s silence and the playback start. With `--streaming`, ASR and the LLM mostly run inside that 1s silence, and TTS starts on the first sentence while the rest is still being generated, so what you wait for is only the leftover wait for the first sentence's audio (see [Streaming turns](#streaming-turns---streaming)).
 
 **How the master eval (`uv run voicebot-eval`) measures.** It feeds each recorded clip in the dataset through the full pipeline once, with exactly the timers above. The only difference from a live turn is that the audio comes from a file, so the recording and the 1s silence never happen. ASR gets the VAD-trimmed audio, as in the app, and the LLM gets a fresh first-meeting system prompt with no history. `total` is `vad + asr + llm + tts`. One untimed warm-up pass on the first clip comes first. See [Benchmarks](#6-benchmarks-evaluate) for the dataset format and output files.
 
@@ -274,6 +297,7 @@ src/voicebot/
   input/           recorder.py: mic capture, SPACE to start, Silero endpointing
   asr/             __init__.py dispatcher; mlx_whisper.py (local), groq_asr.py (remote), vad.py (Silero);
                    stability.py (stable prefix over partials), streaming.py (--streaming turn: partials + speculative LLM)
+  reply_stream.py  sentence-level LLM -> TTS handoff used by --streaming
   llm/             __init__.py dispatcher; mlx_lm.py (local), openrouter.py (remote)
   tts/             __init__.py dispatcher; piper.py, pocket.py, kokoro.py, kitten.py (local); google_tts.py, edge_tts.py, groq_orpheus.py, elevenlabs.py (remote)
   memory/          store.py: per-user JSON memory
@@ -346,7 +370,8 @@ Docker: `docker build -t voicebot . && docker run voicebot` runs the tests only 
 - [ ] Ensure any failings or bad connections are explicitly reported in the terminal logs.
 - [ ] Try TTS models that use their own integrated LLM to tackle latency.
 - [ ] Listening test of the local TTS voices (Piper vs Pocket vs Kokoro): only latency has been measured so far.
-- [ ] Make use of ASR streaming suggestions as described in a separate Claude chat.
+- [x] Make use of ASR streaming suggestions (`--streaming`: partial ASR, stable-prefix tracking, speculative LLM, sentence-level LLM to TTS handoff).
+- [ ] Investigate the streaming tail latency on long (>30s) turns: slow first sentence and many retractions/stale speculations.
 - [ ] Build a set of realistic conversation prompts to compare local LLMs' quality (use of the user's name, plain spoken text, follow-up questions) before choosing a local default. A first version exists in `evaluate/llm_follow.py`; its checks are crude and the sample is small.
 - [ ] Ensure that summary is confined to a set number of tokens/chars
 
@@ -405,7 +430,7 @@ Run `uv run python -m pytest -q`. Most tests mock the other stages so they are f
 | `test_memory.py`, `test_setup_info.py` | memory load/save/extraction (incl. bad JSON), per-turn setup metadata |
 | `test_asr*.py`, `test_llm*.py`, `test_tts*.py`, `test_recorder.py` | each backend and its dispatcher |
 | `test_compare.py` | run comparison: missing/short `--compare_results`, unknown run, config diff, deltas, clip mismatch warning, report + charts written |
-| `test_stability.py`, `test_streaming.py` | stable-prefix promotion, retractions, speculative reply used at the endpoint, discarded when speech resumes, fallback when partials fail |
+| `test_stability.py`, `test_streaming.py` | stable-prefix promotion, retractions, speculative reply used at the endpoint, discarded when speech resumes, fallback when partials fail, sentence cutting and first-sentence audio ready before the reply completes |
 | `test_evaluation.py` | master eval: dataset pairing, WER, flags, and a mocked run writing `config.json` + `metrics.json` |
 | `test_pipeline.py` | live end-to-end run through real services (needs keys; skips without them) |
 

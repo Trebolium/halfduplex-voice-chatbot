@@ -6,8 +6,9 @@ real-time file player) calls feed() for every 32ms frame. A background worker:
   2. at a pause of STREAM_PAUSE_SECS transcribes all speech so far; if that partial retracts nothing already stable,
      it starts the LLM immediately - i.e. during the end-of-turn silence the recorder is waiting out anyway.
 If speech resumes, the speculative reply is marked stale: a streaming backend (local mlx-lm) stops generating at the next
-token, others finish and are discarded. finish() (called at the endpoint) returns the transcript and reply, plus how long
-the caller actually waited for each after the endpoint.
+token, others finish and are discarded. Replies are cut into sentences and each is sent to TTS while the LLM is still
+generating (reply_stream.ReplyStream). finish() (called at the endpoint) returns as soon as the FIRST sentence's audio is
+ready, with the live ReplyStream and how long the caller waited for each stage after the endpoint.
 All model calls run on ONE process-wide worker thread, in order: local MLX models are never used concurrently or from a
 fresh thread each turn.
 """
@@ -21,6 +22,7 @@ import soundfile as sf
 
 from voicebot import config
 from voicebot.asr.stability import StabilityTracker, norm_words
+from voicebot.reply_stream import ReplyStream, next_sentence
 
 FRAME_S = 512 / config.SAMPLE_RATE
 _jobs: queue.Queue = queue.Queue()
@@ -58,13 +60,13 @@ def _submit(fn) -> None:
 class StreamingSession:
     """One user turn. feed() per frame, then finish() at the endpoint. transcribe/reply/stream_reply are injectable for tests."""
 
-    def __init__(self, system_prompt: str, history: list[dict], transcribe=None, reply=None, stream_reply="auto",
+    def __init__(self, system_prompt: str, history: list[dict], transcribe=None, reply=None, stream_reply="auto", synthesize=None,
                  every_s: float | None = None, pause_s: float | None = None, window: int | None = None):
         from voicebot import asr, llm
         self.transcribe, self.reply = transcribe or asr.transcribe, reply or llm.reply
         if stream_reply == "auto":  # cancellable token stream if the active LLM backend has one (local mlx-lm does)
             stream_reply = getattr(llm.current(), "stream_reply", None) if reply is None else None
-        self.stream_reply = stream_reply
+        self.stream_reply, self.synthesize = stream_reply, synthesize  # synthesize: fn(text)->Path run per sentence; None = no TTS
         self.system_prompt, self.history = system_prompt, list(history)  # copy: a speculative reply must not touch history
         self.every = int((every_s or config.STREAM_PARTIAL_EVERY_S) * config.SAMPLE_RATE)
         self.pause_frames = int(round((pause_s or config.STREAM_PAUSE_SECS) / FRAME_S))
@@ -76,9 +78,9 @@ class StreamingSession:
         self.last_partial_n = 0     # samples covered by the last queued periodic partial
         self.pause_queued_for = -1  # speech_end value a pause partial was already queued for
         self.pending = 0            # this session's jobs not yet finished
-        self.lock = threading.Lock()
+        self.lock = threading.Condition()  # also signals finish() when a speculation starts or a job ends
         self.latest = None          # (speech_end covered, text, time ready) from the newest partial
-        self.spec = None            # speculative reply: dict(speech_end, text, text_t, reply, reply_t, stale)
+        self.spec = None            # speculative reply: dict(speech_end, text, stream, stale)
         self.stats = {"partials": 0, "partial_failures": 0, "retractions": 0, "speculations": 0,
                       "stale_speculations": 0, "cancelled_generations": 0, "skipped_partials": 0}
 
@@ -122,6 +124,7 @@ class StreamingSession:
         finally:
             with self.lock:
                 self.pending -= 1
+                self.lock.notify_all()
 
     def _partial(self, audio: np.ndarray, speech_end: int, at_pause: bool) -> None:
         """Transcribe a snapshot, update stability, and start the speculative LLM at a clean pause."""
@@ -134,25 +137,40 @@ class StreamingSession:
         print(f"[stream] partial {self.stats['partials']} ({len(audio) / config.SAMPLE_RATE:.1f}s{', pause' if at_pause else ''}): "
               f"{upd.stable_len}/{len(upd.words)} words stable" + (f", retracted {upd.retracted}" if upd.retracted else ""))
         if at_pause and text and upd.retracted_from is None and speech_end == self.speech_end:
-            spec = {"speech_end": speech_end, "text": text, "text_t": time.time(), "reply": None, "reply_t": None, "stale": False}
-            self.spec = spec
+            stream = ReplyStream(self.synthesize)
+            stream.set_text(text, time.time())
+            spec = {"speech_end": speech_end, "text": text, "stream": stream, "stale": False}
             self.stats["speculations"] += 1
             print("[stream] pause with no retractions - starting the LLM speculatively")
-            spec["reply"] = self._generate(text, spec)
-            spec["reply_t"] = time.time()
+            with self.lock:
+                self.spec = spec
+                self.lock.notify_all()  # finish() may already be waiting for this
+            self._generate(text, stream, spec)
 
-    def _generate(self, text: str, spec: dict | None = None) -> str | None:
-        """LLM reply; with a token-streaming backend, stop early (return None) once the speculation goes stale."""
-        if self.stream_reply is None or spec is None:
-            return self.reply(self.system_prompt, self.history, text)
-        from voicebot.llm.openrouter import _clean
-        out = ""
-        for out, _ in self.stream_reply(self.system_prompt, self.history, text):
-            if spec["stale"]:
-                self.stats["cancelled_generations"] += 1
-                print("[stream] speculative generation stopped (speech resumed)")
-                return None
-        return _clean(out)
+    def _generate(self, text: str, stream: ReplyStream, spec: dict | None = None) -> None:
+        """Fill `stream` with the reply, one sentence at a time (each goes to TTS at once). A speculation that goes stale is cancelled at the next token."""
+        try:
+            if self.stream_reply is None:  # no token stream (remote LLM): the whole reply is one sentence
+                reply = self.reply(self.system_prompt, self.history, text)
+                stream.add(reply)
+                stream.finish(reply)
+                return
+            from voicebot.llm.openrouter import _clean
+            out, pos = "", 0
+            for out, _ in self.stream_reply(self.system_prompt, self.history, text):
+                if spec and spec["stale"]:
+                    self.stats["cancelled_generations"] += 1
+                    print("[stream] speculative generation stopped (speech resumed)")
+                    stream.cancel()
+                    return
+                while (end := next_sentence(out, pos)):
+                    stream.add(out[pos:end])
+                    pos = end
+            stream.add(out[pos:])
+            stream.finish(_clean(out))
+        except Exception as e:
+            stream.fail(e)
+            raise
 
     def _transcribe(self, audio: np.ndarray, name: str) -> str:
         config.ARTEFACTS_DIR.mkdir(parents=True, exist_ok=True)
@@ -161,37 +179,52 @@ class StreamingSession:
         return self.transcribe(path)
 
     # ---- called at the endpoint ----
-    def finish(self) -> dict:
-        """Wait for this turn's in-flight work, then return text, reply and the post-endpoint waits (asr_wait_s, llm_wait_s)."""
-        t_end = time.time()
-        done, result = threading.Event(), {}
-        _submit(lambda: (result.update(self._finish_on_worker()), done.set()))  # queued after this turn's jobs
-        done.wait()
-        if "error" in result:
-            raise result["error"]
-        asr_wait = max(0.0, result["text_t"] - t_end)
-        llm_wait = max(0.0, result["reply_t"] - max(t_end, result["text_t"]))
-        print(f"[stream] endpoint -> reply in {asr_wait + llm_wait:.2f}s via {result['path']} "
-              f"(asr wait {asr_wait:.2f}s, llm wait {llm_wait:.2f}s; {self.stats})")
-        return {"text": result["text"], "reply": result["reply"], "asr_wait_s": asr_wait, "llm_wait_s": llm_wait,
-                "path": result["path"], **self.stats}
+    def _spec_ok(self) -> bool:
+        sp = self.spec
+        return bool(sp and not sp["stale"] and sp["speech_end"] == self.speech_end and sp["stream"].error is None)
 
-    def _finish_on_worker(self) -> dict:
+    def finish(self) -> dict:
+        """Return once the first sentence's audio is ready: the live ReplyStream (play stream.audio(), then read stream.reply)
+        plus the waits after the endpoint (asr_wait_s: transcript, llm_wait_s: first sentence, tts_wait_s: its audio)."""
+        t_end = time.time()
+        with self.lock:
+            self.lock.wait_for(lambda: self._spec_ok() or self.pending == 0)
+            use_spec = self._spec_ok()
+        if use_spec:
+            stream, path = self.spec["stream"], "speculative"
+        else:
+            stream = ReplyStream(self.synthesize)
+            path = "partial" if self.latest and self.latest[0] == self.speech_end and self.latest[1] else "fallback"
+            _submit(lambda: self._fallback_job(stream))  # queued after this turn's jobs
+        stream.text_ready.wait()
+        first = stream.wait_first()  # raises the LLM error, if any
+        if first is None:
+            return {"text": stream.text, "stream": stream, "asr_wait_s": 0.0, "llm_wait_s": 0.0, "tts_wait_s": 0.0, "path": path, **self.stats}
+        audio_t = first["future"].result()["t"] if first["future"] else first["text_t"]
+        asr_wait = max(0.0, stream.text_t - t_end)
+        llm_wait = max(0.0, first["text_t"] - max(t_end, stream.text_t))
+        tts_wait = max(0.0, audio_t - max(t_end, first["text_t"]))
+        print(f"[stream] endpoint -> first audio in {asr_wait + llm_wait + tts_wait:.2f}s via {path} (asr wait {asr_wait:.2f}s, "
+              f"llm wait {llm_wait:.2f}s, tts wait {tts_wait:.2f}s; {self.stats})")
+        return {"text": stream.text, "stream": stream, "asr_wait_s": asr_wait, "llm_wait_s": llm_wait, "tts_wait_s": tts_wait,
+                "path": path, **self.stats}
+
+    def _fallback_job(self, stream: ReplyStream) -> None:
+        """No usable speculation: use the newest partial if it covers all the speech, else transcribe the whole turn, then generate."""
         try:
-            spec = self.spec
-            if spec and not spec["stale"] and spec["speech_end"] == self.speech_end and spec["reply"] is not None:
-                return {"text": spec["text"], "text_t": spec["text_t"], "reply": spec["reply"], "reply_t": spec["reply_t"],
-                        "path": "speculative"}
             if self.latest and self.latest[0] == self.speech_end and self.latest[1]:
-                text, text_t, path = self.latest[1], self.latest[2], "partial"
+                text, text_t = self.latest[1], self.latest[2]
             else:
                 print("[stream] no usable partial covers all the speech - transcribing the whole turn now")
-                text, path = self._transcribe(np.concatenate(self.frames) if self.frames else np.zeros(1, np.int16), "final"), "fallback"
+                text = self._transcribe(np.concatenate(self.frames) if self.frames else np.zeros(1, np.int16), "final")
                 text_t = time.time()
-            reply = self._generate(text) if text else ""
-            return {"text": text, "text_t": text_t, "reply": reply, "reply_t": time.time(), "path": path}
+            stream.set_text(text, text_t)
+            if text:
+                self._generate(text, stream)
+            else:
+                stream.finish("")
         except Exception as e:
-            return {"error": e}
+            stream.fail(e)
 
 
 def load_16k(path: Path) -> np.ndarray:

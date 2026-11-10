@@ -148,10 +148,14 @@ def test_streaming_turn(monkeypatch):
     """--streaming: the recorder feeds the session; the turn uses the session's text/reply and post-endpoint waits."""
     from voicebot import config
 
+    from voicebot.reply_stream import ReplyStream
+    stream = ReplyStream(lambda t: Path("r.mp3"))
+    stream.add("Hi there, nice to meet you."); stream.finish("Hi there, nice to meet you.")
+
     class FakeSession:
-        def __init__(self, sp, h): self.fed = []
+        def __init__(self, sp, h, synthesize=None): self.fed = []
         def feed(self, f, s): self.fed.append(s)
-        def finish(self): return {"text": "hello", "reply": "hi", "asr_wait_s": 0.0, "llm_wait_s": 0.2, "path": "speculative"}
+        def finish(self): return {"text": "hello", "stream": stream, "asr_wait_s": 0.0, "llm_wait_s": 0.2, "tts_wait_s": 0.1, "path": "speculative"}
     monkeypatch.setattr(config, "STREAMING", True)
     monkeypatch.setattr(main, "StreamingSession", FakeSession)
     monkeypatch.setattr(main, "record", lambda wait_for_space, on_frame=None: (on_frame(b"f", True), Path("a.wav"))[1])
@@ -160,4 +164,4 @@ def test_streaming_turn(monkeypatch):
     monkeypatch.setattr(main, "play", lambda p: None)
     t, history = {}, []
     assert main.run_turn("sys", history, first=True, timings=t) is True
-    assert history[-1]["content"] == "hi" and t["vad"] == 0.0 and t["llm"] == 0.2 and "tts" in t
+    assert history[-1]["content"] == "Hi there, nice to meet you." and t["vad"] == 0.0 and t["llm"] == 0.2 and t["tts"] == 0.1

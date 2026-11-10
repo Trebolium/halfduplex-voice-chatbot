@@ -12,6 +12,7 @@ from voicebot.asr.vad import trim_speech
 from voicebot.input.recorder import record
 from voicebot.asr.streaming import StreamingSession
 from voicebot.llm import reply
+from voicebot.reply_stream import join_audio
 from voicebot.memory import store
 from voicebot import memwatch, pipeline_test, tts
 from voicebot.tts import play, synthesize
@@ -76,35 +77,34 @@ def run_turn(system_prompt: str, history: list[dict], first: bool, timings: dict
 
 
 def _run_streaming_turn(system_prompt: str, history: list[dict], first: bool, t: dict, user: dict | None) -> bool:
-    """--streaming: partial ASR + speculative LLM run during the recording; vad/asr/llm keys hold the wait after the endpoint."""
-    session = StreamingSession(system_prompt, history)
+    """--streaming: partial ASR + speculative LLM run during the recording and each sentence goes to TTS as soon as it exists;
+    vad/asr/llm/tts keys hold the waits after the endpoint (so their sum is the time to first audio)."""
+    session = StreamingSession(system_prompt, history, synthesize=synthesize)
     wav = record(wait_for_space=first, on_frame=session.feed)
     if wav is None:
         session.finish()
         print("No speech heard - ending session.")
         return False
-    print("[2-3/5] ASR + LLM: collecting the streamed transcript and reply...")
+    print("[2-4/5] ASR + LLM + TTS: waiting for the first sentence of the reply...")
     res = session.finish()
-    text, answer = res["text"], res["reply"]
-    t.update(vad=0.0, asr=res["asr_wait_s"], llm=res["llm_wait_s"])
+    text, stream = res["text"], res["stream"]
+    t.update(vad=0.0, asr=res["asr_wait_s"], llm=res["llm_wait_s"], tts=res["tts_wait_s"])
     print(f"      You said: {text!r}  (via {res['path']})")
     if not text:
         print("Empty transcription - ending session.")
         return False
+    print("[5/5] PLAYBACK: each sentence plays as soon as its audio is ready...")
+    paths = []
+    for chunk, r in stream.audio():
+        print(f"      Bot: {chunk['text']}")
+        paths.append(r["path"])
+        play(r["path"])
+    answer = stream.reply
     history += [{"role": "user", "content": text}, {"role": "assistant", "content": answer}]
-    print(f"      Bot: {answer}")
     if user is not None:
         store.log_turn(user, text, answer, {"vad": t["vad"], "asr": t["asr"], "llm": t["llm"]}, setup_info.build(asr.current(), llm.current(), tts.current(), vad))
-    print("[4/5] TTS: synthesizing speech...")
-    t0 = time.time()
-    audio = synthesize(answer)
-    t["tts"] = time.time() - t0
-    if user is not None:
         store.add_latency(user, "tts", t["tts"])
-    print("[5/5] PLAYBACK...")
-    play(audio)
-    if user is not None:
-        store.archive_turn(user, text, answer, wav, wav, audio)
+        store.archive_turn(user, text, answer, wav, wav, join_audio(paths))
     return True
 
 

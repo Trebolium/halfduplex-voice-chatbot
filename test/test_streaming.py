@@ -6,6 +6,7 @@ import soundfile as sf
 
 from voicebot import config
 from voicebot.asr.streaming import StreamingSession
+from voicebot.reply_stream import next_sentence
 
 FRAME = np.ones(512, np.int16)
 WORDS = "hello there my name is margaret and i like roses".split()
@@ -26,6 +27,12 @@ def make(monkeypatch, tmp_path, transcribe=fake_asr, replies=None):
     return s, replies
 
 
+def full(res):
+    """Drain the reply stream (the caller's playback loop) and return the complete reply text."""
+    list(res["stream"].audio())
+    return res["stream"].reply
+
+
 def wait_idle(s):
     while s.pending:
         time.sleep(0.01)
@@ -42,7 +49,7 @@ def test_speculative_reply_used_at_endpoint(monkeypatch, tmp_path):
     speak(s, 1.5); speak(s, 1.0, speech=False)  # speech, then the end-of-turn silence
     res = s.finish()
     assert res["path"] == "speculative" and res["speculations"] == 1 and res["partials"] >= 2
-    assert res["reply"] == f"reply to {res['text']}" and res["text"].startswith("Hello there")
+    assert full(res) == f"reply to {res['text']}" and res["text"].startswith("Hello there")
     assert replies[0][1] == [{"role": "user", "content": "earlier"}]  # history passed through, not mutated
 
 
@@ -68,7 +75,7 @@ def test_failing_partials_fall_back(monkeypatch, tmp_path):
     speak(s, 0.8); speak(s, 1.0, speech=False)
     res = s.finish()
     assert res["path"] == "fallback" and res["text"] == "Final words." and res["partial_failures"] >= 1
-    assert res["reply"] == "reply to Final words."
+    assert full(res) == "reply to Final words."
 
 
 def test_stale_speculation_stops_generating(monkeypatch, tmp_path):
@@ -91,4 +98,36 @@ def test_stale_speculation_stops_generating(monkeypatch, tmp_path):
     assert s.stats["cancelled_generations"] == 1 and len(tokens_made) < 6
     speak(s, 1.0, speech=False)
     res = s.finish()
-    assert res["path"] == "speculative" and res["reply"] == "one two three four five six"
+    assert res["path"] == "speculative" and full(res) == "one two three four five six"
+
+
+def test_next_sentence_cuts_only_complete_long_sentences():
+    t = "Sure! I would love to hear about your garden. What grows best"
+    assert next_sentence(t, 0) == len("Sure! I would love to hear about your garden. ")  # "Sure!" alone is too short to cut
+    assert next_sentence("I would love to hear about it.", 0) is None  # no whitespace yet: the sentence may not be finished
+
+
+def test_first_sentence_audio_ready_before_reply_completes(monkeypatch, tmp_path):
+    """finish() returns after sentence 1's audio, while the LLM is still generating; later sentences follow in order."""
+    monkeypatch.setattr(config, "ARTEFACTS_DIR", tmp_path)
+    spoken = []
+    words = "I would love to hear about your garden. Tell me which flowers grow best there. Roses are lovely too.".split()
+
+    def slow_stream(sp, h, text):
+        out = ""
+        for w in words:
+            time.sleep(0.05); out += w + " "
+            yield out, None
+
+    def fake_tts(text):
+        spoken.append(text)
+        return tmp_path / f"{len(spoken)}.wav"
+    s = StreamingSession("sys", [], transcribe=fake_asr, reply=lambda *a: "x", stream_reply=slow_stream, synthesize=fake_tts,
+                         every_s=0.5, pause_s=0.3, window=2)
+    speak(s, 1.0); speak(s, 1.0, speech=False)
+    res = s.finish()
+    assert res["tts_wait_s"] >= 0 and spoken and spoken[0] == "I would love to hear about your garden."
+    assert not res["stream"].done  # first audio came back while the rest is still being generated
+    chunks = [c["text"] for c, _ in res["stream"].audio()]
+    assert chunks == ["I would love to hear about your garden.", "Tell me which flowers grow best there.", "Roses are lovely too."]
+    assert res["stream"].reply == " ".join(words)

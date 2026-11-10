@@ -20,6 +20,7 @@ from voicebot import asr, config, llm, main, setup_info, tts
 from voicebot.asr import vad
 from voicebot.memory import store
 from voicebot.asr.streaming import StreamingSession, load_16k
+from voicebot.reply_stream import join_audio
 from voicebot.input.recorder import FRAME_SAMPLES, endpoint_state
 
 RESULTS_DIR = config.ROOT / "evaluate" / "results"
@@ -117,8 +118,13 @@ def run_datapoint(audio: Path, ref_path: Path, system_prompt: str, data_dir: Pat
     print(f"[eval] {row['dataset']} / {row['bucket']} ({secs:.1f}s audio)")
     if config.STREAMING:
         res = stream_clip(audio, system_prompt)
-        hyp, answer = res["text"], res["reply"]
-        t.update(vad=0.0, asr=res["asr_wait_s"], llm=res["llm_wait_s"])
+        hyp = res["text"]
+        t.update(vad=0.0, asr=res["asr_wait_s"], llm=res["llm_wait_s"], tts=res["tts_wait_s"])
+        results = [r for _, r in res["stream"].audio()]  # drain: the rest of the reply finishes generating + synthesizing (not timed)
+        if not results:
+            raise RuntimeError(f"The LLM returned an empty reply for {audio.name}. Try re-running, or another LLM model.")
+        answer, out = res["stream"].reply, join_audio([r["path"] for r in results])
+        synth_s = sum(r["secs"] for r in results)
         row["stream"] = {k: res[k] for k in ("path", "partials", "partial_failures", "retractions", "speculations", "stale_speculations")}
     else:
         t0 = time.time(); trimmed = vad.trim_speech(audio); t["vad"] = time.time() - t0
@@ -130,10 +136,10 @@ def run_datapoint(audio: Path, ref_path: Path, system_prompt: str, data_dir: Pat
     print(f"[eval] WER {row['wer']:.3f} ({errors}/{n} words)")
     if not config.STREAMING:
         t0 = time.time(); answer = llm.reply(system_prompt, [], hyp); t["llm"] = time.time() - t0
-    t0 = time.time(); out = tts.synthesize(answer); t["tts"] = time.time() - t0
+        t0 = time.time(); out = tts.synthesize(answer); t["tts"] = time.time() - t0; synth_s = t["tts"]
     t["total"] = sum(t[s] for s in STAGES)
     tts_secs = sf.info(str(out)).duration  # soundfile reads wav and mp3
-    rtf = {"vad": t["vad"] / secs, "asr": t["asr"] / secs, "tts": t["tts"] / tts_secs if tts_secs else None}
+    rtf = {"vad": t["vad"] / secs, "asr": t["asr"] / secs, "tts": synth_s / tts_secs if tts_secs else None}
     row.update(reply=answer, reply_chars=len(answer), tts_audio=str(out), tts_audio_s=round(tts_secs, 3),
                latency_s={k: round(v, 3) for k, v in t.items()}, rtf={k: v if v is None else round(v, 4) for k, v in rtf.items()})
     print("[eval] latency: " + "  ".join(f"{k}={v:.2f}s" for k, v in t.items()) + f"  | ASR RTF {rtf['asr']:.3f}")
@@ -147,7 +153,7 @@ def stream_clip(audio: Path, system_prompt: str) -> dict:
     content_frames = len(pcm) // FRAME_SAMPLES  # the endpoint may only fire after the clip ends, so mid-clip reading
     pad = np.zeros(int(config.SAMPLE_RATE * (config.SILENCE_END_SECS + 0.5)), np.int16)  # pauses >= 1s don't cut it short
     pcm = np.concatenate([pcm, pad])
-    session = StreamingSession(system_prompt, [])
+    session = StreamingSession(system_prompt, [], synthesize=tts.synthesize)
     vad.reset()
     started, silence, rec, t_start = False, 0, 0, time.time()
     for i in range(len(pcm) // FRAME_SAMPLES):
@@ -217,7 +223,7 @@ def run(argv: list[str] | None = None) -> Path:
            "wer_normalization": "whisper EnglishTextNormalizer (whisper-normalizer package), applied to reference and transcript",
            "duration_buckets": [name for _, _, name in BUCKETS], "rtf": "stage seconds / audio seconds (input clip for vad/asr, generated reply audio for tts)",
            "asr_input": "streamed in real time; partial ASR on the audio so far, no VAD trim" if config.STREAMING else "VAD-trimmed audio (same as the live pipeline)",
-           "latency_meaning": "seconds waited after the endpoint (vad=0, asr/llm = remaining wait)" if config.STREAMING else "processing time per stage after the endpoint", "warmup": "one untimed VAD+ASR+LLM+TTS pass on the first datapoint"}
+           "latency_meaning": "seconds from the endpoint to the FIRST audio: asr = wait for the transcript, llm = until the first sentence exists, tts = until its audio is ready (vad=0); the rest of the reply is generated/synthesized sentence by sentence while it plays" if config.STREAMING else "processing time per stage after the endpoint", "warmup": "one untimed VAD+ASR+LLM+TTS pass on the first datapoint"}
     print(f"[eval] results will be written to {out_dir} when the run finishes (commit {git['commit_sha'][:7]}{', dirty tree' if git['dirty'] else ''})")
 
     print("[eval] warm-up pass (untimed) on the first datapoint...")

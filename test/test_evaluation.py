@@ -106,13 +106,15 @@ def test_mocked_streaming_run(tmp_path, monkeypatch):
         monkeypatch.setattr(mod, "select_backend", lambda n: None)
         monkeypatch.setattr(mod, "current", lambda: type("M", (), {"INFO": {}}))
     monkeypatch.setattr(ev.vad, "reset", lambda: None)
-    monkeypatch.setattr(ev, "stream_clip", lambda a, sp: {"text": "hello there friend", "reply": "hi", "asr_wait_s": 0.0,
-                                                          "llm_wait_s": 0.4, "path": "speculative", "partials": 3,
+    from voicebot.reply_stream import ReplyStream
+    stream = ReplyStream(lambda t: tmp_path / "out.wav")
+    stream.add("Hi there, lovely to meet you."); stream.finish("Hi there, lovely to meet you.")
+    monkeypatch.setattr(ev, "stream_clip", lambda a, sp: {"text": "hello there friend", "stream": stream, "asr_wait_s": 0.0,
+                                                          "llm_wait_s": 0.4, "tts_wait_s": 0.1, "path": "speculative", "partials": 3,
                                                           "partial_failures": 0, "retractions": 0, "speculations": 1, "stale_speculations": 0})
-    monkeypatch.setattr(ev.tts, "synthesize", lambda t: tmp_path / "out.wav")
     out = ev.run([])
     row = json.loads((out / "metrics.json").read_text())["datapoints"][0]
-    assert row["wer"] == 0 and row["latency_s"]["llm"] == 0.4 and row["latency_s"]["vad"] == 0 and row["stream"]["path"] == "speculative"
+    assert row["wer"] == 0 and row["latency_s"]["llm"] == 0.4 and row["latency_s"]["tts"] == 0.1 and row["latency_s"]["vad"] == 0 and row["stream"]["path"] == "speculative"
     assert "streamed" in json.loads((out / "config.json").read_text())["asr_input"]
 
 
