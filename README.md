@@ -24,6 +24,8 @@ A voice bot feels broken when the pause after you stop talking is long, so laten
   3. *Sentence-level LLM to TTS handoff:* the reply is cut into sentences as it is generated and each is spoken as soon as it exists, so you wait for the first sentence rather than the whole reply.
 - **Failures degrade, they don't stall.** If partial ASR fails (for example, rate limits) the turn falls back to one normal transcription; a remote LLM with no token stream sends its whole reply as one sentence.
 
+**Where this is tuned, and where it could go further.** The local stack is optimised for an M-series MacBook (MLX models, Piper on the CPU, a 3B 4-bit LLM sized for 8GB of RAM), and every figure here was measured on one. On that hardware the latency mechanisms compete for one small GPU, and streaming runs all MLX model calls on a single worker thread, so partial ASR passes and the speculative LLM queue behind each other instead of overlapping. On a CUDA GPU machine we would expect the same mechanisms (partial ASR, speculative LLM start, sentence-level TTS handoff) to have a **significantly larger** impact: models would run concurrently on separate streams, generation is much faster so speculation wastes less when it is discarded, and larger local models become practical. The expected gains would be evident in quality and latency when used in conjunction with better models and larger machines.
+
 **What this buys** (local mode on an M2 MacBook Air, `voicebot-eval`, median time from the end of your turn to the first audio; compared with the same pipeline without `--streaming`):
 
 | | Wait for first audio |
