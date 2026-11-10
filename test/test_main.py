@@ -19,7 +19,7 @@ def test_run_turn_and_end(monkeypatch):
     monkeypatch.setattr(main.store, "archive_turn", lambda *a: user.setdefault("archived", a[1:3]))
     monkeypatch.setattr(main.store, "add_latency", lambda u, stage, secs: u.__setitem__(stage + "_lat", secs))
     assert main.run_turn("sys", history, first=True, user=user) is True
-    assert user["c"] == [("hello", "hi there", ["asr", "llm", "vad"], ["asr", "config", "llm", "tts", "vad"])]
+    assert user["c"] == [("hello", "hi there", ["asr", "llm", "vad"], ["asr", "config", "llm", "streaming", "tts", "vad"])]
     assert user["tts_lat"] > 0 and user["archived"] == ("hello", "hi there")
     assert history[-1] == {"role": "assistant", "content": "hi there"}
     assert main.run_turn("sys", history, first=False) is False
@@ -142,3 +142,22 @@ def test_elevenlabs_needs_key(monkeypatch):
     monkeypatch.setattr(config, "ELEVENLABS_API_KEY", "")
     with pytest.raises(RuntimeError, match="ELEVENLABS_API_KEY"):
         main.configure(main.parse_args(["--mode", "remote", "--tts_model", "elevenlabs"]))
+
+
+def test_streaming_turn(monkeypatch):
+    """--streaming: the recorder feeds the session; the turn uses the session's text/reply and post-endpoint waits."""
+    from voicebot import config
+
+    class FakeSession:
+        def __init__(self, sp, h): self.fed = []
+        def feed(self, f, s): self.fed.append(s)
+        def finish(self): return {"text": "hello", "reply": "hi", "asr_wait_s": 0.0, "llm_wait_s": 0.2, "path": "speculative"}
+    monkeypatch.setattr(config, "STREAMING", True)
+    monkeypatch.setattr(main, "StreamingSession", FakeSession)
+    monkeypatch.setattr(main, "record", lambda wait_for_space, on_frame=None: (on_frame(b"f", True), Path("a.wav"))[1])
+    monkeypatch.setattr(main, "transcribe", lambda p: (_ for _ in ()).throw(AssertionError("batch ASR must not run")))
+    monkeypatch.setattr(main, "synthesize", lambda t: Path("r.mp3"))
+    monkeypatch.setattr(main, "play", lambda p: None)
+    t, history = {}, []
+    assert main.run_turn("sys", history, first=True, timings=t) is True
+    assert history[-1]["content"] == "hi" and t["vad"] == 0.0 and t["llm"] == 0.2 and "tts" in t

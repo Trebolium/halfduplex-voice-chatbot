@@ -1,7 +1,7 @@
 """Master eval: runs every datapoint (audio + matching .txt) through VAD -> ASR -> LLM -> TTS, recording per-stage latency and ASR WER.
 
-Run: uv run voicebot-eval [--mode local|remote] [any voicebot model flag]; clips come from TEST_AUDIO_PATH in .env
-Writes evaluate/results/<datetime>_<sha>/config.json (at start) and metrics.json (at end).
+Run: uv run voicebot-eval [--note "text"] [--mode local|remote] [any voicebot model flag]; clips come from TEST_AUDIO_PATH in .env
+Writes evaluate/results/<datetime>_<sha>[_<note>]/config.json + metrics.json only once the whole run has finished (nothing is created if it is interrupted).
 Summaries: corpus WER, real-time factor (stage time / audio length) and p50/p90 latency, overall + per dataset + per duration bucket.
 """
 import argparse
@@ -19,6 +19,8 @@ from whisper_normalizer.english import EnglishTextNormalizer
 from voicebot import asr, config, llm, main, setup_info, tts
 from voicebot.asr import vad
 from voicebot.memory import store
+from voicebot.asr.streaming import StreamingSession, load_16k
+from voicebot.input.recorder import FRAME_SAMPLES, endpoint_state
 
 RESULTS_DIR = config.ROOT / "evaluate" / "results"
 AUDIO_EXTS = {".wav", ".flac", ".ogg"}  # anything soundfile can read
@@ -91,11 +93,16 @@ def git_info() -> dict:
 
 
 def parse_args(argv: list[str] | None = None) -> tuple[argparse.Namespace, Path]:
-    """Same flags as voicebot (mode + model flags); the dataset folder comes only from TEST_AUDIO_PATH in .env."""
+    """Same flags as voicebot (mode + model flags) plus --note; the dataset folder comes only from TEST_AUDIO_PATH in .env."""
     if not config.TEST_AUDIO_PATH:
         raise FileNotFoundError("Test data not found: TEST_AUDIO_PATH is not set in .env. Add "
                                 "TEST_AUDIO_PATH=<folder of <name>.wav + <name>.txt pairs> to .env (evaluate/sample_dataset.py can build one).")
-    return main.parse_args(argv), Path(config.TEST_AUDIO_PATH).resolve()  # absolute, so clips map to their dataset subfolder
+    note_p = argparse.ArgumentParser(add_help=False)
+    note_p.add_argument("--note", default="", help="free-text label stored in config.json and appended to the results folder name")
+    note_args, rest = note_p.parse_known_args(argv)
+    args = main.parse_args(rest)
+    args.note = note_args.note.strip()
+    return args, Path(config.TEST_AUDIO_PATH).resolve()  # absolute, so clips map to their dataset subfolder
 
 
 def run_datapoint(audio: Path, ref_path: Path, system_prompt: str, data_dir: Path) -> dict:
@@ -108,14 +115,21 @@ def run_datapoint(audio: Path, ref_path: Path, system_prompt: str, data_dir: Pat
     t, row = {}, {"audio": str(audio), "reference_txt": str(ref_path), "reference": ref,
                   "dataset": rel.parts[0] if len(rel.parts) > 1 else "root", "audio_s": round(secs, 3), "bucket": bucket(secs)}
     print(f"[eval] {row['dataset']} / {row['bucket']} ({secs:.1f}s audio)")
-    t0 = time.time(); trimmed = vad.trim_speech(audio); t["vad"] = time.time() - t0
-    if trimmed is None:
-        raise RuntimeError(f"VAD found no speech in {audio.name}. Check the clip has audible speech.")
-    t0 = time.time(); hyp = asr.transcribe(trimmed); t["asr"] = time.time() - t0
+    if config.STREAMING:
+        res = stream_clip(audio, system_prompt)
+        hyp, answer = res["text"], res["reply"]
+        t.update(vad=0.0, asr=res["asr_wait_s"], llm=res["llm_wait_s"])
+        row["stream"] = {k: res[k] for k in ("path", "partials", "partial_failures", "retractions", "speculations", "stale_speculations")}
+    else:
+        t0 = time.time(); trimmed = vad.trim_speech(audio); t["vad"] = time.time() - t0
+        if trimmed is None:
+            raise RuntimeError(f"VAD found no speech in {audio.name}. Check the clip has audible speech.")
+        t0 = time.time(); hyp = asr.transcribe(trimmed); t["asr"] = time.time() - t0
     errors, n = word_errors(ref, hyp)
     row.update(transcript=hyp, word_errors=errors, ref_words=n, wer=errors / n if n else 0.0)
     print(f"[eval] WER {row['wer']:.3f} ({errors}/{n} words)")
-    t0 = time.time(); answer = llm.reply(system_prompt, [], hyp); t["llm"] = time.time() - t0
+    if not config.STREAMING:
+        t0 = time.time(); answer = llm.reply(system_prompt, [], hyp); t["llm"] = time.time() - t0
     t0 = time.time(); out = tts.synthesize(answer); t["tts"] = time.time() - t0
     t["total"] = sum(t[s] for s in STAGES)
     tts_secs = sf.info(str(out)).duration  # soundfile reads wav and mp3
@@ -124,6 +138,34 @@ def run_datapoint(audio: Path, ref_path: Path, system_prompt: str, data_dir: Pat
                latency_s={k: round(v, 3) for k, v in t.items()}, rtf={k: v if v is None else round(v, 4) for k, v in rtf.items()})
     print("[eval] latency: " + "  ".join(f"{k}={v:.2f}s" for k, v in t.items()) + f"  | ASR RTF {rtf['asr']:.3f}")
     return row
+
+
+def stream_clip(audio: Path, system_prompt: str) -> dict:
+    """Play a clip in real time (32ms frames, Silero per frame, as the mic would) into a StreamingSession, then pad with
+    silence until the normal endpoint fires after the clip's end (same speech as batch mode); returns finish()."""
+    pcm = load_16k(audio)
+    content_frames = len(pcm) // FRAME_SAMPLES  # the endpoint may only fire after the clip ends, so mid-clip reading
+    pad = np.zeros(int(config.SAMPLE_RATE * (config.SILENCE_END_SECS + 0.5)), np.int16)  # pauses >= 1s don't cut it short
+    pcm = np.concatenate([pcm, pad])
+    session = StreamingSession(system_prompt, [])
+    vad.reset()
+    started, silence, rec, t_start = False, 0, 0, time.time()
+    for i in range(len(pcm) // FRAME_SAMPLES):
+        time.sleep(max(0.0, t_start + i * FRAME_SAMPLES / config.SAMPLE_RATE - time.time()))  # real-time pacing
+        f = pcm[i * FRAME_SAMPLES:(i + 1) * FRAME_SAMPLES]
+        sp = vad.is_speech(f)
+        if not started and not sp:
+            continue
+        started = True
+        session.feed(f, sp)
+        rec += 1
+        silence, done = endpoint_state(sp, silence, rec)
+        if done and i >= content_frames:
+            break
+    if not started:
+        session.finish()
+        raise RuntimeError(f"VAD found no speech in {audio.name}. Check the clip has audible speech.")
+    return session.finish()
 
 
 def _pct(values: list[float]) -> dict:
@@ -165,18 +207,18 @@ def run(argv: list[str] | None = None) -> Path:
     asr.select_backend(names["asr"]); llm.select_backend(names["llm"]); tts.select_backend(names["tts"]); vad.reset()
 
     git = git_info()
-    out_dir = RESULTS_DIR / f"{started:%Y%m%d_%H%M%S}_{git['commit_sha'][:7]}"
-    out_dir.mkdir(parents=True, exist_ok=True)
+    slug = re.sub(r"[^a-z0-9]+", "-", args.note.lower()).strip("-")[:40]  # note -> short folder-safe suffix
+    out_dir = RESULTS_DIR / f"{started:%Y%m%d_%H%M%S}_{git['commit_sha'][:7]}{'_' + slug if slug else ''}"
     system_prompt = store.build_system_prompt({"name": "friend", "sessions": 0, "facts": []})  # fresh user, as in --test runs
-    cfg = {"datetime": started.isoformat(timespec="seconds"), **git, "mode": args.mode, "backends": names,
+    cfg = {"datetime": started.isoformat(timespec="seconds"), **git, "mode": args.mode, "note": args.note, "backends": names,
            "data_dir": str(data_dir.resolve()), "datapoints": [str(a) for a, _ in points],
            "setup": setup_info.build(asr.current(), llm.current(), tts.current(), vad),
            "tts_voice": config.TTS_VOICE or "backend-default", "eval_system_prompt": system_prompt,
            "wer_normalization": "whisper EnglishTextNormalizer (whisper-normalizer package), applied to reference and transcript",
            "duration_buckets": [name for _, _, name in BUCKETS], "rtf": "stage seconds / audio seconds (input clip for vad/asr, generated reply audio for tts)",
-           "asr_input": "VAD-trimmed audio (same as the live pipeline)", "warmup": "one untimed VAD+ASR+LLM+TTS pass on the first datapoint"}
-    (out_dir / "config.json").write_text(json.dumps(cfg, indent=2))
-    print(f"[eval] config written -> {out_dir / 'config.json'} (commit {git['commit_sha'][:7]}{', dirty tree' if git['dirty'] else ''})")
+           "asr_input": "streamed in real time; partial ASR on the audio so far, no VAD trim" if config.STREAMING else "VAD-trimmed audio (same as the live pipeline)",
+           "latency_meaning": "seconds waited after the endpoint (vad=0, asr/llm = remaining wait)" if config.STREAMING else "processing time per stage after the endpoint", "warmup": "one untimed VAD+ASR+LLM+TTS pass on the first datapoint"}
+    print(f"[eval] results will be written to {out_dir} when the run finishes (commit {git['commit_sha'][:7]}{', dirty tree' if git['dirty'] else ''})")
 
     print("[eval] warm-up pass (untimed) on the first datapoint...")
     try:
@@ -194,6 +236,8 @@ def run(argv: list[str] | None = None) -> Path:
             rows.append({"audio": str(audio), "reference_txt": str(ref), "error": str(e)})
 
     summary = summarize(rows)
+    out_dir.mkdir(parents=True, exist_ok=True)
+    (out_dir / "config.json").write_text(json.dumps(cfg, indent=2))
     (out_dir / "metrics.json").write_text(json.dumps({"summary": summary, "datapoints": rows}, indent=2))
     print(f"\n[eval] done in {(datetime.now().astimezone() - started).total_seconds():.1f}s -> {out_dir}")
     if summary["n_ok"]:

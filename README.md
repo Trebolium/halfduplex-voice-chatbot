@@ -92,6 +92,7 @@ You will be asked for your name (it picks up your saved memory). Press **SPACE**
 | `--llm_model SLUG` | remote only | OpenRouter model slug, e.g. `google/gemini-2.5-flash`. Default `LLM_MODEL` in `.env`. |
 | `--llm_provider TAG` | remote only | Pin an OpenRouter provider, e.g. `deepinfra/turbo`. Default `LLM_PROVIDER` in `.env`; empty means OpenRouter chooses. |
 | `--tts_model NAME` | **both** | TTS backend. Local: `piper` (default), `pocket-tts`, `kokoro`, `kitten-tts`. Remote: `gtts` (default), `edge-tts`, `groq-orpheus`, `elevenlabs`. Defaults come from `LOCAL_TTS` / `REMOTE_TTS` in `.env`. Choosing a remote backend in local mode (or the reverse) gives a clear error. |
+| `--streaming` | both | Transcribe while you speak and start the LLM at your first pause, so less is left to do after you stop. See [Streaming turns](#streaming-turns---streaming). Also works with `voicebot-eval`. |
 | `--tts_voice NAME` | remote only | Voice for the chosen remote TTS: an edge-tts voice (e.g. `en-GB-SoniaNeural`), an Orpheus voice (e.g. `hannah`), or an ElevenLabs voice id. Empty = the backend's default. Default `TTS_VOICE` in `.env`. |
 | `--test_start STAGE` | both | Test run: start at `VAD`, `ASR`, `LLM` or `TTS` and go to the end. See [Testing a slice of the pipeline](#testing-a-slice-of-the-pipeline). |
 | `--test_end STAGE` | both | Test run: stop after this stage (inclusive); starts at `VAD` unless `--test_start` is also given. |
@@ -132,6 +133,22 @@ You will be asked for your name (it picks up your saved memory). Press **SPACE**
   Recordings with no speech, and anything produced outside a user session (benchmarks, tests), stay in `artefacts/`. If a turn fails before it finishes, its files also stay in `artefacts/`.
 - **Text cleanup:** replies are stripped of markdown and emoji, since they are spoken aloud.
 
+### Streaming turns (`--streaming`)
+
+Normally nothing happens until the turn ends: the recorder waits out 1s of silence, then VAD, ASR and the LLM run one after another while you wait. With `--streaming`, most of that work happens while you are still talking or pausing (`src/voicebot/asr/streaming.py`):
+
+1. **Partials.** A background worker re-transcribes the audio so far every `STREAM_PARTIAL_EVERY_S` (1s locally; 3s in remote mode, because each partial re-uploads the audio and Groq limits requests and audio-seconds) using the normal ASR backend.
+2. **Stable prefix.** Each partial goes into a `StabilityTracker` (`src/voicebot/asr/stability.py`, adapted from [streaming-asr-normalizer](https://github.com/Orenil/streaming-asr-normalizer), MIT). A word counts as stable once it has come out the same in `STREAM_WINDOW` (2) consecutive partials. If a later partial changes an already-stable word, or comes back shorter, that is reported as a retraction rather than silently rewritten. Words are compared after lowercasing and removing punctuation, because Whisper re-punctuates as it hears more.
+3. **Speculative LLM start.** After `STREAM_PAUSE_SECS` (0.3s) of silence, the worker transcribes all the speech so far. If that partial retracts nothing, the LLM starts straight away, inside the 1s of silence the recorder waits out anyway. If you start talking again, that reply is discarded and the cycle repeats at your next pause.
+4. **Endpoint.** At the 1s endpoint, the turn uses the speculative reply if it is still valid. Otherwise it uses the newest partial that covers all the speech, and if partials failed (for example, rate limits) it falls back to one normal transcription. You only wait for whatever is still unfinished.
+
+This works with any LLM: it doesn't make the model faster, it starts it sooner. The costs:
+- The ASR runs many times per turn. That's free locally, but uses more of the remote API quota.
+- A discarded speculative reply wastes one LLM call.
+- Partials skip the VAD trim. The transcript at a pause is of the raw audio so far.
+
+In streaming mode, the saved `vad`/`asr`/`llm` latencies mean **the time you waited after the endpoint for each step** (`vad` is always 0), not the processing time. Compare the two modes on `total`.
+
 ### What each turn records
 
 Every turn in the user JSON stores, next to the text:
@@ -168,7 +185,7 @@ Every turn in the user JSON stores, next to the text:
 - Model loading and warm-up at startup.
 - The end-of-session memory update (the LLM call that extracts facts and updates the summary).
 
-**What you actually wait for.** The delay from the moment you stop talking to the moment the bot starts speaking is about `1s silence + vad + asr + llm + tts` (plus a little for starting playback). The saved per-turn numbers cover everything except the 1s silence and the playback start.
+**What you actually wait for.** The delay from the moment you stop talking to the moment the bot starts speaking is about `1s silence + vad + asr + llm + tts` (plus a little for starting playback). The saved per-turn numbers cover everything except the 1s silence and the playback start. With `--streaming`, ASR and the LLM mostly run inside that 1s silence, so `vad + asr + llm` is only what is left over after it (see [Streaming turns](#streaming-turns---streaming)).
 
 **How the master eval (`uv run voicebot-eval`) measures.** It feeds each recorded clip in the dataset through the full pipeline once, with exactly the timers above. The only difference from a live turn is that the audio comes from a file, so the recording and the 1s silence never happen. ASR gets the VAD-trimmed audio, as in the app, and the LLM gets a fresh first-meeting system prompt with no history. `total` is `vad + asr + llm + tts`. One untimed warm-up pass on the first clip comes first. See [Benchmarks](#6-benchmarks-evaluate) for the dataset format and output files.
 
@@ -255,7 +272,8 @@ src/voicebot/
   evaluation.py    master eval: latency + WER over a folder of clips (`uv run voicebot-eval`)
   compare.py       side-by-side comparison of eval runs (`uv run voicebot-compare`)
   input/           recorder.py: mic capture, SPACE to start, Silero endpointing
-  asr/             __init__.py dispatcher; mlx_whisper.py (local), groq_asr.py (remote), vad.py (Silero)
+  asr/             __init__.py dispatcher; mlx_whisper.py (local), groq_asr.py (remote), vad.py (Silero);
+                   stability.py (stable prefix over partials), streaming.py (--streaming turn: partials + speculative LLM)
   llm/             __init__.py dispatcher; mlx_lm.py (local), openrouter.py (remote)
   tts/             __init__.py dispatcher; piper.py, pocket.py, kokoro.py, kitten.py (local); google_tts.py, edge_tts.py, groq_orpheus.py, elevenlabs.py (remote)
   memory/          store.py: per-user JSON memory
@@ -280,7 +298,7 @@ An optional `load()` is called once at startup (download and load the model ther
 
 ```bash
 uv run python -m pytest -q   # unit tests; live tests use your keys if present and skip if not
-uv run voicebot-eval         # latency per stage + ASR WER over TEST_AUDIO_PATH from .env (add --mode remote, ...)
+uv run voicebot-eval         # latency per stage + ASR WER over TEST_AUDIO_PATH from .env (add --mode remote, ...; --note "text" labels the run: saved in config.json and appended to the folder name)
 uv run voicebot-compare --compare_results <run> <run>   # side-by-side metrics of runs in evaluate/results/
 ```
 
@@ -387,6 +405,7 @@ Run `uv run python -m pytest -q`. Most tests mock the other stages so they are f
 | `test_memory.py`, `test_setup_info.py` | memory load/save/extraction (incl. bad JSON), per-turn setup metadata |
 | `test_asr*.py`, `test_llm*.py`, `test_tts*.py`, `test_recorder.py` | each backend and its dispatcher |
 | `test_compare.py` | run comparison: missing/short `--compare_results`, unknown run, config diff, deltas, clip mismatch warning, report + charts written |
+| `test_stability.py`, `test_streaming.py` | stable-prefix promotion, retractions, speculative reply used at the endpoint, discarded when speech resumes, fallback when partials fail |
 | `test_evaluation.py` | master eval: dataset pairing, WER, flags, and a mocked run writing `config.json` + `metrics.json` |
 | `test_pipeline.py` | live end-to-end run through real services (needs keys; skips without them) |
 
@@ -405,7 +424,7 @@ uv run voicebot-eval --mode remote                   # any voicebot flag works (
 - **Dataset:** every audio file (`.wav`/`.flac`/`.ogg`) under `TEST_AUDIO_PATH`, including subfolders, must have a same-named `.txt` next to it holding its reference transcript. Unpaired files stop the run with an error. Each subfolder counts as a dataset in the summaries; files at the top level are grouped as `root`.
 - **Per datapoint:** the clip runs through VAD → ASR → LLM → TTS (ASR gets the VAD-trimmed audio, as in the live app). It records the clip's duration and bucket, the `vad`, `asr`, `llm`, `tts` and `total` latency, the real-time factor (RTF) for VAD, ASR (stage time ÷ clip length) and TTS (synthesis time ÷ length of the generated audio), and the WER of the transcript against the `.txt`. Both texts go through Whisper's standard `EnglishTextNormalizer` first (from the `whisper-normalizer` package). It lowercases and removes punctuation, expands contractions, turns spelled-out numbers into digits and maps British spellings to American, so formatting differences aren't counted as errors. One untimed warm-up pass is made first.
 - **Summaries:** overall, per dataset, and per duration bucket (short <5s, medium 5–15s, long 15–30s, longform >30s; 30s is Whisper's window). Each group reports corpus WER (total errors ÷ total reference words, the headline figure, so short clips don't dominate), mean per-clip WER, and p50/p90/mean for every stage's latency and RTF. Percentiles are used instead of min/max because the occasional slow turn is what users notice.
-- **Output:** `evaluate/results/<datetime>_<sha>/`. `config.json` is written at the start of the run and holds the datetime, the latest commit SHA (plus whether the tree was dirty), the mode, backends, models, voice, VAD and recorder settings, the system prompt, the bucket definitions and the datapoint paths. `metrics.json` is written at the end and holds the summaries plus each datapoint's transcript, reply and timings. Compare runs by diffing their `config.json` files.
+- **Output:** `evaluate/results/<datetime>_<sha>/`. `config.json` and `metrics.json` are both written only when the run finishes (an interrupted run leaves no folder). `config.json` holds the datetime, the latest commit SHA (plus whether the tree was dirty), the mode, backends, models, voice, VAD and recorder settings, the system prompt, the bucket definitions and the datapoint paths. `metrics.json` holds the summaries plus each datapoint's transcript, reply and timings. Compare runs by diffing their `config.json` files.
 - **The test set** (usually `TEST_AUDIO_PATH=./test/test_data/`, git-ignored, so each machine builds its own): `libritts/` and `voxpopuli/` with 12 clips each. These are 3 random clips per bucket from LibriTTS `dev-clean` (normalized transcripts) and the voxpopuli `en_samples` set, with different speakers where possible. The longform clips are joined from several source clips and named `<stem>+<stem>+...`: consecutive utterances from one chapter for LibriTTS, and unrelated segments for voxpopuli (so different speakers). [evaluate/sample_dataset.py](evaluate/sample_dataset.py) made the selection and writes to `TEST_AUDIO_PATH` with `--copy` (seed 0, sources expected in `~/Documents/datasets/`). A re-run picks different clips because it skips ones already copied.
 - The code is in `src/voicebot/evaluation.py` (`evaluate/run_eval.py` is the same thing as a script).
 

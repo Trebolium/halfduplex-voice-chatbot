@@ -27,6 +27,12 @@ MIN_SPEECH_MS = 300          # VAD drops speech segments shorter than this
 VAD_THRESHOLD = 0.5          # Silero speech probability above this counts as speech
 IDLE_TIMEOUT_SECS = 8        # no speech this long after a reply -> session ends and memory is saved
 
+# Streaming turn (--streaming): partial ASR while speaking + speculative LLM start at the first pause
+STREAMING = False            # set by --streaming
+STREAM_PARTIAL_EVERY_S = 1.0  # re-transcribe the audio so far this often while speech continues (remote mode uses 3.0: rate limits)
+STREAM_PAUSE_SECS = 0.3      # silence that triggers the full-speech partial + speculative LLM start (< SILENCE_END_SECS)
+STREAM_WINDOW = 2            # consecutive agreeing partials before a word counts as stable
+
 BASE_SYSTEM_PROMPT = (
     "You are a helpful voice AI assistant designed to assist the elderly. "
     "Be kind, engaging, and provide short responses, unless explicitly asked to elabourate."

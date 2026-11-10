@@ -10,9 +10,10 @@ from voicebot import asr, llm
 from voicebot.asr import transcribe, vad
 from voicebot.asr.vad import trim_speech
 from voicebot.input.recorder import record
+from voicebot.asr.streaming import StreamingSession
 from voicebot.llm import reply
 from voicebot.memory import store
-from voicebot import pipeline_test, tts
+from voicebot import memwatch, pipeline_test, tts
 from voicebot.tts import play, synthesize
 
 log = logging.getLogger("main")
@@ -22,6 +23,8 @@ def run_turn(system_prompt: str, history: list[dict], first: bool, timings: dict
     """One loop iteration. Returns False when the session should end; sets t["retry"] if nothing was heard (so SPACE is asked again)."""
     t = timings if timings is not None else {}
     print("\n[1/5] INPUT: " + ("press SPACE (or ENTER if prompted) to speak..." if first else "listening for your reply..."))
+    if config.STREAMING:
+        return _run_streaming_turn(system_prompt, history, first, t, user)
     wav = record(wait_for_space=first)
     if wav is None:
         print("No speech heard - ending session.")
@@ -38,6 +41,7 @@ def run_turn(system_prompt: str, history: list[dict], first: bool, timings: dict
     t0 = time.time()
     text = transcribe(trimmed)
     t["asr"] = time.time() - t0
+    memwatch.log_mem("ASR")
     print(f"      You said: {text!r}")
     if not text:
         print("Empty transcription - ending session.")
@@ -47,7 +51,8 @@ def run_turn(system_prompt: str, history: list[dict], first: bool, timings: dict
     t0 = time.time()
     answer = reply(system_prompt, history, text)
     t["llm"] = time.time() - t0
-    history += [{"role": "user", "content": text}, {"role": "assistant", "content": answer}]
+    memwatch.log_mem("LLM")
+    history +=[{"role": "user", "content": text}, {"role": "assistant", "content": answer}]
     print(f"      Bot: {answer}")
     if user is not None:
         # saved now so nothing is lost if the session dies; latencies: asr = transcribe call, llm = transcript -> full reply
@@ -57,6 +62,7 @@ def run_turn(system_prompt: str, history: list[dict], first: bool, timings: dict
     t0 = time.time()
     audio = synthesize(answer)
     t["tts"] = time.time() - t0  # LLM reply returned -> audio file written
+    memwatch.log_mem("TTS")
     if user is not None:
         store.add_latency(user, "tts", t["tts"])
 
@@ -67,6 +73,39 @@ def run_turn(system_prompt: str, history: list[dict], first: bool, timings: dict
     return True
 
 
+
+
+def _run_streaming_turn(system_prompt: str, history: list[dict], first: bool, t: dict, user: dict | None) -> bool:
+    """--streaming: partial ASR + speculative LLM run during the recording; vad/asr/llm keys hold the wait after the endpoint."""
+    session = StreamingSession(system_prompt, history)
+    wav = record(wait_for_space=first, on_frame=session.feed)
+    if wav is None:
+        session.finish()
+        print("No speech heard - ending session.")
+        return False
+    print("[2-3/5] ASR + LLM: collecting the streamed transcript and reply...")
+    res = session.finish()
+    text, answer = res["text"], res["reply"]
+    t.update(vad=0.0, asr=res["asr_wait_s"], llm=res["llm_wait_s"])
+    print(f"      You said: {text!r}  (via {res['path']})")
+    if not text:
+        print("Empty transcription - ending session.")
+        return False
+    history += [{"role": "user", "content": text}, {"role": "assistant", "content": answer}]
+    print(f"      Bot: {answer}")
+    if user is not None:
+        store.log_turn(user, text, answer, {"vad": t["vad"], "asr": t["asr"], "llm": t["llm"]}, setup_info.build(asr.current(), llm.current(), tts.current(), vad))
+    print("[4/5] TTS: synthesizing speech...")
+    t0 = time.time()
+    audio = synthesize(answer)
+    t["tts"] = time.time() - t0
+    if user is not None:
+        store.add_latency(user, "tts", t["tts"])
+    print("[5/5] PLAYBACK...")
+    play(audio)
+    if user is not None:
+        store.archive_turn(user, text, answer, wav, wav, audio)
+    return True
 
 
 def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
@@ -80,6 +119,8 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
     p.add_argument("--tts_model", help=f"TTS backend, works in both modes. local: {'|'.join(tts.LOCAL_BACKENDS)} (default {tts.DEFAULT}); "
                                        f"remote: {'|'.join(tts.REMOTE_BACKENDS)} (default {tts.REMOTE_DEFAULT})")
     p.add_argument("--tts_voice", help="remote only: voice for the chosen remote TTS (edge-tts voice name, Orpheus voice, or ElevenLabs voice id)")
+    p.add_argument("--streaming", action="store_true",
+                   help="partial ASR while you speak + start the LLM at the first pause (cuts the wait after you stop talking)")
     st = dict(type=str.upper, choices=pipeline_test.STAGES, metavar="|".join(pipeline_test.STAGES))
     p.add_argument("--test_start", **st, help="test run: start the pipeline at this stage and go to the end (or --test_end)")
     p.add_argument("--test_end", **st, help="test run: stop after this stage, inclusive (starts at VAD unless --test_start is given)")
@@ -90,6 +131,12 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
 
 def configure(args: argparse.Namespace) -> dict:
     """Validate the environment for the chosen mode, apply remote overrides, and return the backend names to use."""
+    config.STREAMING = bool(getattr(args, "streaming", False))
+    if config.STREAMING:
+        if args.mode == "remote":
+            config.STREAM_PARTIAL_EVERY_S = 3.0  # each partial re-uploads the audio so far: keep under Groq's rate/audio limits
+        print(f"[main] streaming on: partials every {config.STREAM_PARTIAL_EVERY_S}s, speculative LLM after "
+              f"{config.STREAM_PAUSE_SECS}s pause, stability window {config.STREAM_WINDOW}")
     flags = {k: v for k, v in {"--asr_model": args.asr_model, "--llm_model": args.llm_model,
                                "--llm_provider": args.llm_provider, "--tts_voice": args.tts_voice}.items() if v}
     if args.mode == "local":
@@ -124,9 +171,12 @@ def configure(args: argparse.Namespace) -> dict:
 def warm_up() -> None:
     """Run each local model once so the first real turn is not slow (weights get paged in, kernels compile)."""
     print("[main] warming up local models (avoids a slow first turn)...")
+    memwatch.apply_limit()
     t0 = time.time()
     llm.reply("Be brief.", [], "Hello")
+    memwatch.log_mem("warm-up LLM")
     tts.synthesize("Hello.")
+    memwatch.log_mem("warm-up TTS")
     print(f"[main] warm-up done in {time.time() - t0:.1f}s")
 
 

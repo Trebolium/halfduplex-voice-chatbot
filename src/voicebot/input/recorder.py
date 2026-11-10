@@ -1,4 +1,4 @@
-"""INTERFACE: record(wait_for_space) -> Path | None. Returns a 16kHz mono wav, or None if no speech began within IDLE_TIMEOUT_SECS."""
+"""INTERFACE: record(wait_for_space, on_frame=None) -> Path | None. on_frame(frame, is_speech) sees every recorded frame (streaming). Returns a 16kHz mono wav, or None if no speech began within IDLE_TIMEOUT_SECS."""
 import queue
 import threading
 import time
@@ -61,7 +61,7 @@ def _wait_for_space() -> None:
         listener.stop()
 
 
-def record(wait_for_space: bool) -> Path | None:
+def record(wait_for_space: bool, on_frame=None) -> Path | None:
     """Record one utterance from the mic; save wav to ARTEFACTS_DIR and return its path (None on idle timeout)."""
     import sounddevice as sd
     from voicebot.asr import vad
@@ -106,6 +106,8 @@ def record(wait_for_space: bool) -> Path | None:
                     continue
             frames.append(f)
             rec += 1
+            if on_frame is not None:
+                on_frame(f, is_speech)
             silence, done = endpoint_state(is_speech, silence, rec)
             if done:
                 print(f"[recorder] Recording ended ({silence * FRAME_MS / 1000:.1f}s silence, {rec * FRAME_MS / 1000:.1f}s total).")

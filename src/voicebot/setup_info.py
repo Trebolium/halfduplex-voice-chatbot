@@ -14,4 +14,6 @@ def build(asr, llm, tts, vad) -> dict:
         "config": {"sample_rate": config.SAMPLE_RATE, "max_record_secs": config.MAX_RECORD_SECS,
                    "silence_end_secs": config.SILENCE_END_SECS, "min_speech_ms": config.MIN_SPEECH_MS,
                    "idle_timeout_secs": config.IDLE_TIMEOUT_SECS, "system_prompt_base": config.BASE_SYSTEM_PROMPT},
+        "streaming": {"enabled": config.STREAMING, **({"partial_every_s": config.STREAM_PARTIAL_EVERY_S,
+                      "pause_secs": config.STREAM_PAUSE_SECS, "window": config.STREAM_WINDOW} if config.STREAMING else {})},
     }

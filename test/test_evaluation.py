@@ -91,3 +91,66 @@ def test_clips_near(tmp_path, monkeypatch):
     monkeypatch.setattr(config, "TEST_AUDIO_PATH", "")
     with pytest.raises(FileNotFoundError, match="Test data not found"):
         ev.clips_near({"short": 3})
+
+
+def test_mocked_streaming_run(tmp_path, monkeypatch):
+    """In streaming mode the eval takes text/reply/waits from stream_clip and records the stream stats."""
+    data = tmp_path / "data"; data.mkdir()
+    wav(data / "one.wav", 3); (data / "one.txt").write_text("hello there friend")
+    wav(tmp_path / "out.wav", 1)
+    monkeypatch.setattr(ev, "RESULTS_DIR", tmp_path / "results")
+    monkeypatch.setattr(config, "TEST_AUDIO_PATH", str(data))
+    monkeypatch.setattr(config, "STREAMING", True)
+    monkeypatch.setattr(ev.main, "configure", lambda a: {"asr": "a", "llm": "l", "tts": "t"})
+    for mod in (ev.asr, ev.llm, ev.tts):
+        monkeypatch.setattr(mod, "select_backend", lambda n: None)
+        monkeypatch.setattr(mod, "current", lambda: type("M", (), {"INFO": {}}))
+    monkeypatch.setattr(ev.vad, "reset", lambda: None)
+    monkeypatch.setattr(ev, "stream_clip", lambda a, sp: {"text": "hello there friend", "reply": "hi", "asr_wait_s": 0.0,
+                                                          "llm_wait_s": 0.4, "path": "speculative", "partials": 3,
+                                                          "partial_failures": 0, "retractions": 0, "speculations": 1, "stale_speculations": 0})
+    monkeypatch.setattr(ev.tts, "synthesize", lambda t: tmp_path / "out.wav")
+    out = ev.run([])
+    row = json.loads((out / "metrics.json").read_text())["datapoints"][0]
+    assert row["wer"] == 0 and row["latency_s"]["llm"] == 0.4 and row["latency_s"]["vad"] == 0 and row["stream"]["path"] == "speculative"
+    assert "streamed" in json.loads((out / "config.json").read_text())["asr_input"]
+
+
+def test_interrupted_run_creates_no_results_folder(tmp_path, monkeypatch):
+    data = tmp_path / "data"; data.mkdir()
+    wav(data / "one.wav", 2); (data / "one.txt").write_text("hello there friend")
+    monkeypatch.setattr(ev, "RESULTS_DIR", tmp_path / "results")
+    monkeypatch.setattr(ev.main, "configure", lambda a: {"asr": "a", "llm": "l", "tts": "t"})
+    for mod in (ev.asr, ev.llm, ev.tts):
+        monkeypatch.setattr(mod, "select_backend", lambda n: None)
+        monkeypatch.setattr(mod, "current", lambda: type("M", (), {"INFO": {}}))
+    monkeypatch.setattr(ev.vad, "reset", lambda: None)
+    monkeypatch.setattr(ev.vad, "trim_speech", lambda p: p)
+    monkeypatch.setattr(ev.asr, "transcribe", lambda p: "hello")
+    monkeypatch.setattr(ev.llm, "reply", lambda s, h, t: "hi!")
+    def boom(t): raise KeyboardInterrupt  # Ctrl-C mid-run
+    monkeypatch.setattr(ev.tts, "synthesize", boom)
+    monkeypatch.setattr(config, "TEST_AUDIO_PATH", str(data))
+    with pytest.raises(KeyboardInterrupt):
+        ev.run([])
+    assert not (tmp_path / "results").exists()
+
+
+def test_note_in_config_and_folder_name(tmp_path, monkeypatch):
+    data = tmp_path / "data"; data.mkdir()
+    wav(data / "one.wav", 2); (data / "one.txt").write_text("hello there friend")
+    wav(tmp_path / "out.wav", 1)
+    monkeypatch.setattr(ev, "RESULTS_DIR", tmp_path / "results")
+    monkeypatch.setattr(ev.main, "configure", lambda a: {"asr": "a", "llm": "l", "tts": "t"})
+    for mod in (ev.asr, ev.llm, ev.tts):
+        monkeypatch.setattr(mod, "select_backend", lambda n: None)
+        monkeypatch.setattr(mod, "current", lambda: type("M", (), {"INFO": {}}))
+    monkeypatch.setattr(ev.vad, "reset", lambda: None)
+    monkeypatch.setattr(ev.vad, "trim_speech", lambda p: p)
+    monkeypatch.setattr(ev.asr, "transcribe", lambda p: "hello")
+    monkeypatch.setattr(ev.llm, "reply", lambda s, h, t: "hi!")
+    monkeypatch.setattr(ev.tts, "synthesize", lambda t: tmp_path / "out.wav")
+    monkeypatch.setattr(config, "TEST_AUDIO_PATH", str(data))
+    out = ev.run(["--note", "Streaming: reload fix!"])
+    assert out.name.endswith("_streaming-reload-fix")
+    assert json.loads((out / "config.json").read_text())["note"] == "Streaming: reload fix!"

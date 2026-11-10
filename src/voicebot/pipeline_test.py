@@ -2,7 +2,7 @@
 import time
 from pathlib import Path
 
-from voicebot import asr, llm, tts
+from voicebot import asr, llm, memwatch, tts
 from voicebot.asr import transcribe, vad
 from voicebot.llm import reply
 from voicebot.memory import store
@@ -41,6 +41,7 @@ def run(start: str, end: str, args, names: dict) -> None:
     """Select only the backends the slice uses, run it once, print each stage's output + timing."""
     stages = STAGES[STAGES.index(start):STAGES.index(end) + 1]
     print(f"[test] running {' -> '.join(stages)} once (no mic, no loop)")
+    memwatch.apply_limit()
     if "VAD" in stages: vad.reset()
     if "ASR" in stages: asr.select_backend(names["asr"])
     if "LLM" in stages: llm.select_backend(names["llm"])
@@ -71,4 +72,5 @@ def run(start: str, end: str, args, names: dict) -> None:
             audio = synthesize(text)
             print(f"[test] TTS audio -> {audio}")
         print(f"[test] {stage} took {time.time() - t0:.2f}s")
+        memwatch.log_mem(stage)
     print(f"\n[test] done: {' -> '.join(stages)} in {time.time() - t_all:.2f}s")

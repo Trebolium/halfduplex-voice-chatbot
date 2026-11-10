@@ -127,7 +127,8 @@ def compare(names: list[str]) -> str:
     lines = ["Runs (run 1 is the baseline for Δ):"]
     for i, (n, c, m) in enumerate(zip(names, configs, metrics), 1):
         dirty = " (uncommitted changes)" if c.get("dirty") else ""
-        lines.append(f"  {i}. {n}  {c.get('datetime', '?')}  commit {str(c.get('commit_sha', '?'))[:7]}{dirty}  mode={c.get('mode')}  "
+        note = f"  note: {c['note']}" if c.get("note") else ""
+        lines.append(f"  {i}. {n}{note}  {c.get('datetime', '?')}  commit {str(c.get('commit_sha', '?'))[:7]}{dirty}  mode={c.get('mode')}  "
                      f"backends={c.get('backends')}  ok={m['summary']['n_ok']} failed={m['summary']['n_failed']}")
     lines += ["", "Config differences:"] + config_diff(names, configs)
     lines += ["", "Metrics (WER lower is better; latency in seconds, lower is better; Δ for WER in percentage points):"]
